@@ -1,0 +1,61 @@
+\input{preamble/definitions}
+\input{preamble/syntaxhighlighting}
+\input{preamble/acronyms}
+\input{preamble/newcommands}
+
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue}
+
+\definecolor{verylightgray}{rgb}{0.902, 0.902, 0.902}
+
+\mdfdefinestyle{writersnote}{%
+    linecolor=lightgray,linewidth=2pt,%
+    leftmargin=1cm,backgroundcolor=verylightgray,%
+    topline=false,rightline=false,bottomline=false,%
+    innertopmargin=2pt, frametitle=Section Plan,
+}
+
+\usetikzlibrary{calc,arrows}
+\makeatletter
+\mdf@do@stringoption{digressiontitle=={Section Plan}}
+\tikzset{
+  line/.style={%
+      line width=2pt,
+      draw=gray!40,
+      rounded corners=2ex,
+      },
+   excursus head/.style={
+      fill=white,
+      font=\bfseries\sffamily,
+      text=gray!80,
+      anchor=base west,
+  },
+}
+\mdfdefinestyle{sectionplanstyle}{%
+   singleextra={%
+            \path let \p1=(P), \p2=(O) in (\x2,\y1) coordinate (Q);
+            \path let \p1=(Q), \p2=(O) in (\x1,{(\y1-\y2)/2}) coordinate (M);
+            \path [line]
+                        ($(O)+(\linewidth,0ex)$) -| (M) |- %
+                        ($(Q)+(6em,0ex)$);%
+            \node [excursus head] at ($(Q)+(2.5em,-0.75pt)$) {\mdf@digressiontitle};},
+   middlelinewidth=2.5em,middlelinecolor=white,fontcolor=gray,%
+   hidealllines=true,topline=true,
+   innertopmargin=0ex,
+   innerbottommargin=1.5ex,
+   innerrightmargin=2pt,
+   innerleftmargin=2ex,
+   skipabove=0.87\baselineskip,
+   skipbelow=0.62\baselineskip,
+}
+\makeatother
+\newenvironment{sectionplan}
+  {\begin{mdframed}[style=writersnote]
+      \small}
+  {\end{mdframed}}
+%frametitleaboveskip=\dimexpr−\ht\strutbox\relax,
+
+% page settings
+\setlength{\parindent}{5em}
+\bibliographystyle{unsrtnat}
+\hbadness=10000
+\hfuzz=50pt

@@ -1,0 +1,9 @@
+\newcommand{\addimg}[2]{
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=12cm]{#1}
+    \caption{#2}
+    \StrBefore{#1}{.}[\filenamebase]
+\label{fig:\filenamebase}
+  \end{figure}
+}

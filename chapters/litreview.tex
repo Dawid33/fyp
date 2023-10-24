@@ -1,0 +1,51 @@
+
+
+\section{Literature Review}
+\begin{sectionplan}
+Introduction - Tell the person what you're going to tell them. Talk about what this chapter is about with reference to the various subsections of the chapter.
+\end{sectionplan}
+
+\subsection{Tokenisation}
+\begin{sectionplan}
+    \begin{itemize}
+        \item What is involved in lexing.
+        \item Overview of existing methods and the differences between them.
+        \begin{itemize}
+            \item Speculative multi-threaded, potentially with pre-scanning
+            \item Naive multi-threaded, potentially optimised
+            \item Novel approaches
+            \item Possibly mention SIMD approaches ( though they are not relevant to here)
+        \end{itemize}
+        \item Lexing conclusion 
+    \end{itemize}
+\end{sectionplan}
+
+\subsection{Parsing}
+\begin{sectionplan}
+    \begin{itemize}
+        \item What factors generally influence parallel parsing methods?
+        \item Details of lexing / parsing methods that I surveyed.
+        \begin{itemize}
+            \item CYK
+            \item Earley
+            \item OPG 
+            \item LLP
+            \item LRP
+        \end{itemize}
+        \item Short conclusion comparing the surveyed methods.
+        \item Content: Discuss a paper about context free grammars, parsing expression grammars and operator precedence grammars. 
+    \end{itemize}
+\end{sectionplan}
+
+\subsection{Semantic Analysis}
+\begin{sectionplan}
+    \begin{itemize}
+        \item Identify what is in semantic anlysis
+        \item What occurs during semantic analysis?
+        \begin{itemize}
+            \item Correcting parse tree if only subset of possible grammar productions are accepted
+            \item Symbol table generation
+        \end{itemize}
+        \item Ways of navigating an AST in parallel
+    \end{itemize}
+\end{sectionplan}

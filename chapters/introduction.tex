@@ -1,0 +1,57 @@
+\section{Introduction}
+\begin{sectionplan}
+     Short explanation of compiler technology and the structure of a compiler.
+Explain the compilation process and the use cases for compilation.
+\end{sectionplan}
+
+\citep{li_associative_2023}
+
+\subsection{Parallelism In Compilers}
+\begin{sectionplan}
+     What is meant by parallelism in a compilers implementation? E.g compared to
+a compiler generating code that works in parallel.
+\end{sectionplan}
+
+\subsection{Benefits of Parallel Compilation}
+\begin{sectionplan}
+     \begin{itemize}
+          \item What is meant by parallelism in a compilers implementation? E.g
+                compared to a compiler generating code that works in parallel.
+          \item Reasons a parallel compiler implementation is useful.
+     \end{itemize}
+\end{sectionplan}
+\subsection{Parallelisation Methods}
+\begin{sectionplan}
+     What are the different means of parallelisation? Which ones are being
+studied here?
+\end{sectionplan}
+
+\subsubsection{Single Instruction Multiple Data (SIMD)}
+\begin{sectionplan}
+SIMD - hard to use and optimise with. Good for speeding up single threaded
+operations *if* a use case is found.
+\end{sectionplan}
+\subsubsection{Multithreading / Multiprocessing}
+
+\begin{sectionplan}
+     Multi-threading / multi-processing - hard to work around in a compiler but
+commonly available.
+\end{sectionplan}
+\subsubsection{General Purpose Computing On GPUs (GPGPU)}
+
+\begin{sectionplan}
+     large scale heterogeneous computing (gpu) - Imposes many limitations along
+with a very large overhead that makes it useless for smaller - scale workloads.
+Availability varies.
+\end{sectionplan}
+
+\subsubsection{Very Large Instruction Word (VLIW)}
+\begin{sectionplan}
+     VLIW can be used to make any program parallel - general purpose VLIW cpu's
+not available for this purpose, mostly use in DSP's - esoteric.
+\end{sectionplan}
+
+\subsection{Objectives of My Work}
+
+\subsection{Outline of Subsequent Sections}
+
