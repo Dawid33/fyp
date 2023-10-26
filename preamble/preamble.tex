@@ -9,9 +9,16 @@
 
 \mdfdefinestyle{writersnote}{%
     linecolor=lightgray,linewidth=2pt,%
-    leftmargin=1cm,backgroundcolor=verylightgray,%
+    backgroundcolor=verylightgray,%
     topline=false,rightline=false,bottomline=false,%
     innertopmargin=2pt, frametitle=Section Plan,
+}
+
+\mdfdefinestyle{roughwork}{%
+    linecolor=lightgray,linewidth=2pt,%
+    leftmargin=1cm,%
+    topline=false,rightline=false,bottomline=false,%
+    innertopmargin=2pt, frametitle=Rough Work,
 }
 
 \usetikzlibrary{calc,arrows}
@@ -48,14 +55,18 @@
    skipbelow=0.62\baselineskip,
 }
 \makeatother
+
 \newenvironment{sectionplan}
   {\begin{mdframed}[style=writersnote]
+      \small}
+  {\end{mdframed}}
+\newenvironment{roughwork}
+  {\begin{mdframed}[style=roughwork]
       \small}
   {\end{mdframed}}
 %frametitleaboveskip=\dimexpr−\ht\strutbox\relax,
 
 % page settings
-\setlength{\parindent}{5em}
-\bibliographystyle{unsrtnat}
+% \setlength{\parindent}{5em}
 \hbadness=10000
 \hfuzz=50pt

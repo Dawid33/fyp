@@ -1,41 +1,143 @@
 
 
-\section{Literature Review}
+\section{Literature Review} \label{litreview}
 \begin{sectionplan}
-Introduction - Tell the person what you're going to tell them. Talk about what this chapter is about with reference to the various subsections of the chapter.
+Introduction - Tell the person what you're going to tell them. Talk about what
+this chapter is about with reference to the various subsections of the chapter.
 \end{sectionplan}
 
-\subsection{Tokenisation}
+\subsection{Parallelisation Methods}
 \begin{sectionplan}
-    \begin{itemize}
-        \item What is involved in lexing.
-        \item Overview of existing methods and the differences between them.
-        \begin{itemize}
-            \item Speculative multi-threaded, potentially with pre-scanning
-            \item Naive multi-threaded, potentially optimised
-            \item Novel approaches
-            \item Possibly mention SIMD approaches ( though they are not relevant to here)
-        \end{itemize}
-        \item Lexing conclusion 
-    \end{itemize}
+     What are the different means of parallelisation? Which ones are being
+studied here?
 \end{sectionplan}
+
+\subsubsection{Single Instruction Multiple Data (SIMD)}
+\begin{sectionplan}
+	SIMD - hard to use and optimise with. Good for speeding up single threaded
+	operations if a use case is found.
+\end{sectionplan}
+
+\begin{roughwork}
+
+	The first method  I’ve looked at was SIMD. SIMD instructions are assembly
+	instructions where instead of processing data using normal registers, SIMD
+	instructions uses special registers that are several times bigger than a typical
+	register. This allows the processor to compute a given instruction over each
+	part of the register in parallel. As an example, The arm ADD insturction can
+	be contrasted with its corresponding vector instruction UQADD8 which adds 4
+	8bit numbers with 4 other 8bit numbers. Performance gains using this method
+	can be substantial however only up to a point. More performance requires larger
+	registers which takes a long time to architect and standerdize in a CPU. The
+	next method is more scalable.
+
+\end{roughwork}
+
+\subsubsection{Multithreading / Multiprocessing}
+\begin{sectionplan}
+     Multi-threading / multi-processing - hard to work around in a compiler but
+commonly available.
+\end{sectionplan}
+
+\begin{roughwork}
+
+	With multicore parallism, its possible to have multiple programs exectute at the
+	same time. Each process can have its own call stack and its own view of memory.
+	This gives a programmer tremendous freedom with the things that can be done in
+	parallel. The down side here is the difficulty in creating a reliable multi-
+	threaded program. Unfortunatlely, if one is coverting a sequential program it
+	a parallel one, it is usually necessary to re-architect significant portions of
+	it in order to better fit this processing model. The benefit is the theoretical
+	promise of near-linear performance improvement with each additional core in the
+	cpu. So, for example, if a strongly parallel program can run in 1 second on one
+	thread then in theory it should run in a quarter of a second on four threads. In
+	other words, a four times speed up. The next method takes this approach to the
+	next level.
+
+\end{roughwork}
+
+
+\subsubsection{General Purpose Computing On GPUs (GPGPU)}
+\begin{sectionplan}
+     large scale heterogeneous computing (gpu) - Imposes many limitations along
+with a very large overhead that makes it useless for smaller - scale workloads.
+Availability varies.
+\end{sectionplan}
+
+\begin{roughwork}
+
+	It is possible to use graphics cards for general purpose computing, called
+	GPGPU. It is conceptually like programming a specialised CPU that has
+	potentially thousands of cores. This might seem like an obvious advantage over
+	programming a multicore cpu however a program that runs on the GPU has many
+	peculiarities and restrictions place on it that it requires a programmer to re-
+	architect a program even further in order to fit this programming model, as
+	compared to the multicore case. As an example, memory latency between a gpu and
+	main memory is usually so big that it makes the GPU significantly worse at for
+	processing small amounts of data.
+
+\end{roughwork}
+
+\subsubsection{Very Large Instruction Word (VLIW)}
+\begin{sectionplan}
+     VLIW can be used to make any program parallel - general purpose VLIW cpu's
+not available for this purpose, mostly use in DSP's - esoteric.
+\end{sectionplan}
+
+
+\subsection{Methods of Parallelising A Compiler} \label{compiler_parallel_methods}
+\begin{sectionplan}
+    Mention the different ways to architect a parallel compiler program using
+aforementioned parallel processing methods.
+\end{sectionplan}
+
+\begin{roughwork}
+
+	So, after a survey of what parallel processing methods are available, we can
+	take a look at what approaches have been thought about in the past. I found
+	that a paper from 1989 which the main approaches into the three points on this
+	slide. The first approach is splitting up the input and processing each chunk
+	individually. Many compilers divide up data at the file system level where each
+	file of source code can be compiled seperately from other files it may depend
+	on. Ideally, in a truly parallel compiler, each file could be split up further
+	into even smaller chunks with each chunk being processed independantly. This
+	approach is great but it causes issues that I will describe later. Computation
+	partitioning on the other hand assumes that a series of sequential computations
+	can be divided up and processed in parallel with results of each computation
+	being joined joined together at the end. The final method is pipeling which
+	is similar to computation partitioning. Pipelining involves dividing up a
+	computation into some number of phases where each phase depends on the output
+	from the previous phase. A complier can conveniently be divided up into such
+	a pipline where, for example, the lexer, parser and semantic analyzer can be
+	potentially executed simultaneusly. For my project I will focus predominantly on
+	the data paritioning method and I will elaborate on my reasons for this decision
+	in my final report.
+
+\end{roughwork}
+
+\subsection{Lexing}
+\begin{sectionplan}
+    What is involved in lexing. Mention DFA / Finite state machine.
+\end{sectionplan}
+
+\subsubsection{Naive Multithreaded}
+
+\subsubsection{Speculative Prescanning}
+
+\subsubsection{Novel Approaches}
+
+\subsubsection{Vectorization}
 
 \subsection{Parsing}
 \begin{sectionplan}
-    \begin{itemize}
-        \item What factors generally influence parallel parsing methods?
-        \item Details of lexing / parsing methods that I surveyed.
-        \begin{itemize}
-            \item CYK
-            \item Earley
-            \item OPG 
-            \item LLP
-            \item LRP
-        \end{itemize}
-        \item Short conclusion comparing the surveyed methods.
-        \item Content: Discuss a paper about context free grammars, parsing expression grammars and operator precedence grammars. 
-    \end{itemize}
+    What factors generally influence parallel parsing methods?
 \end{sectionplan}
+
+\subsubsection{CYK}
+\subsubsection{Earley}
+\subsubsection{OPG Parsing}
+\subsubsection{LLP}
+\subsubsection{LRP}
 
 \subsection{Semantic Analysis}
 \begin{sectionplan}
