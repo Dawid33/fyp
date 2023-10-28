@@ -20,16 +20,16 @@ studied here?
 
 \begin{roughwork}
 
-	The first method  I’ve looked at was SIMD. SIMD instructions are assembly
-	instructions where instead of processing data using normal registers, SIMD
-	instructions uses special registers that are several times bigger than a typical
-	register. This allows the processor to compute a given instruction over each
-	part of the register in parallel. As an example, The arm ADD insturction can
-	be contrasted with its corresponding vector instruction UQADD8 which adds 4
-	8bit numbers with 4 other 8bit numbers. Performance gains using this method
-	can be substantial however only up to a point. More performance requires larger
-	registers which takes a long time to architect and standerdize in a CPU. The
-	next method is more scalable.
+The first method  I’ve looked at was SIMD. SIMD instructions are assembly
+instructions where instead of processing data using normal registers, SIMD
+instructions uses special registers that are several times bigger than a typical
+register. This allows the processor to compute a given instruction over each
+part of the register in parallel. As an example, The arm ADD insturction can
+be contrasted with its corresponding vector instruction UQADD8 which adds 4
+8bit numbers with 4 other 8bit numbers. Performance gains using this method
+can be substantial however only up to a point. More performance requires larger
+registers which takes a long time to architect and standerdize in a CPU. The
+next method is more scalable.
 
 \end{roughwork}
 

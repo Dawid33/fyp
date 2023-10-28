@@ -37,17 +37,17 @@ compiler theory can be justified not only by its direct benefit to software
 development but also its affect on tangential fields of research.
 
 The focus of my FYP is to study a subset of compiler research regarding parallel
-compiler implementations. Research into this niche has been historically
-of low priority. Traditional compiler architecture in the 70’s was focused
-on minimising memory use and optimising for single threaded performance
-(\textbf{citation needed}). This was at a time when computers didn’t even
-have enough ram to store all the data necessary for compiling a large amounts
-of source code. Times have since changed. The memory available in a computer
-is much more abundant than before and single threaded processor speed is not
-improving at the same rate as it once did (\textbf{citation needed}). In fact,
-were seeing commodity processors contain many cores capable of running dozens of
-threads in parallel. I believe this is sufficient cause to consider alternative
-architectures that better utilise this environment.
+compilation. Research into this niche has been historically of low priority.
+Traditional compiler architecture in the 70’s was focused on minimising memory
+use and optimising for single threaded performance (\textbf{citation needed}).
+This was at a time when computers didn’t even have enough ram to store all the
+data necessary for compiling a large amounts of source code. Times have since
+changed. The memory available in a computer is much more abundant than before
+and single threaded processor speed is not improving at the same rate as it
+once did (\textbf{citation needed}). In fact, were seeing commodity processors
+contain many cores capable of running dozens of threads in parallel. I believe
+this is sufficient cause to consider alternative architectures that better
+utilise this environment.
 
 \begin{roughwork}
 
@@ -59,7 +59,6 @@ architectures that better utilise this environment.
      code (\textbf{citation needed}). 
 
 \end{roughwork}
-
 
 \subsection{Sequential Compilation}
 \begin{sectionplan}
@@ -90,51 +89,23 @@ graph of tokens is then analysed during the semantic analysis phase, doing
 things like looking for unsused variables. The parts of the compiler up to this
 point are colloquially called the frontend of the compiler.
 
+The stages of a compiler that are reponsible for taking a file from
+source code to code generation are often implemented with little to no
+parallelisation(\textbf{citation needed}). An example of going from source
+code to machine code is the process of compiling a C file into an object file.
+As can be seen from figure \ref{fig:compiler}, this envelopes a significant
+portion of the compiler. 
 
 \subsection{Parallel Compiliation}
 \begin{sectionplan}
-    \begin{itemize}
-	\item What is meant by parallelism in a compiler implementation as  compared to
-          a compiler generating code that works in parallel.
-
-	\item Justify looking at alternative forms of parallelism besides the status quo
-          method of compiling source files in parallel and linking them together
-          in the end.
-
-		\begin{itemize}
-         	\item Finer grained parallelism is better suited for running code on 				
-				  massively parallel hardware like GPU's.
-
-         	\item More parts of a program can be compiled in parallel which makes
-				  better use of a computers parallel processing facilities. Mention 
-				  ahmdals law.
-
-         	\item Reduced bottle neck when compiling very large files (since
-				  individual files are split up and compiled in parallel).
-
-			\item Significant speedups in other fields where only one stage of is 
-				  needed like lexing and parsing very large amounts of structured 
-				  data. Mention PAPAGENO parser with relation to simdjson.
-		\end{itemize}
-
-    \end{itemize}
+	What is meant by parallel compilation?
 \end{sectionplan}
 
-The stages of a compiler that are reponsible for taking a file from
-source code to code generation are often implemented with little to no
-parallelisation(\textbf{citation needed}). An example of going from source code
-to machine code is the process of compiling a C file into an object file. As
-can be seen from figure \ref{fig:compiler}, this envelopes a significant portion
-of the compiler. Many existing compilers can operate in parallel by compiling
-several source code files at the same time. In this work I am looking at methods
-employing finer-grained parallelism where various stages of a compiler can be
-executed in parallel. These are methods described in more detail in Section
-\ref{compiler_parallel_methods}.
 
-
-\subsubsection{Parallel As Compared To Sequential}
+\subsubsection{Advantages Of Parallel Compilation}
 \begin{sectionplan}
-     Reasons why parallel compilation is good / better.
+     Reasons why parallel compilation is good / better compared to sequential
+	 compilation.
 
      \begin{itemize}
           \item More cores used during compilation increase compiler performance
@@ -167,15 +138,16 @@ specialised hardware beyond the typical CPU. Examples include things like smart
 nics that offload network packet parsing from the CPU or DPU’s that provide
 more facilities for networking and input / output related tasks than a typical
 CPU. A recent article from October 2023 shows how AMD’s software stack for
-general purpose computing on graphics cards known as rocm is now among their top
-priorities \citep{ward-foxton_rocm_2023}. As time goes on, we are likely to see increasingly specialised and
-heterogenous hardware (\textbf{citation needed}). Traditional compiler architecture is not well suited to
-this type of environment.
+general purpose computing on graphics cards known as rocm is now among their
+top priorities \citep{ward-foxton_rocm_2023}. As time goes on, we are likely
+to see increasingly specialised and heterogenous hardware (\textbf{citation
+needed}). Traditional compiler architecture is not well suited to this type
+of environment.
 
 For many programming languages, once a syntax goes into general use, it becomes
 nearly impossible to revert or change it in a way that breaks existing programs.
 This leads to programming languages becoming complicated and hard to define as
-new features are added. For example, langauges like c++ are extremely hard to
+new features are added. For example, langauges like C++ are extremely hard to
 compile in any way, let alone a parallel way. Research into and the development
 of parallel compilers can aid future developers when they are choosing their
 syntax or what features they want to implement without making their language
@@ -183,6 +155,37 @@ hard to compile in parallel (\textbf{citation needed}). It is currently
 rather difficult to design a language that can easily be compiled in parallel
 due to a lack of research and prior work compared to sequential approaches
 (\textbf{citation needed}).
+
+\subsubsection{Fine-Grained Parallel Compilation}
+\begin{sectionplan}
+	Justify looking at alternative forms of parallelism besides the status quo 	
+	method of compiling source files in parallel and linking them together in the
+	end.
+
+	\begin{itemize}
+     	\item Finer grained parallelism is better suited for running code on 				
+			  massively parallel hardware like GPU's.
+
+     	\item Error handling potential improved by being able to independantly
+			  process any part of text. No need for complex parser recovery.
+
+     	\item More parts of a program can be compiled in parallel which makes
+			  better use of a computers parallel processing facilities. Mention 
+			  ahmdals law.
+
+     	\item (weak) Reduced bottle neck when compiling very large files (since 			
+			  individual files are split up and compiled in parallel).
+
+		\item Significant speedups in other fields where only one stage of is 
+			  needed like lexing and parsing very large amounts of structured 
+			  data. Mention PAPAGENO parser with relation to simdjson.
+	\end{itemize}
+\end{sectionplan}
+
+Many existing compilers can operate in parallel by compiling several source
+code files at the same time. In this work I am looking at methods employing
+finer-grained parallelism where various stages of a compiler can be executed
+in parallel.
 
 \subsection{Objectives of My Work}
 
@@ -198,5 +201,5 @@ review and their pros and cons. I elaborate the issues with designing a
 parallel compiler aswell as the design of my compiler implementation. In Section
 \ref{implementation} I explain the details of my implementation, explaining
 things like external dependancies and code structure. Finally, I test and
-evaluate the performance of my implementation in section \ref{evalandtesting},
-followed by the conclusion in section \ref{conclusion}.
+evaluate the performance of my implementation in Section \ref{evalandtesting},
+followed by the conclusion in Section \ref{conclusion}.

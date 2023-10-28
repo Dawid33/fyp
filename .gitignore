@@ -9,5 +9,6 @@
 *.xml
 *.gz
 *.toc
+*.lof
 _minted-main
 jim
