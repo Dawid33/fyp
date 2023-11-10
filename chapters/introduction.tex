@@ -1,16 +1,15 @@
-\section{Introduction}
+\section{Introduction} \label{introduction}
 \begin{sectionplan}
      \begin{itemize}
-          \item  General introduction extoling how prevalant compilers are
-                 and how everyone and their mother is using them in some form
-                 or another.
-
-          \item Justify further research into compilers based on their use
-                in software development and other fields.
+          \item  General introduction about how important compilers are and how
+                 everyone and is using them in some form or another.
 
           \item Talk about research into parallel compilers at a highlevel,
                 ie the current state of research, when research has been done,
                 parallel compilers historically of low importance.
+
+          \item Justify further research into compilers based on their use
+                in software development and other fields.
 
           \item Link to next section that describes how compilers work at a
                 high level
@@ -18,47 +17,48 @@
 \end{sectionplan}
 
 Compilers are an important part of the interface between a programmer and the
-machine for which he is developing software. The modern software ecosystem
+computer for which he is developing software. The modern software ecosystem
 could not exist without the frequent and extensive use of compilers in the
 software development process. It is of no surprise that the study of compilers
 and programming languages has been an important field of research in computer
 science for many decades. Any improvements in compiler technology can have wide
-and long lasting affects on software development speed and software quality
-which makes compiler research strongly worthwhile \citep{hall_compiler_2009}
-
-Compiler research can generalize to other areas outside of software development.
-Applications of techniques traditionally associated with compilers can be
-found in network packet parsing \citep{wang_hyperscan_2019, roesch_snort_1999}
-and huffman decoding \citep{howard_parallel_1996}. These areas, among others,
-can benefit from research directed at improving compiler technology due to a
-significant overlap in the underlying theory
-\citep{mytkowicz_data-parallel_2014}. It is evident that futher development in
-compiler theory can be justified not only by its direct benefit to software
-development but also its affect on tangential fields of research.
+and long lasting affects on software development \citep{hall_compiler_2009}.
 
 The focus of my FYP is to study a subset of compiler research regarding parallel
 compilation. Research into this niche has been historically of low priority.
-Traditional compiler architecture in the 70’s was focused on minimising memory
-use and optimising for single threaded performance (\textbf{citation needed}).
-This was at a time when computers didn’t even have enough ram to store all the
-data necessary for compiling a large amounts of source code. Times have since
-changed. The memory available in a computer is much more abundant than before
-and single threaded processor speed is not improving at the same rate as it
-once did (\textbf{citation needed}). In fact, were seeing commodity processors
-contain many cores capable of running dozens of threads in parallel. I believe
-this is sufficient cause to consider alternative architectures that better
-utilise this environment.
+Traditional compiler architecture since the 1970’s was focused on minimising
+memory use and optimising for single threaded performance (\textbf{citation
+needed}). This was at a time when computers didn’t even have enough ram to store
+all the data necessary for compiling large amounts of source code.  Commodity
+hardware has since improved significantly. The memory available in a computer
+is much more abundant than before and single threaded processor speed is not
+improving at the same rate as it once did (\textbf{citation needed}). In fact,
+were seeing commodity processors contain many cores capable of running dozens of
+threads in parallel. I believe this is sufficient cause to consider alternative
+architectures that better utilise this environment.
 
-\begin{roughwork}
+Modern compiler implementations in use today often use varying amounts of
+parallelism in order to speed up compilation times. The rustc compiler team
+reports that the time spent in the compiler frontend of the rustc compiler
+was reduced by 50\% after increasing the amount of work it does in parallel.
+\citep{nicholas_nethercote_faster_2023}. Improvements are not limited to
+the compiler frontend. The mold linker project boasts significantly better
+performance than its competitors due to its extensive and clever use of
+parallelism \citep{rui_ueyama_design_nodate}. The potential for performance
+improvements is clearly evident in modern compilers. Moreover, compiler research
+and development can generalize to other areas outside of software development.
 
-     Language design decisions of that era were made to address this problem.
-     For example, in C, programmers are forced to declare functions before
-     they are called. This was originally done to allow the compiler to
-     fully compile each function independantly, without needing to keep all
-     the other functions in memory and avoiding a costly second pass over
-     code (\textbf{citation needed}). 
+Applications of techniques traditionally associated with compilers
+can be found in network packet parsing \citep{wang_hyperscan_2019,
+roesch_snort_1999} and huffman decoding \citep{howard_parallel_1996}.
+These areas, among others, can benefit from research directed at improving
+compiler technology due to a significant overlap in the underlying theory
+\citep{mytkowicz_data-parallel_2014}. Futher development in compiler theory can
+be justified not only by its direct benefit to software development but also its
+affect on tangential fields of research.
 
-\end{roughwork}
+The next section describes the sequential method of compilation which can be
+seen in a large number of compilers.
 
 \subsection{Sequential Compilation}
 \begin{sectionplan}
@@ -69,7 +69,7 @@ utilise this environment.
 \begin{figure}[t]
 \includegraphics[width=\linewidth]{images/generic_compiler.png}
 \centering
-\caption{Diagram of compilation phases in a generic compiler}
+\caption{Compilation phases in a generic compiler}
 \label{fig:compiler}
 \end{figure}
 
@@ -193,13 +193,23 @@ The goal of my project is to research ways of the compilation stages in
 a compiler frontend by using parallel processing methods, aswell as an
 implementation of those stages if time allows.
 
-\subsection{Outline of Subsequent Sections}
+\subsection{Structure of Report}
 
-Section \ref{litreview} describes literature I have reviewed. In Section
-\ref{design} I discuss the various approaches mentioned in the literature
-review and their pros and cons. I elaborate the issues with designing a
-parallel compiler aswell as the design of my compiler implementation. In Section
-\ref{implementation} I explain the details of my implementation, explaining
-things like external dependancies and code structure. Finally, I test and
-evaluate the performance of my implementation in Section \ref{evalandtesting},
-followed by the conclusion in Section \ref{conclusion}.
+Chapter \ref{introduction} provides an introduction to parallel compilation as
+well as reasons for continued effort in this area of research.
+\newline \newline
+Chapter \ref{litreview} describes exisiting approaches for compiling
+in parallel.
+\newline \newline
+Chapter \ref{design} elaborates on the issues associated with designing a
+parallel compiler aswell as the design of my compiler implementation. I discuss
+the various approaches mentioned in the literature review, including their
+advantages and disadvantages where appropriate.
+\newline \newline
+Chapter \ref{implementation} explains the details of my implementation,
+referring to things like external code dependancies and program structure.
+\newline \newline
+Chapter \ref{evalandtesting} describes my testing methodologies and the evaluation of my compilers performance.
+\newline \newline
+Chapter \ref{conclusion} concludes the report with a summary of the report and
+concluding remarks.
