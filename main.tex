@@ -1,15 +1,22 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{report}
 \input{preamble/packages}
 \input{preamble/preamble}
 
+\AtBeginDocument{\renewcommand{\bibname}{References}}
 \bibliographystyle{agsm}
 
 \begin{document}
 \begin{sloppypar}
 \include{cover}
+\addcontentsline{toc}{section}{Cover}
 \tableofcontents
+\addcontentsline{toc}{section}{Table of Contents}
 \listoffigures
+\addcontentsline{toc}{section}{List of Figures}
 \printacronyms
+\addcontentsline{toc}{section}{Acronyms}
+\printglossaries
+\addcontentsline{toc}{section}{Glossary}
 \clearpage
 \input{chapters/introduction}
 \newpage
@@ -24,7 +31,6 @@
 \input{chapters/conclusion}
 \newpage
 \end{sloppypar}
-\addcontentsline{toc}{section}{Acronyms}
 \clearpage
 \bibliography{references}
 \end{document}

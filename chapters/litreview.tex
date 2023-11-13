@@ -1,152 +1,144 @@
-\section{Literature Review} \label{litreview}
+\chapter{Literature Review} \label{litreview}
 \begin{sectionplan}
 Introduction - Tell the person what you're going to tell them. Talk about what
 this chapter is about with reference to the various subsections of the chapter.
 \end{sectionplan}
 
-\subsection{Parallelisation Methods}
+\section{Parallelisation Methods} \label{parallelisation_methods}
 \begin{sectionplan}
      What are the different means of parallelisation? Which ones are being
 studied here?
 \end{sectionplan}
 
-\subsubsection{Single Instruction Multiple Data (SIMD)}
+\subsection{Single Instruction Multiple Data (SIMD)}
 \begin{sectionplan}
 	SIMD - hard to use and optimise with. Good for speeding up single threaded
 	operations if a use case is found.
 \end{sectionplan}
 
-\begin{roughwork}
+\ac{simd} instructions are assembly instructions where instead of processing data
+with normal registers, \ac{simd} instructions use special registers that are
+several times bigger than a typical register. This allows the processor to
+compute a given instruction over each part of the register in parallel. As
+an example, The arm ADD insturction can be contrasted with its corresponding
+vector instruction UQADD8 which adds 4 8bit numbers with 4 other 8bit numbers.
+Performance gains using this method can be substantial however only up to a
+point. More performance requires larger registers which takes a long time to
+architect and standardize in a \ac{cpu}.
 
-The first method  I’ve looked at was SIMD. SIMD instructions are assembly
-instructions where instead of processing data using normal registers, SIMD
-instructions uses special registers that are several times bigger than a typical
-register. This allows the processor to compute a given instruction over each
-part of the register in parallel. As an example, The arm ADD insturction can
-be contrasted with its corresponding vector instruction UQADD8 which adds 4
-8bit numbers with 4 other 8bit numbers. Performance gains using this method
-can be substantial however only up to a point. More performance requires larger
-registers which takes a long time to architect and standerdize in a CPU. The
-next method is more scalable.
-
-\end{roughwork}
-
-\subsubsection{Multithreading / Multiprocessing}
+\subsection{Multithreading / Multiprocessing}
 \begin{sectionplan}
      Multi-threading / multi-processing - hard to work around in a compiler but
 commonly available.
 \end{sectionplan}
 
-\begin{roughwork}
+Multicore parallelism makes it possible to have multiple programs exectute at
+the same time. Each process can have its own call stack and its own view of
+memory. This gives a programmer tremendous freedom with the things that can be
+done in parallel. The down side here is the difficulty in creating a reliable
+multi-threaded program. Unfortunatlely, if one is coverting a sequential
+program it a \gls{data_parallel} one, it is usually necessary to re-architect
+significant portions of it in order to better fit this processing model. The
+benefit is the theoretical promise of near-linear performance improvement that
+scales with additional available cores. So, for example, if a strongly parallel
+program can run in 1 second on one thread then in theory it should run in a
+quarter of a second on four threads. In other words, a four times speed up. The
 
-	With multicore parallism, its possible to have multiple programs exectute at the
-	same time. Each process can have its own call stack and its own view of memory.
-	This gives a programmer tremendous freedom with the things that can be done in
-	parallel. The down side here is the difficulty in creating a reliable multi-
-	threaded program. Unfortunatlely, if one is coverting a sequential program it
-	a parallel one, it is usually necessary to re-architect significant portions of
-	it in order to better fit this processing model. The benefit is the theoretical
-	promise of near-linear performance improvement with each additional core in the
-	cpu. So, for example, if a strongly parallel program can run in 1 second on one
-	thread then in theory it should run in a quarter of a second on four threads. In
-	other words, a four times speed up. The next method takes this approach to the
-	next level.
-
-\end{roughwork}
-
-
-\subsubsection{General Purpose Computing On GPUs (GPGPU)}
+\subsection{General Purpose Computing On GPUs (GPGPU)}
 \begin{sectionplan}
      large scale heterogeneous computing (gpu) - Imposes many limitations along
 with a very large overhead that makes it useless for smaller - scale workloads.
 Availability varies.
 \end{sectionplan}
 
-\begin{roughwork}
+It is possible to use graphics cards for general purpose computing, called
+\ac{gpgpu}. It is conceptually like programming a specialised \ac{cpu} that has
+potentially thousands of cores. This might seem like an obvious advantage over
+programming a multicore \ac{cpu} however a program that runs on the \ac{gpu} has
+many peculiarities and restrictions placed on it that it requires a programmer to
+re-architect a program even further in order to fit its programming model, as
+compared to the multicore case. As an example, memory latency between a \ac{gpu}
+and main memory is usually so big that it makes the \ac{gpu} significantly worse
+at for processing small amounts of data.
 
-	It is possible to use graphics cards for general purpose computing, called
-	GPGPU. It is conceptually like programming a specialised CPU that has
-	potentially thousands of cores. This might seem like an obvious advantage over
-	programming a multicore cpu however a program that runs on the GPU has many
-	peculiarities and restrictions place on it that it requires a programmer to re-
-	architect a program even further in order to fit this programming model, as
-	compared to the multicore case. As an example, memory latency between a gpu and
-	main memory is usually so big that it makes the GPU significantly worse at for
-	processing small amounts of data.
-
-\end{roughwork}
-
-\subsubsection{Very Large Instruction Word (VLIW)}
+\subsection{Very Large Instruction Word (VLIW)}
 \begin{sectionplan}
      VLIW can be used to make any program parallel - general purpose VLIW cpu's
 not available for this purpose, mostly use in DSP's - esoteric.
 \end{sectionplan}
 \cite{fisher_parallel_2004}
 
-\subsection{Methods of Parallelising A Compiler} \label{compiler_parallel_methods}
+\section{Methods of Parallelising A Compiler} \label{compiler_parallel_methods}
 \begin{sectionplan}
     Mention the different ways to architect a parallel compiler program using
 aforementioned parallel processing methods.
-\end{sectionplan}
 \cite{hillis_data_1986, gross_parallel_1989, jena_design_2018, baer_model_1977}
+\end{sectionplan}
 
-\begin{roughwork}
+So, after a survey of what parallel processing methods are available, we
+can take a look at what approaches have been thought about in the past.
+\cite{gross_parallel_1989} outlines three main approaches for parallising a
+compiler. The first approach is splitting up the input and processing each chunk
+individually. Many compilers divide up data at the file system level where each
+file of source code can be compiled seperately from other files it may depend
+on. In a \gls{data_parallel} compiler, each file could be split up further into
+even smaller chunks with each chunk being processed independantly.
 
-	So, after a survey of what parallel processing methods are available, we can
-	take a look at what approaches have been thought about in the past. I found
-	that a paper from 1989 which the main approaches into the three points on this
-	slide. The first approach is splitting up the input and processing each chunk
-	individually. Many compilers divide up data at the file system level where each
-	file of source code can be compiled seperately from other files it may depend
-	on. Ideally, in a truly parallel compiler, each file could be split up further
-	into even smaller chunks with each chunk being processed independantly. This
-	approach is great but it causes issues that I will describe later. Computation
-	partitioning on the other hand assumes that a series of sequential computations
-	can be divided up and processed in parallel with results of each computation
-	being joined joined together at the end. The final method is pipeling which
-	is similar to computation partitioning. Pipelining involves dividing up a
-	computation into some number of phases where each phase depends on the output
-	from the previous phase. A complier can conveniently be divided up into such
-	a pipline where, for example, the lexer, parser and semantic analyzer can be
-	potentially executed simultaneusly. For my project I will focus predominantly on
-	the data paritioning method and I will elaborate on my reasons for this decision
-	in my final report.
+Computation partitioning on the other hand assumes that a series of sequential
+computations can be divided up and processed in parallel with results of
+each computation being joined together at the end. 
 
-\end{roughwork}
+The final method is pipeling which is similar to computation partitioning.
+Pipelining involves dividing up a computation into some number of phases
+where each phase depends on the output from the previous phase. A complier can
+conveniently be divided up into such a pipline where, for example, the lexer,
+parser and semantic analyzer can be potentially executed simultaneusly. 
 
-\subsection{Lexing}
+\section{Lexing}
 \begin{sectionplan}
     What is involved in lexing. Mention DFA / Finite state machine.
+	\cite{pai_t_systematic_2020, barve_parallel_2014, barve_parallel_2012, barve_improved_2015}
 \end{sectionplan}
-\cite{pai_t_systematic_2020, barve_parallel_2014, barve_parallel_2012, barve_improved_2015}
 
-\subsubsection{Naive Multithreaded}
+Lexing is the process of process of removing unneccesary characters from the
+source code and grouping characters of interest together into tokens. This
+stage emits a list of tokens that are passed on to the parser. The purpose of
+lexing is to simplify the task of the parser by reducing the size of the input.
+Lexing is sometimes  called tokenisation or lexical analysis. It is performed
+by a lexer, sometimes called a tokenizer or lexical analyzer. Its task of
+finding groupings of characters is ideally described using a regular language
+and is best performed by regular expression matching. This means a lexer can be
+described as a finite state machine.
+
+
+\subsection{Naive Multithreaded}
 \cite{barenghi_parallel_2015, mytkowicz_data-parallel_2014}
 
-\subsubsection{Speculative Prescanning}
+\subsection{Speculative Prescanning}
 \cite{li_plex_2021}
 
-\subsubsection{Novel Approaches}
+\subsection{Novel Approaches}
 \cite{sinya_simultaneous_2013, lin_accelerating_2013}
 
-\subsubsection{Vectorization}
+\subsection{Vectorization}
 \cite{wang_hyperscan_2019}
 
-\subsection{Parsing}
+\section{Parsing}
 \begin{sectionplan}
     What factors generally influence parallel parsing methods?
 \end{sectionplan}
 \cite{mark_thierry_vandevoorde_parallel_1988}
 
-\subsubsection{CYK}
+\subsection{CYK Parsing}
 \cite{skrzypczak_parallel_nodate}
-\subsubsection{OPG Parsing}
-\cite{barenghi_parallel_2015, li_associative_2023}
-\subsubsection{LLP}
+\subsection{Parallel LL Parsing}
 \cite{robin_voetter_parallel_2021}
-\subsubsection{LRP}
+\subsection{Parallel LR Parsing}
+\cite{clarke_error_1993}
+\subsection{LR(0) OPG Parsing}
+\cite{barenghi_parallel_2015, li_associative_2023}
 
-\subsection{Semantic Analysis}
+\section{Semantic Analysis}
 \begin{sectionplan}
     \begin{itemize}
         \item Identify what is in semantic anlysis

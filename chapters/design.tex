@@ -1,4 +1,4 @@
-\section{Design} \label{design}
+\chapter{Design} \label{design}
 \begin{sectionplan}
 \begin{itemize}
 	\item Discuss the various approaches mentioned in the literature review, mentioning
@@ -11,63 +11,20 @@
 
 \end{sectionplan}
 
-\subsubsection{Parallelisation Method}
+\section{Parallelisation Method}
 
-\begin{roughwork}
+Computing on the GPU is theoretically the option with the most available
+performance. Unfortunately however,  programming on a GPU is difficult,
+running small tasks on it is impractical and trying to create a compiler that
+runs on the GPU requires making big concessions with regards to the compiler
+architecture and language design. This leaves a combination of multicore and
+\ac{simd} processing which would be most performant in the general case,
+however for my \ac{fyp} I intend to only focus on the multi-threaded case.
+There are other methods that exist today besides the ones I’ve mentioned so far
+however they are arguably niche and not commonly available.
 
-	Computing on the GPU is theoretically the option with the most available
-	performance. Unfortunately however,  programming on a GPU it is difficult,
-	running small tasks on it is impractical and trying to create a compiler that
-	runs on the GPU requires making big conessions with regards to the compiler
-	architectuer and language design. This leaves a combination of multicore and
-	SIMD processing which would be most performant in the general case, however for
-	my FYP I intend to focus on the multi-threaded case. There are other methods
-	that exist today besides the ones I’ve mentioned so far however they are
-	arguably niche and not commonly available.
+\section{Lexer}
 
-\end{roughwork}
+\section{Parser}
 
-\subsubsection{Lexer}
-
-\begin{roughwork}
-
-	Assuming a focus on data partitioning, I’d like to look at some issues related
-	to lexing in parallel using data partitioning. A lexer fundamentally works
-	through the use of a finite state machine. Without going into details, this
-	causes issues because it means that a lexer is dependant on the input that has
-	already been processed. This problem has solid theoretical foundations however
-	in practice it manifests its self as two key issues. The first issue is choosing
-	where to split up the source code so that the lexer can correctly tokenize the
-	input. An extension of this issue is lexing strings and comments. I’ll talk
-	about these in a little more detail.
-
-	The diagram here shows the issue with paritioning up the data haphazardly and
-	processing it independantly. We have here a bit of made up source code that
-	defines a variable with a really long name. This code is split down the middle,
-	with each half being processed separately on each thread. The output should be
-	LET, NAME, EQ, NUMBER, SEMI however due to the variable name getting split down
-	the middle we get two NAME tokens instead of one. The most practical solution to
-	work around this is to use a heursitc based on the way a language is going to be
-	used in practice. For example, many langauges can be correctly tokenized if the
-	lexer begins tokenizing from a whitespace or newline. This means that so long as
-	the programmer uses spaces and newlines every so often, the input that will be
-	fed into the lexer can be divided up roughly equally without the issue shown in
-	the diagram.
-
-	The second problem is similar but cannot be worked around with a simple
-	heuristic. Here the code is split in the middle of a string. Recognizing whether
-	a lexer should assuming that is is tokenising the inside of a string or normal
-	code is plain hard. The naive approach is to tokenize the string for every
-	possible state the lexer can initially be in and join up the correct outputs
-	from each thread at the end. I have not yet seen any approach that improves on
-	core idea of the naive approach other than applying optimisations. The issue is
-	of course that that more complex a language is, the more possible start states
-	it can have, which forces the lexer to to re-compute the same code many times
-	which leads to worse performance. An other solution is to just not have things
-	like strings and comments.
-
-\end{roughwork}
-
-\subsubsection{Parser}
-
-\subsubsection{Semantic Analyzer}
+\section{Semantic Analyzer}

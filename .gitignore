@@ -10,5 +10,8 @@
 *.gz
 *.toc
 *.lof
+*.glo
+*.gls
+*.glg
+*.ist
 _minted-main
-jim
