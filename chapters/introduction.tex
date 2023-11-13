@@ -92,7 +92,7 @@ a compiler, the source code passes through several algorithms that transform
 the code in various ways. These different compilation stages are visualised in
 figure \ref{fig:compiler}
 
-Compilers usually work in a way that resemebles a pipeline. The lexer splits up
+Compilers usually work in a way that resemebles a pipeline. The lexer splits
 the source code into words called tokens. The parser then takes those tokens and
 assigns structure to them by arraging them as a graph. This structure makes them
 easier to meaningfully navigate. It addtionally lets the tokens better describe
@@ -177,12 +177,12 @@ idea.
 
 For many programming languages, once a syntax goes into general use, it becomes
 nearly impossible to revert or change it in a way that breaks existing programs.
-This leads to programming languages becoming complicated and hard to define as
-new features are added. For example, langauges like C++ are very hard to compile
-in a sequential way, let alone a parallel way. Research into and the development
+This leads to programming languages becoming complicated and difficult to define as
+new features are added. For example, langauges like C++ are very difficult to compile
+in a sequential way, let alone in a parallel way. Research into and the development
 of parallel compilers can aid future developers when they are choosing their
 syntax or what features they want to implement without making their language
-hard to compile in parallel (\textbf{citation needed}). It is currently
+difficult to compile in parallel (\textbf{citation needed}). It is currently
 rather difficult to design a language that can easily be compiled in parallel
 due to a lack of research and prior work as compared to sequential approaches
 (\textbf{citation needed}).
@@ -236,10 +236,10 @@ to restart the parsing process immediately after encountering an error
 
 There have been increasingly larger investments in the hardware industry for
 specialised hardware beyond the typical \ac{cpu}. Examples include things like smart
-nics that offload network packet parsing from the \ac{cpu} or \ac{dpu}s that provide
+\ac{nic}s that offload network packet parsing from the \ac{cpu} or \ac{dpu}s that provide
 more facilities for networking and input / output related tasks than a typical
 \ac{cpu}. A recent article from October 2023 shows how AMD’s software stack for
-general purpose computing on graphics cards known as rocm is now among their
+general purpose computing on graphics cards known as \ac{rocm} is now among their
 top priorities \citep{ward-foxton_rocm_2023}. As time goes on, we are likely
 to see increasingly specialised and heterogenous hardware (\textbf{citation
 needed}).

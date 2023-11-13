@@ -4,59 +4,82 @@ Introduction - Tell the person what you're going to tell them. Talk about what
 this chapter is about with reference to the various subsections of the chapter.
 \end{sectionplan}
 
+As part of this literature review I research existing techniques used to create
+parallel compilers. This form of study has allowed me to better understand how
+parallel compilers work and how to approach implementing one.
+\newline \newline
+Section \ref{parallelisation_methods} describes general methods of executing
+code in parallel.
+\newline \newline
+Section \ref{compiler_parallel_methods} describes different ways of design a compiler
+such that parts of it can be executed simulatneously.
+\newline \newline
+Section \ref{lit_review_lexing} describes various algorithms perform lexing
+in parallel.
+\newline \newline
+Section \ref{lit_review_parsing} describes various algorithms perform parsing
+in parallel.
+\newline \newline
+Section \ref{lit_review_analysis} describes various algorithms perform semantic
+analysis in parallel.
+\newline \newline
+
 \section{Parallelisation Methods} \label{parallelisation_methods}
-\begin{sectionplan}
-     What are the different means of parallelisation? Which ones are being
-studied here?
-\end{sectionplan}
+There exist various hardware solutions for executing code in parallel.
+The choice of parallel processing methods strongly influences the ease of
+implementation and performance of the final program. This makes it worthwhile to
+research and analyze the various forms so parallelisation so as to make informed
+decisions about how they are used in a parallel program.
 
 \subsection{Single Instruction Multiple Data (SIMD)}
-\begin{sectionplan}
-	SIMD - hard to use and optimise with. Good for speeding up single threaded
-	operations if a use case is found.
-\end{sectionplan}
+\ac{simd} instructions are assembly instructions, that can process more data
+at the same time than typical assembly instructions. Instead of processing
+data with normal registers, \ac{simd} instructions use special registers that
+are several times bigger than a typical register. This allows the processor to
+compute a given instruction over each part of the register in parallel. These
+instructions are also known as vector instructions since they process lists or
+vectors of data. As an example, the arm ADD insturction can be contrasted with
+its corresponding vector instruction UQADD8 which adds 4 8bit numbers with 4
+other 8bit numbers.
 
-\ac{simd} instructions are assembly instructions where instead of processing data
-with normal registers, \ac{simd} instructions use special registers that are
-several times bigger than a typical register. This allows the processor to
-compute a given instruction over each part of the register in parallel. As
-an example, The arm ADD insturction can be contrasted with its corresponding
-vector instruction UQADD8 which adds 4 8bit numbers with 4 other 8bit numbers.
-Performance gains using this method can be substantial however only up to a
-point. More performance requires larger registers which takes a long time to
-architect and standardize in a \ac{cpu}.
+This form of parallelisation mimics the sequential approach as vector
+instructions do multiple sequential instructions at the same time. This makes
+it possible for compilers to automatically utilise these instructions to speed
+up sequential programs in a process called vectorisation. Vector instructions
+can also be manually written by the programmer in order to improve performance.
+The performance gains using this method are clearly demonstrated with
+simdJSON (\textbf{citation needed}). Although using vector instructions can be
+significantly faster than the sequential case, this performance benefit is only
+up to a point. Increasing performance requires larger registers which takes a
+long time to architect and standardize in a \ac{cpu}. The methods described next
+scale better in this regard at the cost of potentially having a more complex
+implementation.
 
 \subsection{Multithreading / Multiprocessing}
-\begin{sectionplan}
-     Multi-threading / multi-processing - hard to work around in a compiler but
-commonly available.
-\end{sectionplan}
-
 Multicore parallelism makes it possible to have multiple programs exectute at
 the same time. Each process can have its own call stack and its own view of
 memory. This gives a programmer tremendous freedom with the things that can be
-done in parallel. The down side here is the difficulty in creating a reliable
-multi-threaded program. Unfortunatlely, if one is coverting a sequential
-program it a \gls{data_parallel} one, it is usually necessary to re-architect
-significant portions of it in order to better fit this processing model. The
-benefit is the theoretical promise of near-linear performance improvement that
-scales with additional available cores. So, for example, if a strongly parallel
-program can run in 1 second on one thread then in theory it should run in a
-quarter of a second on four threads. In other words, a four times speed up. The
+implemented in parallel. The down side is the difficulty in creating reliable
+multi-threaded programs. Managing shared memory is difficult and can lead to
+very complex bugs.
+
+When coverting a sequential program to a \gls{data_parallel} one, it is usually
+necessary to re-architect significant portions of it in order to better fit
+this processing model. The advantage to this is the potential of near-linear
+performance improvement that scales with additional available cores. For
+example, if a strongly parallel program can run in 1 second on one thread then
+in it should run in a quarter of a second on four threads. In other words, a
+four times speed up. In practice there is overhead which prevents prefectly
+linear performance improvement.
+
 
 \subsection{General Purpose Computing On GPUs (GPGPU)}
-\begin{sectionplan}
-     large scale heterogeneous computing (gpu) - Imposes many limitations along
-with a very large overhead that makes it useless for smaller - scale workloads.
-Availability varies.
-\end{sectionplan}
-
 It is possible to use graphics cards for general purpose computing, called
 \ac{gpgpu}. It is conceptually like programming a specialised \ac{cpu} that has
 potentially thousands of cores. This might seem like an obvious advantage over
 programming a multicore \ac{cpu} however a program that runs on the \ac{gpu} has
-many peculiarities and restrictions placed on it that it requires a programmer to
-re-architect a program even further in order to fit its programming model, as
+many peculiarities and restrictions placed on it that it requires a programmer
+to re-architect a program even further in order to fit its programming model, as
 compared to the multicore case. As an example, memory latency between a \ac{gpu}
 and main memory is usually so big that it makes the \ac{gpu} significantly worse
 at for processing small amounts of data.
@@ -75,55 +98,97 @@ aforementioned parallel processing methods.
 \cite{hillis_data_1986, gross_parallel_1989, jena_design_2018, baer_model_1977}
 \end{sectionplan}
 
-So, after a survey of what parallel processing methods are available, we
-can take a look at what approaches have been thought about in the past.
 \cite{gross_parallel_1989} outlines three main approaches for parallising a
 compiler. The first approach is splitting up the input and processing each chunk
 individually. Many compilers divide up data at the file system level where each
 file of source code can be compiled seperately from other files it may depend
-on. In a \gls{data_parallel} compiler, each file could be split up further into
-even smaller chunks with each chunk being processed independantly.
+on. Although this approach is already \gls{data_parallel}, it can be taken even
+further where each file is split up into even smaller chunks with each chunk
+being processed independantly.
 
 Computation partitioning on the other hand assumes that a series of sequential
 computations can be divided up and processed in parallel with results of
-each computation being joined together at the end. 
+each computation being joined together at the end.
 
 The final method is pipeling which is similar to computation partitioning.
 Pipelining involves dividing up a computation into some number of phases
 where each phase depends on the output from the previous phase. A complier can
 conveniently be divided up into such a pipline where, for example, the lexer,
-parser and semantic analyzer can be potentially executed simultaneusly. 
+parser and semantic analyzer can be potentially executed simultaneously. 
 
-\section{Lexing}
+\section{Lexing} \label{lit_review_lexing}
 \begin{sectionplan}
     What is involved in lexing. Mention DFA / Finite state machine.
 	\cite{pai_t_systematic_2020, barve_parallel_2014, barve_parallel_2012, barve_improved_2015}
 \end{sectionplan}
 
 Lexing is the process of process of removing unneccesary characters from the
-source code and grouping characters of interest together into tokens. This
-stage emits a list of tokens that are passed on to the parser. The purpose of
-lexing is to simplify the task of the parser by reducing the size of the input.
-Lexing is sometimes  called tokenisation or lexical analysis. It is performed
-by a lexer, sometimes called a tokenizer or lexical analyzer. Its task of
-finding groupings of characters is ideally described using a regular language
-and is best performed by regular expression matching. This means a lexer can be
-described as a finite state machine.
+source code and grouping characters of interest together into tokens. This stage
+emits a list of tokens that are passed on to the parser. The purpose of lexing
+is to simplify the task of the parser by reducing the size of the input. Lexing
+is sometimes  called tokenisation or lexical analysis. It is performed by a
+lexer, sometimes called a tokenizer or lexical analyzer. Its task of finding
+groupings of characters can be performed by using regular expressions that
+define what sequence of characters need to be found in the source code. The use
+of regular expressions means that a lexer can be described as a finite state
+machine.
+
+A finite state machine is a model of an abstract machine that can be in exactly
+one of a finite number of states at any given time. (\textbf{formal definition
+of an FSM}).
+
+A lexer can be described as an \ac{nfa} or as a \ac{dfa}. In a parallel lexer
+where the output in one thread may depend on the output of another thread, it
+is undesirable to have different results based on the same input as it leads
+to bugs and an unpredictable output for a given input. This situation can occur
+in a \ac{nfa} which makes it non-trivial to design a parallel lexer around an
+\ac{nfa}. The determinstic property of a \ac{dfa} enusures that the that the
+changes in state incurred from a given input and inital state will always be
+the same for that input. As such, structuring a lexer as a \ac{dfa} can ensure a
+consistent and repeatable computation for a given chunk of source code.
 
 
-\subsection{Naive Multithreaded}
-\cite{barenghi_parallel_2015, mytkowicz_data-parallel_2014}
+\subsection{Speculative Simulation of \ac{dfa}}
+
+One method of creating parallel lexer is by structuring the lexer
+as a \ac{dfa} as described by \cite{barenghi_parallel_2015} and
+\cite{mytkowicz_data-parallel_2014}. The lexer works by splitting its input into
+chunks and processing each chunk independantly on a separate thread. A key issue
+with this approach is the need to know the initial state of the \ac{dfa} for
+each chunk of input. The initial state for a chunk of code depends on the output
+computed from lexing the code just before it. This dependancy relationship is
+more formally described in \textbf{citation needed}. 
+
+Speculative simultation involves computing the \ac{dfa} with every possible
+initial state that it can have for a given input string. At the end of the
+lexing process the outputs from each thread are checked, starting from the
+first chunk of code, such that the finishing state of the lexer corresponds to
+the initial state of the subsequent chunk of code. For a large number of states
+this results in a lot of unneccesary computations and increased memory usage due
+to only one output being chosen per thread out of $N$ outputs where $N$ is the
+number of states.
+
+\cite{barenghi_parallel_2015} optimise this by using a heuristic whereby the
+source code is split into chunks that start with symbols that have known and
+consistent initial states. These symbols are found by scanning ahead when the
+source code is being split until such a symbol is found. The symbols that a
+chunk of code can start with are langauge dependant.  If a symbol is allowed to
+appear in lexeme then all potential  initial states that result from this must
+be additionally computed.
 
 \subsection{Speculative Prescanning}
 \cite{li_plex_2021}
 
 \subsection{Novel Approaches}
-\cite{sinya_simultaneous_2013, lin_accelerating_2013}
+\cite{sinya_simultaneous_2013} propose a novel type of finite automata called
+\ac{sfa}.
+
+\cite{lin_accelerating_2013}
 
 \subsection{Vectorization}
 \cite{wang_hyperscan_2019}
 
-\section{Parsing}
+\section{Parsing} \label{lit_review_parsing}
 \begin{sectionplan}
     What factors generally influence parallel parsing methods?
 \end{sectionplan}
@@ -138,7 +203,7 @@ described as a finite state machine.
 \subsection{LR(0) OPG Parsing}
 \cite{barenghi_parallel_2015, li_associative_2023}
 
-\section{Semantic Analysis}
+\section{Semantic Analysis} \label{lit_review_analysis}
 \begin{sectionplan}
     \begin{itemize}
         \item Identify what is in semantic anlysis
