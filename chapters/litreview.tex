@@ -8,7 +8,9 @@ As part of this literature review I research existing techniques used to create
 parallel compilers. This form of study has allowed me to better understand how
 parallel compilers work and how to approach implementing one. Due to a large
 amount of literture on the topic, I only review as many exisiting approaches
-as time allows.
+as time allows. An important reference used througout the literature review is by
+\cite{scott_programming_2015}  which introduces various parts of a compiler at
+a high-level.
 \newline \newline
 Section \ref{parallelisation_methods} describes general methods of executing
 code in parallel.
@@ -35,28 +37,29 @@ research and analyze the various forms so parallelisation so as to make informed
 decisions about how they are used in a parallel program.
 
 \subsection{Single Instruction Multiple Data (SIMD)}
-\gls{simd} instructions are assembly instructions, that can process more data
-at the same time than typical assembly instructions. Instead of processing
-data with normal registers, \gls{simd} instructions use special registers that
-are several times bigger than a typical register. This allows the processor to
-compute a given instruction over each part of the register in parallel. These
-instructions are also known as vector instructions since they process lists or
-vectors of data. As an example, the arm ADD insturction can be contrasted with
-its corresponding vector instruction UQADD8 which adds 4 8bit numbers with 4
-other 8bit numbers.
+\ac{simd} instructions are assembly instructions, that can process more data
+at the same time than typical assembly instructions. Instead of processing data
+with normal registers, \ac{simd} instructions use special registers that are
+several times bigger than a typical register \textbf{find citation}. This allows
+the processor to compute a given instruction over each part of the register in
+parallel. These instructions are also known as vector instructions since they
+process lists or vectors of data. As an example, the arm ADD insturction can be
+contrasted with its corresponding vector instruction UQADD8 which adds 4 8bit
+numbers with 4 other 8bit numbers \textbf{cite amd's website}.
+>>>>>>> Stashed changes
 
 This form of parallelisation mimics the sequential approach as vector
 instructions do multiple sequential instructions at the same time. This makes
 it possible for compilers to automatically utilise these instructions to speed
 up sequential programs in a process called vectorisation. Vector instructions
 can also be manually written by the programmer in order to improve performance.
-The performance gains using this method are clearly demonstrated with
-simdJSON (\textbf{citation needed}). Although using vector instructions can be
-significantly faster than the sequential case, this performance benefit is only
-up to a point. Increasing performance requires larger registers which takes a
-long time to architect and standardize in a \gls{cpu}. The methods described next
-scale better in this regard at the cost of potentially having a more complex
-implementation.
+The performance gains using this method are clearly demonstrated with simdJSON
+(\textbf{citation needed for simdjson}). Although using vector instructions can
+be significantly faster than the sequential case, this performance benefit is
+only up to a point. Increasing performance requires larger registers which takes
+a long time to architect and standardize in a \ac{cpu}. The methods described
+next scale better in this regard at the cost of potentially having a more
+complex implementation.
 
 \subsection{Multithreading / Multiprocessing}
 Multicore parallelism makes it possible to have multiple programs exectute at
@@ -259,21 +262,38 @@ barve_improved_2015}
     What factors generally influence parallel parsing methods?
 \end{sectionplan}
 
+\cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
 
+Parsing is the second canoncial stage of a generic compiler.
+\cite{scott_programming_2015} describes the goal of a parser is take a list
+of tokens from a lexer and structure them as a graph. This structure makes it
+easier to navigate and manipulate the source code using concepts defined by the
+language like variables, functions and control structures. The graph strucuture
+created by a parser is typically called a syntax tree or a parse tree. This
+structure is created according to a parsing grammar that defines how it should
+be built. The rules that govern how tokens in a parsing grammar should be
+processed in order to validate the langauge and build a syntax tree representing
+it are called production rules. The tokens A parser might addtionally process a syntax
+tree as it is getting built, or during a separate susequent processing step,
+which produces an AST. This datastructure is later analysed during the semantic
+analysis phase which is described in Section \ref{lit_review_analysis}.
 
-\begin{roughwork}
-Mention \cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
-\end{roughwork}
+There exist different families of parsers which are defined by similarities  in
+the method of parsing. LL parsers read the input tokens from left to right and
 
 
 \subsection{CYK Parsing}
 \cite{skrzypczak_parallel_nodate}
+
 \subsection{Parallel LL Parsing}
 \cite{robin_voetter_parallel_2021}
+
 \subsection{Parallel LR Parsing}
 \cite{clarke_error_1993}
+
 \subsection{LR(0) OPG Parsing}
 \cite{barenghi_parallel_2015, li_associative_2023}
+
 
 \section{Semantic Analysis} \label{lit_review_analysis}
 \begin{sectionplan}
