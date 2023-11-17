@@ -27,12 +27,12 @@ in computer science for many decades. Any improvements in compiler technology
 can have wide and long lasting affects on software development as a whole
 \citep{hall_compiler_2009}.
 
-The focus of my \ac{fyp} is to study a subset of compiler research regarding
+The focus of my \gls{fyp} is to study a subset of compiler research regarding
 parallel compilation. Research into this niche has been historically of low
 priority. Traditional compiler architecture since the 1970’s has been focused
 on minimising memory use and optimising for single threaded performance
 (\textbf{citation needed}). This was at a time when computers didn’t even have
-enough \ac{ram} to store all the data necessary for compiling large amounts
+enough \gls{ram} to store all the data necessary for compiling large amounts
 of source code. Commodity hardware has improved significantly since then. The
 memory available in a computer is much more abundant than before and single
 threaded processor speed is not improving at the same rate as it once did
@@ -63,10 +63,10 @@ overlap in the underlying theory \citep{mytkowicz_data-parallel_2014}. Futher
 development in compiler theory can benefit not only software development but
 also tangential fields of research.
 
-Before introducting parallel compilation any further, the next section
+Before introducing parallel compilation any further, the next section
 first describes compilation in general, as well as the traditional method of
 compilation which is largely sequential. This type of compiler architecture can
-be seen in several existing compilers, both old and new.
+be seen in several existing compilers, both old and new(\textbf{citation needed}).
 
 \section{Sequential Compilation}
 \begin{comment}
@@ -235,21 +235,21 @@ to restart the parsing process immediately after encountering an error
 \subsection{Applications in Massively Parallel Computing}
 
 There have been increasingly larger investments in the hardware industry for
-specialised hardware beyond the typical \ac{cpu}. Examples include things like smart
-\ac{nic}s that offload network packet parsing from the \ac{cpu} or \ac{dpu}s that provide
+specialised hardware beyond the typical \gls{cpu}. Examples include things like smart
+\gls{nic}s that offload network packet parsing from the \gls{cpu} or \gls{dpu}s that provide
 more facilities for networking and input / output related tasks than a typical
-\ac{cpu}. A recent article from October 2023 shows how AMD’s software stack for
-general purpose computing on graphics cards known as \ac{rocm} is now among their
+\gls{cpu}. A recent article from October 2023 shows how AMD’s software stack for
+general purpose computing on graphics cards known as \gls{rocm} is now among their
 top priorities \citep{ward-foxton_rocm_2023}. As time goes on, we are likely
 to see increasingly specialised and heterogenous hardware (\textbf{citation
 needed}).
 
 Current compilation algorithms scale poorly on massively parallel hardware
-such as \ac{gpu}s. This is due to the restrictions imposed on programs by
+such as \gls{gpu}s. This is due to the restrictions imposed on programs by
 computing in such an environment. An approach utilising \gls{data_parallel}
 datastructures described by \cite{hillis_data_1986} was applied by
 \cite{voetter_compilation_2022} in order to create a parallel compiler
-implementation that could run on a \ac{gpu}. This shows how  re-architecting
+implementation that could run on a \gls{gpu}. This shows how  re-architecting
 the compilation process makes it possible to execute a compiler in a massively
 parallel environment, potentially achieving a linear performance increase that
 scales with the number of available processing cores. This can only be achieved
@@ -266,10 +266,10 @@ matching algorithm which has a large number of uses beyond lexical analysis.
 
 \section{Objectives of My Work}
 
-The goal of my \ac{fyp} is to research ways of implementing a parallel compiler
+The goal of my \gls{fyp} is to research ways of implementing a parallel compiler
 frontend and implementing it if time allows. This includes research into
 parallel processing methods and algorithms. I have chosen to study only the
-compiler frontend in order to reduce the scope of my \ac{fyp}.
+compiler frontend in order to reduce the scope of my \gls{fyp}.
 
 \section{Structure of Report}
 

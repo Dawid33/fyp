@@ -14,12 +14,6 @@ programming language into a semantically equivalent program written in a
 lower-level programming language such as assembly or machine language}
 }
 
-\newglossaryentry{strongly_parallel}
-{
-    name=strongly parallel,
-    description={ TODO }
-}
-
 \newglossaryentry{compiler_frontend}
 {
     name=compiler frontend,
@@ -40,6 +34,13 @@ parsing and semantic analysis are colloquially called the frontend of a compiler
 in parallel computing environments. It focuses on distributing the data across
 different processors which operate on the data in parallel. Importantly, it
 involves running the same task on different components of the data}
+}
+
+\newglossaryentry{reg_exp}
+{
+    name=regular expression,
+    description={A regular expression is a sequence of characters that specifies
+a match pattern in text}
 }
 
 \newglossaryentry{rustc}
@@ -64,74 +65,105 @@ commonly used for lossless data compression. The process of finding or using
 such a code is Huffman coding}
 }
 
-\DeclareAcronym{gpgpu}{
-  short = GPGPU,
-  long  = General Purpose Graphical Processing Unit Computation,
-  first-style=long-short
+\newglossaryentry{fsmg}{
+	name={finite state machine},
+    description={}
 }
 
-\DeclareAcronym{fyp}{
-  short = FYP,
-  long  = Final Year Project,
-  first-style=long-short
+
+%%
+%% ACRONYMS
+%%
+
+\newglossaryentry{fsm}{
+	type = \acronymtype, 
+	name = {FSM},
+	description = {Finite State Machine},
+	first = {Finite State Machine (FSM)\glsadd{fsmg}},
+	see = [Glossary:]{fsmg}
 }
 
-\DeclareAcronym{simd}{
-  short = SIMD,
-  long  = Single Instruction Multiple Data,
-  first-style=long-short
+\newglossaryentry{fyp}{
+	type=\acronymtype, 
+	name = {FYP},
+	description  = {Final Year Project},
+	first={Final Year Project (FYP)},
 }
 
-\DeclareAcronym{dpu}{
-  short = DPU,
-  long  = Data Processing Unit,
-  first-style=long-short
+
+\newglossaryentry{gpgpu}{
+	type=\acronymtype, 
+	name = {GPGPU},
+	description = {General Purpose Graphical Processing Unit Computation},
+	first={General Purpose Graphical Processing Unit Computation (GPGPU)},
 }
 
-\DeclareAcronym{cpu}{
-  short = CPU,
-  long  = Central Processing Unit,
-  first-style=long-short
+\newglossaryentry{simd}{
+	type=\acronymtype, 
+  name = {SIMD},
+  description  = {Single Instruction Multiple Data},
+	first={Single Instruction Multiple Data (SIMD)},
 }
 
-\DeclareAcronym{gpu}{
-  short = GPU,
-  long  = Graphics Processing Unit,
-  first-style=long-short
+\newglossaryentry{dpu}{
+	type=\acronymtype, 
+  name = {DPU},
+  description  = {Data Processing Unit},
+	first={Data Processing Unit (DPU)},
 }
 
-\DeclareAcronym{ram}{
-  short = RAM,
-  long  = Random Access Memory,
-  first-style=long-short
+\newglossaryentry{cpu}{
+	type=\acronymtype, 
+  name = {CPU},
+  description  = {Central Processing Unit},
+	first={Central Processing Unit (CPU)},
 }
 
-\DeclareAcronym{nic}{
-  short = NIC,
-  long  = Network Interface Controller,
-  first-style=long-short
+\newglossaryentry{gpu}{
+	type=\acronymtype, 
+  name = {GPU},
+  description  = {Graphics Processing Unit},
+	first={Graphics Processing Unit (GPU)},
 }
 
-\DeclareAcronym{rocm}{
-  short = Rocm,
-  long  = Radeon Open Compute platforM,
-  first-style=long-short
+\newglossaryentry{ram}{
+	type=\acronymtype, 
+  name = {RAM},
+  description  = {Random Access Memory},
+	first={Random Access Memory (RAM)},
 }
 
-\DeclareAcronym{nfa}{
-  short = NFA,
-  long  = Non-deterministic Finite Automata,
-  first-style=long-short
+\newglossaryentry{nic}{
+	type=\acronymtype, 
+  name = {NIC},
+  description  = {Network Interface Controller},
+	first={Network Interface Controller (NIC)},
 }
 
-\DeclareAcronym{dfa}{
-  short = DFA,
-  long  = Deterministic Finite Automata,
-  first-style=long-short
+\newglossaryentry{rocm}{
+	type=\acronymtype, 
+  name = {Rocm},
+  description  = {Radeon Open Compute platforM},
+	first={Radeon Open Compute platforM (Rocm)},
 }
 
-\DeclareAcronym{sfa}{
-  short = SFA,
-  long  = Simultaneous Finite Automata,
-  first-style=long-short
+\newglossaryentry{nfa}{
+	type=\acronymtype, 
+  name = {NFA},
+  description  = {Non-deterministic Finite Automata},
+	first={Non-deterministic Finite Automata (NFA)},
+}
+
+\newglossaryentry{dfa}{
+	type=\acronymtype, 
+  name = {DFA},
+  description  = {Deterministic Finite Automata},
+	first={Deterministic Finite Automata (DFA)},
+}
+
+\newglossaryentry{sfa}{
+	type=\acronymtype, 
+  name = {SFA},
+  description  = {Simultaneous Finite Automata},
+	first={Simultaneous Finite Automata (SFA)},
 }

@@ -6,21 +6,24 @@ this chapter is about with reference to the various subsections of the chapter.
 
 As part of this literature review I research existing techniques used to create
 parallel compilers. This form of study has allowed me to better understand how
-parallel compilers work and how to approach implementing one.
+parallel compilers work and how to approach implementing one. Due to a large
+amount of literture on the topic, I only review as many exisiting approaches
+as time allows.
 \newline \newline
 Section \ref{parallelisation_methods} describes general methods of executing
 code in parallel.
 \newline \newline
-Section \ref{compiler_parallel_methods} describes different ways of design a compiler
+Section \ref{compiler_parallel_methods} describes different ways of designing a compiler
 such that parts of it can be executed simulatneously.
 \newline \newline
-Section \ref{lit_review_lexing} describes various algorithms perform lexing
+Section \ref{lit_review_lexing} describes various algorithms to perform lexing
+in parallel.\cite{pai_t_systematic_2020} describes a literature review of parallel lexing
+approaches.
+\newline \newline
+Section \ref{lit_review_parsing} describes various algorithms to perform parsing
 in parallel.
 \newline \newline
-Section \ref{lit_review_parsing} describes various algorithms perform parsing
-in parallel.
-\newline \newline
-Section \ref{lit_review_analysis} describes various algorithms perform semantic
+Section \ref{lit_review_analysis} describes various algorithms to perform semantic
 analysis in parallel.
 \newline \newline
 
@@ -32,9 +35,9 @@ research and analyze the various forms so parallelisation so as to make informed
 decisions about how they are used in a parallel program.
 
 \subsection{Single Instruction Multiple Data (SIMD)}
-\ac{simd} instructions are assembly instructions, that can process more data
+\gls{simd} instructions are assembly instructions, that can process more data
 at the same time than typical assembly instructions. Instead of processing
-data with normal registers, \ac{simd} instructions use special registers that
+data with normal registers, \gls{simd} instructions use special registers that
 are several times bigger than a typical register. This allows the processor to
 compute a given instruction over each part of the register in parallel. These
 instructions are also known as vector instructions since they process lists or
@@ -51,7 +54,7 @@ The performance gains using this method are clearly demonstrated with
 simdJSON (\textbf{citation needed}). Although using vector instructions can be
 significantly faster than the sequential case, this performance benefit is only
 up to a point. Increasing performance requires larger registers which takes a
-long time to architect and standardize in a \ac{cpu}. The methods described next
+long time to architect and standardize in a \gls{cpu}. The methods described next
 scale better in this regard at the cost of potentially having a more complex
 implementation.
 
@@ -75,13 +78,13 @@ linear performance improvement.
 
 \subsection{General Purpose Computing On GPUs (GPGPU)}
 It is possible to use graphics cards for general purpose computing, called
-\ac{gpgpu}. It is conceptually like programming a specialised \ac{cpu} that has
+\gls{gpgpu}. It is conceptually like programming a specialised \gls{cpu} that has
 potentially thousands of cores. This might seem like an obvious advantage over
-programming a multicore \ac{cpu} however a program that runs on the \ac{gpu} has
+programming a multicore \gls{cpu} however a program that runs on the \gls{gpu} has
 many peculiarities and restrictions placed on it that it requires a programmer
 to re-architect a program even further in order to fit its programming model, as
-compared to the multicore case. As an example, memory latency between a \ac{gpu}
-and main memory is usually so big that it makes the \ac{gpu} significantly worse
+compared to the multicore case. As an example, memory latency between a \gls{gpu}
+and main memory is usually so big that it makes the \gls{gpu} significantly worse
 at for processing small amounts of data.
 
 \subsection{Very Large Instruction Word (VLIW)}
@@ -117,10 +120,6 @@ conveniently be divided up into such a pipline where, for example, the lexer,
 parser and semantic analyzer can be potentially executed simultaneously. 
 
 \section{Lexing} \label{lit_review_lexing}
-\begin{sectionplan}
-    What is involved in lexing. Mention DFA / Finite state machine.
-	\cite{pai_t_systematic_2020, barve_parallel_2014, barve_parallel_2012, barve_improved_2015}
-\end{sectionplan}
 
 Lexing is the process of process of removing unneccesary characters from the
 source code and grouping characters of interest together into tokens. This stage
@@ -128,71 +127,144 @@ emits a list of tokens that are passed on to the parser. The purpose of lexing
 is to simplify the task of the parser by reducing the size of the input. Lexing
 is sometimes  called tokenisation or lexical analysis. It is performed by a
 lexer, sometimes called a tokenizer or lexical analyzer. Its task of finding
-groupings of characters can be performed by using regular expressions that
+groupings of characters can be performed by using \glspl{reg_exp} that
 define what sequence of characters need to be found in the source code. The use
-of regular expressions means that a lexer can be described as a finite state
+of \glspl{reg_exp} means that a lexer can be described as a finite state
 machine.
 
-A finite state machine is a model of an abstract machine that can be in exactly
-one of a finite number of states at any given time. (\textbf{formal definition
-of an FSM}).
-
-A lexer can be described as an \ac{nfa} or as a \ac{dfa}. In a parallel lexer
-where the output in one thread may depend on the output of another thread, it
-is undesirable to have different results based on the same input as it leads
-to bugs and an unpredictable output for a given input. This situation can occur
-in a \ac{nfa} which makes it non-trivial to design a parallel lexer around an
-\ac{nfa}. The determinstic property of a \ac{dfa} enusures that the that the
+A \gls{fsm} is a model of an abstract machine that can be in one of a finite
+number of states at any given time. A \gls{fsm} works by accepting input symbols
+which potentially cause the state of the \gls{fsm} to change according to a set
+of state transitions that define the \gls{fsm}. Finite state machines can be
+be described as either a \gls{nfa} or as a \gls{dfa}. In a parallel lexer where
+the output in one thread may depend on the output of another thread, it is
+undesirable to have different results based on the same input as it leads to
+bugs and an unpredictable output for a given input. This situation can occur
+in a \gls{nfa} which makes it non-trivial to design a parallel lexer around an
+\gls{nfa}. The determinstic property of a \gls{dfa} enusures that the that the
 changes in state incurred from a given input and inital state will always be
-the same for that input. As such, structuring a lexer as a \ac{dfa} can ensure a
+the same for that input. As such, structuring a lexer as a \gls{dfa} can ensure a
 consistent and repeatable computation for a given chunk of source code.
 
+A common approach to multi-threaded lexing involves structuring the lexer as
+a \gls{dfa}, splitting the input into some number of parts, lexing each part on
+its own thread and joining up the results at the end. Due to the inherent data
+dependancy between state transitions in a \gls{dfa}, the initial state for a
+chunk of code depends on the output computed from lexing the code just before
+it. This causes exists an issue of determining the initial start state of all
+the lexers besides the one responsible for computing the first part of the code.
+A solution to this problem is through speculative simulation where an algorithm
+speculates on the unkown initial states of the \gls{dfa}s.
 
-\subsection{Speculative Simulation of \ac{dfa}}
+\subsection{Speculative Simulation of DFA}
 
-One method of creating parallel lexer is by structuring the lexer
-as a \ac{dfa} as described by \cite{barenghi_parallel_2015} and
-\cite{mytkowicz_data-parallel_2014}. The lexer works by splitting its input into
-chunks and processing each chunk independantly on a separate thread. A key issue
-with this approach is the need to know the initial state of the \ac{dfa} for
-each chunk of input. The initial state for a chunk of code depends on the output
-computed from lexing the code just before it. This dependancy relationship is
-more formally described in \textbf{citation needed}. 
-
-Speculative simultation involves computing the \ac{dfa} with every possible
-initial state that it can have for a given input string. At the end of the
-lexing process the outputs from each thread are checked, starting from the
-first chunk of code, such that the finishing state of the lexer corresponds to
-the initial state of the subsequent chunk of code. For a large number of states
-this results in a lot of unneccesary computations and increased memory usage due
-to only one output being chosen per thread out of $N$ outputs where $N$ is the
-number of states.
+One approach to speculative simulation is the brute force method of computing a
+\gls{dfa} for every possible initial state  Such a lexer starts by splitting its
+input into chunks and processing each chunk independantly on a separate thread.
+Once all threads are finished lexing, the outputs from each thread are checked,
+starting from the first chunk of code, such that the finishing state of the
+lexer corresponds to the initial state of the lexer that computed the subsequent
+chunk of code. Computing a \gls{dfa} in this way relies on the  associativity of
+state transition functions as described in the parallel prefix sum algorithm in
+\cite{hillis_data_1986}. This algorithm is explained more formally wth both a
+message passing and a shared memory implementation by \cite{holub_parallel_2009}
+and a variation of it in a cloud computing environment is shown by
+\cite{ko_speculative_2012}. The need to compute the output for every possible
+initial state can result in a large number of unneccesary computations which can
+significantly impact perfromance for \gls{dfa}s with a large number of states.
 
 \cite{barenghi_parallel_2015} optimise this by using a heuristic whereby the
 source code is split into chunks that start with symbols that have known and
-consistent initial states. These symbols are found by scanning ahead when the
-source code is being split until such a symbol is found. The symbols that a
-chunk of code can start with are langauge dependant.  If a symbol is allowed to
-appear in lexeme then all potential  initial states that result from this must
-be additionally computed.
+consistent initial states. These symbols are found by scanning ahead when
+the source code is being split until such a symbol is found. The symbols
+that a chunk of code can start with are langauge dependant. If a symbol is
+allowed to appear in a lexeme, such a string or comment, then multiple initial
+states must be additionally computed. 
 
-\subsection{Speculative Prescanning}
-\cite{li_plex_2021}
+Instead of using a language specific heuristic,
+\cite{mytkowicz_data-parallel_2014} aim optmise speculative simulation for
+any given \gls{dfa}. The core algorithm is very similar to the one previously
+described. It begins with the assumption of needing to compute the \gls{dfa} for
+every possible initial state the input can be in. Instead of using a language
+specific heuristic like \cite{barenghi_parallel_2015}, which is determined ahead
+of time, \cite{mytkowicz_data-parallel_2014} define a convergence algorithm
+which reduces the number of states that need to be computed at runtime. It
+follows from the observation that many states transition to the same state on
+a given input symbol. Once this convergence of state occurs, looking up the
+state transisition for each state becomes redundant as it is going to be the
+same for subsequent input symbols. By factoring out these common states, the
+number of actual state transitions that need to be computed drops significantly
+for most \gls{dfa}s, especially structured and non-adverserial ones. Heuristics
+are used to determine when to check for a  convergence of states. The ahead of
+time heuristic as well as this convergence algorithm are fundamentally similar
+however the solution proposed by \cite{mytkowicz_data-parallel_2014} is more
+generally applicable by not being tied to a specific language.
 
-\subsection{Novel Approaches}
+\cite{mytkowicz_data-parallel_2014} additionally utilise \gls{simd} instructions
+in order to perform the state transitions for a given set of states and
+transition function. This parallelises an important part of the algorithm and
+significantly improves performance. An technique called range coalescing is
+used to reduce the number of memory addresses accessed when computing state
+transitions for a large number of states (\textbf{possibly elaborate}).
+
+\cite{zhao_--fly_2015} implements a convergence algorthim similar to the
+one described by  \cite{mytkowicz_data-parallel_2014}. (\textbf{elaborate on
+additional optmizations by zhao})
+
+Another method of speculative simulation attempts to simply guess the initial
+state of the \gls{dfa}s, possibly with a way to back track or validate
+its result in case of an incorrect guess. \cite{luchaup_multi-byte_2009,
+luchaup_speculative_2011} implements a speculative method which simply guesses
+the unknown inital \gls{dfa} state. This optmization works due to its specifc
+use in intrusion decection systems where a \gls{dfa} spends most of its time
+in a small number of states which can be guessed with sufficient accuracy to
+outweight the cost of validation in case of failure.
+
+\subsection{Prescanning} \label{lit_prescanning}
+
+\cite{bernecky_spmdsimd_2003} describes a multi-pass parallel APL tokenizer
+written in APL which performs several scanning phases in order to pre-process
+source code as well as find strings, comments and identifiers, among other
+tokens, in distinct passes over the source code. It is not table driven and is
+instead specialised for APL. Since the computational complexity of the compiler
+is high and its performance is not evaluated by the authors, it remains unknown
+if is an improved approach to tokenizing APL.
+
+A variation of the heuristic apporach by \cite{barenghi_parallel_2015} is
+implemented by \cite{li_plex_2021} that generalizes it and makes it langauge
+independant. It builds on work from \cite{sinya_simultaneous_2013} and
+\cite{zhao_--fly_2015} to perform a backtrack-free prescanning phase by
+generating and executing a \gls{dfa} based on the lexical grammar that determines
+the context for \gls{dfa} in a subsequent tokenisation phase. (\textbf{its a
+tough one with tough prior work, needs elaboration})
+
+
+\subsection{Other Approaches}
+
+\begin{roughwork}
 \cite{sinya_simultaneous_2013} propose a novel type of finite automata called
-\ac{sfa}.
-
-\cite{lin_accelerating_2013}
-
-\subsection{Vectorization}
-\cite{wang_hyperscan_2019}
+\gls{sfa}.
+\newline \newline
+Mention \cite{lin_accelerating_2013, wang_hyperscan_2019,
+li_plex_2021, asthagiri_associative_1992} Go and look at references cited in
+\cite{zhao_--fly_2015}
+\newline \newline
+Could mention these but the fella doesn't do anything novel (and his
+grammar is questionable) \cite{barve_parallel_2014, barve_parallel_2012,
+barve_improved_2015}
+\end{roughwork}
 
 \section{Parsing} \label{lit_review_parsing}
 \begin{sectionplan}
     What factors generally influence parallel parsing methods?
 \end{sectionplan}
-\cite{mark_thierry_vandevoorde_parallel_1988}
+
+
+
+\begin{roughwork}
+Mention \cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
+\end{roughwork}
+
 
 \subsection{CYK Parsing}
 \cite{skrzypczak_parallel_nodate}
