@@ -3,21 +3,52 @@
 \input{preamble/preamble}
 
 \AtBeginDocument{\renewcommand{\bibname}{References}}
+\renewcommand{\contentsname}{Table of Contents}
 \bibliographystyle{agsm}
 
+% Make list of figures use the figure name rather than
+% the section it appears in.
+% \renewcommand{\listoffigures}{\begingroup
+% \tocsection
+% \tocfile{\listfigurename}{lof}
+% \endgroup}
+
+
 \begin{document}
-\begin{sloppypar}
-\include{cover}
-\addcontentsline{toc}{section}{Cover}
+\begin}
+\pagenumbering{Roman}
+{
+	% Cover
+	\centering
+	\vspace*{2cm}
+	{\Large \papertitle}\\
+
+	\vspace{2cm}
+	\includegraphics[width=0.6\textwidth]{images/ul.jpg}\\
+
+	\vspace{2cm}
+	{\Large \author}\\
+	\studentnumber\\
+	\vspace{0.5cm}
+	\dept\\
+	\vspace{0.5cm}
+	\university\\
+
+	\vfill 
+	Supervisor: \supervisor\\
+	Submitted to the \university\\
+	for the degree of \degree\\
+}
+
 \tableofcontents
-\addcontentsline{toc}{section}{Table of Contents}
 \listoffigures
 \addcontentsline{toc}{section}{List of Figures}
-\printglossary[type=\acronymtype]
+\printglossary[style=long, type=\acronymtype]
 \addcontentsline{toc}{section}{Acronyms}
 \printglossary[type=main]
 \addcontentsline{toc}{section}{Glossary}
 \clearpage
+\pagenumbering{arabic}
 \input{chapters/introduction}
 \newpage
 \input{chapters/litreview}
@@ -30,7 +61,6 @@
 \newpage
 \input{chapters/conclusion}
 \newpage
-\end{sloppypar}
 \clearpage
 \bibliography{references}
 \end{document}

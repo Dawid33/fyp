@@ -46,7 +46,6 @@ parallel. These instructions are also known as vector instructions since they
 process lists or vectors of data. As an example, the arm ADD insturction can be
 contrasted with its corresponding vector instruction UQADD8 which adds 4 8bit
 numbers with 4 other 8bit numbers \textbf{cite amd's website}.
->>>>>>> Stashed changes
 
 This form of parallelisation mimics the sequential approach as vector
 instructions do multiple sequential instructions at the same time. This makes
@@ -61,7 +60,7 @@ a long time to architect and standardize in a \ac{cpu}. The methods described
 next scale better in this regard at the cost of potentially having a more
 complex implementation.
 
-\subsection{Multithreading / Multiprocessing}
+\subsection{Multithreading/Multiprocessing}
 Multicore parallelism makes it possible to have multiple programs exectute at
 the same time. Each process can have its own call stack and its own view of
 memory. This gives a programmer tremendous freedom with the things that can be
@@ -79,7 +78,7 @@ four times speed up. In practice there is overhead which prevents prefectly
 linear performance improvement.
 
 
-\subsection{General Purpose Computing On GPUs (GPGPU)}
+\subsection{General Purpose Computing on GPUs}
 It is possible to use graphics cards for general purpose computing, called
 \gls{gpgpu}. It is conceptually like programming a specialised \gls{cpu} that has
 potentially thousands of cores. This might seem like an obvious advantage over
@@ -90,7 +89,7 @@ compared to the multicore case. As an example, memory latency between a \gls{gpu
 and main memory is usually so big that it makes the \gls{gpu} significantly worse
 at for processing small amounts of data.
 
-\subsection{Very Large Instruction Word (VLIW)}
+\subsection{Very Large Instruction Word}
 \begin{sectionplan}
      VLIW can be used to make any program parallel - general purpose VLIW cpu's
 not available for this purpose, mostly use in DSP's - esoteric.

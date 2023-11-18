@@ -3,22 +3,20 @@
 
 \setulcolor{lightgray}
 \renewcommand*{\glstextformat}[1]{\textcolor{black}{%
-\ul{\mbox{#1}}}}
+\mbox{#1}}}
 
 \newglossaryentry{compiler}
 {
     name=compiler,
-    description={
-    A compiler is a program which translates a high-level
-programming language into a semantically equivalent program written in a
-lower-level programming language such as assembly or machine language}
+    description={software that converts a program written in a high-level language into semantically equivalent instructions in a low-level programming language, the resulting instructions can then be read and executed by the computer}
 }
 
 \newglossaryentry{compiler_frontend}
 {
     name=compiler frontend,
-    description={The first few stages of compilation including tokenisation,
-parsing and semantic analysis are colloquially called the frontend of a compiler}
+    description={the initial stages of compilation are colloquially referred
+to as the frontend of a compiler, such stages include tokenisation, parsing and
+semantic analysis}
 }
 
 \newglossaryentry{linker}
@@ -30,10 +28,10 @@ parsing and semantic analysis are colloquially called the frontend of a compiler
 \newglossaryentry{data_parallel}
 {
     name=data-parallel,
-    description={Data parallelism is parallelization across multiple processors
-in parallel computing environments. It focuses on distributing the data across
-different processors which operate on the data in parallel. Importantly, it
-involves running the same task on different components of the data}
+    description={in computer processing, data parallelism refers to dividing or partitioning the
+data amongst multiple processors (aka graphical processing units or nodes), so
+that multiple threads can operate concurrently (applying the same operation) on
+each segment, thereby increasing data throughput}
 }
 
 \newglossaryentry{reg_exp}
@@ -60,9 +58,12 @@ packet is a formatted unit of data carried throught out a computer network}
 \newglossaryentry{huffman_coding}
 {
     name=huffman coding,
-    description={A Huffman code is a type of optimal prefix code that is
-commonly used for lossless data compression. The process of finding or using
-such a code is Huffman coding}
+    description={an algorithm used to compress information (characters,
+images, audio and so forth) without losing information (i.e., a lossless data
+compression algorithm), named after its creator David Huffman in 1952. The
+algorithm works by identifying frequently occurring items in the information
+and assigning them a short sequence of bits in the encoding, while using longer
+sequences of bits for less frequently occurring items}
 }
 
 \newglossaryentry{fsmg}{
@@ -70,10 +71,22 @@ such a code is Huffman coding}
     description={}
 }
 
+\newglossaryentry{astg}{
+	name={finite state machine},
+    description={}
+}
 
 %%
 %% ACRONYMS
 %%
+
+\newglossaryentry{ast}{
+	type = \acronymtype, 
+	name = {AST},
+	description = {Abstract Syntax Tree},
+	first = {Abstract Syntax Tree (AST)\glsadd{astg}},
+	see = [Glossary:]{astg}
+}
 
 \newglossaryentry{fsm}{
 	type = \acronymtype, 
@@ -94,8 +107,8 @@ such a code is Huffman coding}
 \newglossaryentry{gpgpu}{
 	type=\acronymtype, 
 	name = {GPGPU},
-	description = {General Purpose Graphical Processing Unit Computation},
-	first={General Purpose Graphical Processing Unit Computation (GPGPU)},
+	description = {General Purpose Graphical Processing Unit},
+	first={General Purpose Graphical Processing Unit (GPGPU)},
 }
 
 \newglossaryentry{simd}{
@@ -163,7 +176,9 @@ such a code is Huffman coding}
 
 \newglossaryentry{sfa}{
 	type=\acronymtype, 
-  name = {SFA},
-  description  = {Simultaneous Finite Automata},
+	name = {SFA},
+	description = {Simultaneous Finite Automata},
 	first={Simultaneous Finite Automata (SFA)},
 }
+
+

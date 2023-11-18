@@ -18,7 +18,7 @@
 \end{sectionplan}
 \end{comment}
 
-\Glspl{compiler} are an important part of the interface between a programmer
+A \gls{compiler} is an important part of the interface between a programmer
 and the underlying hardware of a computer. The modern software ecosystem
 could not exist without the frequent and extensive use of compilers in
 the software development process. It is of no surprise that the study of
@@ -27,48 +27,47 @@ in computer science for many decades. Any improvements in compiler technology
 can have wide and long lasting affects on software development as a whole
 \citep{hall_compiler_2009}.
 
-The focus of my \gls{fyp} is to study a subset of compiler research regarding
-parallel compilation. Research into this niche has been historically of low
-priority. Traditional compiler architecture since the 1970’s has been focused
-on minimising memory use and optimising for single threaded performance
-(\textbf{citation needed}). This was at a time when computers didn’t even have
-enough \gls{ram} to store all the data necessary for compiling large amounts
-of source code. Commodity hardware has improved significantly since then. The
-memory available in a computer is much more abundant than before and single
-threaded processor speed is not improving at the same rate as it once did
-(\textbf{citation needed}). In fact, were seeing commodity processors contain
-many cores capable of running dozens of processes at the same time. I believe
-this is sufficient cause to consider alternative architectures that more
-efficiently utilise this environment.
+The focus of my \gls{fyp} is to study a subset of compiler research techniques
+concerning aspects of parallel compilation. Research in this niche has been
+historically of low priority. Traditional compiler architecture since the
+1970’s has focused on minimising memory use and optimising for single threaded
+performance (\textbf{citation needed}). This was at a time when computers
+did not even have enough random access memory to store all the data necessary
+for compiling large amounts of source code. Commodity hardware has improved
+significantly since then. The memory available in a computer is much more
+abundant than before and single threaded processor speed is not improving at
+the same rate as it once did (\textbf{citation needed}). Nowadays, in fact,
+were seeing commodity processors comprising several cores capable of running
+dozens of processes concurrently. I believe this is sufficient cause to consider
+alternative architectures that more efficiently utilise this environment. A
+parallel compiler utilises these methods of executing code in parallel in order
+to speed up the compilation process
 
-A parallel compiler utilises these methods of executing code in parallel
-in order to speed up the compilation process. Modern compilers in use today
-implement varying amounts of parallelism in order to speed up compilation
-times. The \gls{rustc} compiler team reports a 50 \% performance improvement
-after making parts of the \gls{compiler_frontend} work in parallel.
-\citep{nicholas_nethercote_faster_2023}. Such improvements are not limited to
-the \gls{compiler_frontend}. The mold \gls{linker} project boasts significantly
-better performance than its competitors due to its extensive and clever use
-of parallelism \citep{rui_ueyama_design_nodate}. The potential for performance
-improvements is evident in modern compilers and tool. Moreover, compiler
-research and development can generalize to other areas outside of software
-development.
+Modern compilers in use today implement varying amounts of parallelism in order
+to speed up compilation times. The \gls{rustc} compiler team reports a 50\%
+performance improvement after making parts of the \gls{compiler_frontend} work
+in parallel. \citep{nicholas_nethercote_faster_2023}. Such improvements are not
+limited to the \gls{compiler_frontend}. The mold \gls{linker} project boasts
+significantly better performance than its competitors due to its extensive and
+clever use of parallelism \citep{rui_ueyama_design_nodate}. The potential for
+performance improvements is evident in modern compilers and tools. Moreover,
+compiler research and development can generalize to other areas outside of
+software development.
 
 Applications of techniques traditionally associated with compilers can
 be found in \gls{network_packet_parsing} \citep{wang_hyperscan_2019,
-roesch_snort_1999} and \gls{huffman_coding} in lossless image compression
+roesch_snort_1999} and \Gls{huffman_coding} in lossless image compression
 \citep{howard_parallel_1996}. These areas, among others, can benefit from
 research directed at improving compiler technology due to a significant
 overlap in the underlying theory \citep{mytkowicz_data-parallel_2014}. Futher
 development in compiler theory can benefit not only software development but
 also tangential fields of research.
 
-Before introducing parallel compilation any further, the next section
-first describes compilation in general, as well as the traditional method of
-compilation which is largely sequential. This type of compiler architecture can
-be seen in several existing compilers, both old and new(\textbf{citation needed}).
+Before delving any further into parallel compilation, Section \ref {seq_comp}
+will describe compilation in general, paying particular reference to the
+traditional method of sequential compilation.
 
-\section{Sequential Compilation}
+\section{Sequential Compilation} \label{seq_comp}
 \begin{comment}
 \begin{sectionplan}
      Short explanation of compiler technology and the structure of a compiler.
@@ -83,23 +82,26 @@ be seen in several existing compilers, both old and new(\textbf{citation needed}
 \label{fig:compiler}
 \end{figure}
 
-Compilation is the process of translating a high-level programming language into
-a semantically equivalent program written in a lower-level programming language
-such as assembly or machine language. During this process, a compiler will
-usually lose information in the source code that is useful to the programmer
-but is useless to the machine that will ultimately execute the program. Inside
-a compiler, the source code passes through several algorithms that transform
-the code in various ways. These different compilation stages are visualised in
-figure \ref{fig:compiler}
+Compilation is the process of translating a program written in a high-level
+programming language into a semantically equivalent program written in a
+lower-level programming language such as assembly or machine language. During
+this process, a compiler will usually lose information in the source code that
+is useful to the programmer but is useless to the machine that will ultimately
+execute the program. Inside a compiler, the source code passes through several
+algorithms that transform the code in various ways. These compilation stages are
+shown in Figure \ref{fig:compiler}
 
-Compilers usually work in a way that resemebles a pipeline. The lexer splits
-the source code into words called tokens. The parser then takes those tokens and
-assigns structure to them by arraging them as a graph. This structure makes them
-easier to meaningfully navigate. It addtionally lets the tokens better describe
-what they mean, beyond what can be understood from a simple list of words.
-This graph of tokens is then analysed during the semantic analysis phase, doing
-things like looking for unsused variables. The parts of the compiler up to this
-point are colloquially called the frontend of the compiler.
+The work of a compiler can be described as a multi-stage process resembling a
+pipeline, where each stage works on the output of the previous stage thereby
+producing the input for the next stage. The lexer splits the source code into
+lexemes which are then tokenized for the next stage. In the parser stage, based
+on the rules of the source language the code’s syntax is verified. During this
+stage, an \gls{ast} is created, reflecting the hierarchy of the elements in the
+code such as, tokens, variables and statements, and the relationships between
+them. This AST is then analysed during the semantic analysis stage, considering
+type checking, variable declaration prior to usage, unused variables and so
+forth. The parts of the compiler up to this point are colloquially called the
+frontend of the compiler.
 
 These stages of compilation are often executed sequentially with each stage
 doing the least amount of work neccessary before passing control to the
@@ -108,26 +110,27 @@ the next token before passing that token to the parser. The parser will then
 begin executing, doing as much work as it can with the input it got from the
 lexer. Once it has done that, it might request more tokens from the lexer,
 in which case control is returned to the lexer. This process repeats until
-the whole file has been processed. Compiling in this way is much more memory
-efficient compared to performing each compilation stage fully before moving
-onto the next. Difficulties with implementing this architecutre using parallel
-processing methods is described in Section \ref{compiler_parallel_methods}.
+the entire contents of the source code in the input file has been processed.
+Compiling in this way is much more memory efficient compared to performing
+a compilation stage to completion prior to moving onto the next stage.
+Difficulties with implementing this architecutre using parallel processing
+methods is described in Section \ref{compiler_parallel_methods}.
 
-This type of architecture has traditionally been driven by a need to
-optimise for memory use and single threaded performance. For example, in
-the C programming language, programmers are forced to declare functions
-before they are called. This was originally done to allow the compiler
-to fully compile each function independantly, without needing to keep all
-the other functions in memory and avoiding a costly second pass over code
-(\textbf{citation needed}). As a result of these decisions aswell as historical
-circumstances, the stages of a compiler that are reponsible for taking a file
-from source code to code generation are often implemented with little to no
-parallelisation(\textbf{citation needed}). An example of going from source code
+This type of architecture has traditionally been driven by a need to optimise
+for memory use and single threaded performance. For example, in the C
+programming language, programmers are forced to declare functions before they
+are called. This was originally done to allow the compiler to fully compile
+each function independantly, without needing to keep all the other functions
+in memory and avoiding a costly second pass over code (\textbf{citation
+needed}). As a result of these decisions aswell as historical circumstances,
+the stages of a compiler that are reponsible  for taking a file containing
+source code to code generation are often implemented with little to no
+parallelisation (\textbf{citation needed}). An example of going from source code
 to machine code is the process of compiling a C file into an object file. As can
 be seen from figure \ref{fig:compiler}, this envelopes a significant portion of
 the compiler. The next section describes parallel compilation.
 
-\section{Advantages Of Parallel Compilation} \label{advantages_parallel_compilation}
+\section{Advantages of Parallel Compilation} \label{advantages_parallel_compilation}
 \begin{comment}
 \begin{sectionplan}
 	What is meant by parallel compilation?
@@ -160,32 +163,33 @@ to structure such a compiler that uses such methods is discussed in Section
 \ref{compiler_parallel_methods}. This section considers the motivation for
 performing various stages of compilation in parallel.
 
-\subsection{Increased Compilation Speed With Additional Cores}
+\subsection{Increased Compilation Speed with Additional Cores}
 
-Using multiple CPU cores during compilation can signficantly speed up
-compilation time. IBM researchers in created an optimised lexer for a
+Using multiple \gls{cpu} cores during compilation can signficantly speed
+up compilation time. IBM researchers created an optimised lexer for a
 machine that had a large number of cores that could run code in parallel
-\citep{scarpazza_high-performance_2009}. It had eight cpu cores where each core
-could run eight threads in parallel for a total of 64 parallel threads. Later
-research into parallel lexing from 2014 achieved a 14 times speed up for lexing
-HTML on a 16 core system \citep{mytkowicz_data-parallel_2014}. Substantial
-performance gains can clearly be achieved through parallelisation. This shows
-how using parallel processing to speed up compilation tasks is not a new
-idea.
+\citep{scarpazza_high-performance_2009}. It had eight \gls{cpu} cores where each
+core could run eight threads in parallel for a total of 64 parallel threads.
+More recent research into parallel lexing from 2014 achieved a 14 times speed
+up for lexing HTML on a 16 core system \citep{mytkowicz_data-parallel_2014}.
+Substantial performance gains can clearly be achieved through parallelisation.
+This shows how using parallel processing to speed up compilation tasks is not a
+new idea.
 
 \subsection{Parallel Compilation Research Aids Language Design}
 
-For many programming languages, once a syntax goes into general use, it becomes
-nearly impossible to revert or change it in a way that breaks existing programs.
-This leads to programming languages becoming complicated and difficult to define as
-new features are added. For example, langauges like C++ are very difficult to compile
-in a sequential way, let alone in a parallel way. Research into and the development
-of parallel compilers can aid future developers when they are choosing their
-syntax or what features they want to implement without making their language
-difficult to compile in parallel (\textbf{citation needed}). It is currently
-rather difficult to design a language that can easily be compiled in parallel
-due to a lack of research and prior work as compared to sequential approaches
-(\textbf{citation needed}).
+For several programming languages, once their syntax goes into general use, it
+becomes nearly impossible to reverse or change it, without breaking programs
+already written in the particular language. This leads to programming languages
+becoming complicated and difficult to define as new features are added. For
+example, langauges like C++ are very difficult to compile in a sequential
+manner, let alone in a parallel manner (\textbf{citation needed}). Research into
+and the development of parallel compilers can aid future developers when they
+are choosing their syntax or what features they want to implement without making
+their language difficult to compile in parallel (\textbf{citation needed}). It
+is currently rather difficult to design a language that can easily be compiled
+in parallel due to a lack of research and prior work as compared to sequential
+approaches (\textbf{citation needed}).
 
 \section{Advantages of Data-Parallel Compilation}
 \begin{comment}
@@ -255,7 +259,7 @@ parallel environment, potentially achieving a linear performance increase that
 scales with the number of available processing cores. This can only be achieved
 efficiently using \gls{data_parallel} techniques.
 
-\subsection{Increased Performance In Individual Compilation Stages}
+\subsection{Increased Performance in Individual Compilation Stages}
 
 Data parallelism can massively improve the performance of various workloads that
 utilise of individual compilation stages. Tasks that involve processing large
@@ -264,7 +268,7 @@ how JSON parsing can be performed much faster using a parallel parser.
 \cite{mytkowicz_data-parallel_2014} optimised a parallel regular expression
 matching algorithm which has a large number of uses beyond lexical analysis.
 
-\section{Objectives of My Work}
+\section{Project Objectives}
 
 The goal of my \gls{fyp} is to research ways of implementing a parallel compiler
 frontend and implementing it if time allows. This includes research into
