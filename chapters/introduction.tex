@@ -36,12 +36,12 @@ did not even have enough random access memory to store all the data necessary
 for compiling large amounts of source code. Commodity hardware has improved
 significantly since then. The memory available in a computer is much more
 abundant than before and single threaded processor speed is not improving at
-the same rate as it once did (\textbf{citation needed}). Nowadays, in fact,
-were seeing commodity processors comprising several cores capable of running
-dozens of processes concurrently. I believe this is sufficient cause to consider
-alternative architectures that more efficiently utilise this environment. A
-parallel compiler utilises these methods of executing code in parallel in order
-to speed up the compilation process
+the same rate as it once did \citep{shalf_future_2020, williams_whats_2017}.
+Nowadays, in fact, were seeing commodity processors compri sing several
+cores capable of running dozens of processes concurrently. I believe this is
+sufficient cause to consider alternative architectures that more efficiently
+utilise this environment. A parallel compiler utilises these methods of
+executing code in parallel in order to speed up the compilation process
 
 Modern compilers in use today implement varying amounts of parallelism in order
 to speed up compilation times. The \gls{rustc} compiler team reports a 50\%
@@ -178,18 +178,20 @@ new idea.
 
 \subsection{Parallel Compilation Research Aids Language Design}
 
-For several programming languages, once their syntax goes into general use, it
-becomes nearly impossible to reverse or change it, without breaking programs
-already written in the particular language. This leads to programming languages
-becoming complicated and difficult to define as new features are added. For
-example, langauges like C++ are very difficult to compile in a sequential
-manner, let alone in a parallel manner (\textbf{citation needed}). Research into
-and the development of parallel compilers can aid future developers when they
-are choosing their syntax or what features they want to implement without making
-their language difficult to compile in parallel (\textbf{citation needed}). It
-is currently rather difficult to design a language that can easily be compiled
-in parallel due to a lack of research and prior work as compared to sequential
-approaches (\textbf{citation needed}).
+For several programming languages, once their syntax goes into general
+use, it becomes nearly impossible to reverse or change it, without breaking
+programs already written in the particular language. This leads to programming
+languages becoming complicated and difficult to define as new features are
+added. For example, langauges like C++ are very difficult to compile in a
+sequential manner, let alone in a parallel manner \citep{noauthor_most_2022,
+noauthor_difficulties_nodate}. Research into and the development of parallel
+compilers can aid future developers when they are choosing their syntax or
+what features they want to implement without making their language difficult
+to compile in parallel. \cite{barenghi_parallel_2015} demonstrate how this is
+possible by, for example, restricting the grammar of a langauge to an \gls{opg}.
+It is currently rather difficult to design a language that can easily be
+compiled in parallel due to a lack of research and prior work as compared to
+sequential approaches.
 
 \section{Advantages of Data-Parallel Compilation} \label{advantages_of_data_p_comp}
 \begin{comment}
@@ -246,7 +248,7 @@ more facilities for networking and input/ output related tasks than a typical
 of \gls{amd} for general purpose computing on graphics cards known as \gls{rocm}
 is now among their top priorities \citep{ward-foxton_rocm_2023}. As time goes
 on, we are likely to see increasingly specialised and heterogenous hardware
-(\textbf{citation needed}).
+\citep{stefan_lets_2021}.
 
 Current compilation algorithms scale poorly on massively parallel hardware
 such as \glspl{gpu}s. This is due to the restrictions imposed on programs by
