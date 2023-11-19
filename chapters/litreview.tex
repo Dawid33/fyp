@@ -19,7 +19,7 @@ Section \ref{compiler_parallel_methods} describes different ways of designing a 
 such that parts of it can be executed simulatneously.
 \newline \newline
 Section \ref{lit_review_lexing} describes various algorithms to perform lexing
-in parallel.\cite{pai_t_systematic_2020} describes a literature review of parallel lexing
+in parallel. \cite{pai_t_systematic_2020} describes a literature review of parallel lexing
 approaches.
 \newline \newline
 Section \ref{lit_review_parsing} describes various algorithms to perform parsing
@@ -37,15 +37,15 @@ research and analyze the various forms so parallelisation so as to make informed
 decisions about how they are used in a parallel program.
 
 \subsection{Single Instruction Multiple Data (SIMD)}
-\ac{simd} instructions are assembly instructions, that can process more data
+\gls{simd} instructions are assembly instructions, that can process more data
 at the same time than typical assembly instructions. Instead of processing data
-with normal registers, \ac{simd} instructions use special registers that are
-several times bigger than a typical register \textbf{find citation}. This allows
+with normal registers, \gls{simd} instructions use special registers that are
+several times bigger than a typical register (\textbf{find citation}). This allows
 the processor to compute a given instruction over each part of the register in
 parallel. These instructions are also known as vector instructions since they
 process lists or vectors of data. As an example, the arm ADD insturction can be
 contrasted with its corresponding vector instruction UQADD8 which adds 4 8bit
-numbers with 4 other 8bit numbers \textbf{cite amd's website}.
+numbers with 4 other 8bit numbers (\textbf{cite amd's website}).
 
 This form of parallelisation mimics the sequential approach as vector
 instructions do multiple sequential instructions at the same time. This makes
@@ -56,7 +56,7 @@ The performance gains using this method are clearly demonstrated with simdJSON
 (\textbf{citation needed for simdjson}). Although using vector instructions can
 be significantly faster than the sequential case, this performance benefit is
 only up to a point. Increasing performance requires larger registers which takes
-a long time to architect and standardize in a \ac{cpu}. The methods described
+a long time to architect and standardize in a \gls{cpu}. The methods described
 next scale better in this regard at the cost of potentially having a more
 complex implementation.
 

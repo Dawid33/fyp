@@ -63,7 +63,7 @@ overlap in the underlying theory \citep{mytkowicz_data-parallel_2014}. Futher
 development in compiler theory can benefit not only software development but
 also tangential fields of research.
 
-Before delving any further into parallel compilation, Section \ref {seq_comp}
+Before delving any further into parallel compilation, Section \ref{seq_comp}
 will describe compilation in general, paying particular reference to the
 traditional method of sequential compilation.
 
@@ -191,7 +191,7 @@ is currently rather difficult to design a language that can easily be compiled
 in parallel due to a lack of research and prior work as compared to sequential
 approaches (\textbf{citation needed}).
 
-\section{Advantages of Data-Parallel Compilation}
+\section{Advantages of Data-Parallel Compilation} \label{advantages_of_data_p_comp}
 \begin{comment}
 \begin{sectionplan}
 	Justify looking at alternative forms of parallelism besides the status quo 	
@@ -231,67 +231,67 @@ present useful error messages to the programmer. Such syntax errors are often
 detected during the parsing stage. An issue arises when a parser must then try
 to continue parsing after encountering a syntax error. This parser recovery
 process is frequently complicated and sub optimal \citep{medeiros_syntax_2018,
-hutchison_pika_2020}. Certain parallel parsing algorithms allow a compiler
-to forgo a complicated parsing recovery process by nature of being able
-to restart the parsing process immediately after encountering an error
-\citep{clarke_error_1993}.
+hutchison_pika_2020}. Certain parallel parsing algorithms, such as those
+described in \citet{clarke_error_1993} and \cite{barenghi_parallel_2015}, allow
+a compiler to forgo a complicated parsing recovery process by being able to
+restart the parsing process immediately after encountering an error.
 
 \subsection{Applications in Massively Parallel Computing}
 
 There have been increasingly larger investments in the hardware industry for
-specialised hardware beyond the typical \gls{cpu}. Examples include things like smart
-\gls{nic}s that offload network packet parsing from the \gls{cpu} or \gls{dpu}s that provide
-more facilities for networking and input / output related tasks than a typical
-\gls{cpu}. A recent article from October 2023 shows how AMD’s software stack for
-general purpose computing on graphics cards known as \gls{rocm} is now among their
-top priorities \citep{ward-foxton_rocm_2023}. As time goes on, we are likely
-to see increasingly specialised and heterogenous hardware (\textbf{citation
-needed}).
+specialised hardware beyond the typical \gls{cpu}.  For example, smart \gls{nic}
+s that offload network packet parsing from the \gls{cpu} or \gls{dpu} to provide
+more facilities for networking and input/ output related tasks than a typical
+\gls{cpu}. A recent article from October 2023 outlined how the software stack
+of \gls{amd} for general purpose computing on graphics cards known as \gls{rocm}
+is now among their top priorities \citep{ward-foxton_rocm_2023}. As time goes
+on, we are likely to see increasingly specialised and heterogenous hardware
+(\textbf{citation needed}).
 
 Current compilation algorithms scale poorly on massively parallel hardware
-such as \gls{gpu}s. This is due to the restrictions imposed on programs by
+such as \glspl{gpu}s. This is due to the restrictions imposed on programs by
 computing in such an environment. An approach utilising \gls{data_parallel}
-datastructures described by \cite{hillis_data_1986} was applied by
+data structures described by \cite{hillis_data_1986} was applied by
 \cite{voetter_compilation_2022} in order to create a parallel compiler
 implementation that could run on a \gls{gpu}. This shows how  re-architecting
 the compilation process makes it possible to execute a compiler in a massively
 parallel environment, potentially achieving a linear performance increase that
 scales with the number of available processing cores. This can only be achieved
-efficiently using \gls{data_parallel} techniques.
+by efficiently using \gls{data_parallel} techniques.
 
 \subsection{Increased Performance in Individual Compilation Stages}
 
-Data parallelism can massively improve the performance of various workloads that
-utilise of individual compilation stages. Tasks that involve processing large
+Data parallelism can massively improve the performance of various workloads
+that utilise individual compilation stages. Tasks that involve processing large
 amounts of data benefit the most. \cite{barenghi_parallel_2015} demonstrated
-how JSON parsing can be performed much faster using a parallel parser.
+how \gls{json} parsing can be performed much faster using a parallel parser.
 \cite{mytkowicz_data-parallel_2014} optimised a parallel regular expression
 matching algorithm which has a large number of uses beyond lexical analysis.
 
 \section{Project Objectives}
 
-The goal of my \gls{fyp} is to research ways of implementing a parallel compiler
-frontend and implementing it if time allows. This includes research into
-parallel processing methods and algorithms. I have chosen to study only the
-compiler frontend in order to reduce the scope of my \gls{fyp}.
+The goal of my \gls{fyp} is to research methods and algorithms for use in the stages
+of a parallel compiler frontend and to justify the selection of those included
+in the implementation of same.
 
-\section{Structure of Report}
+\section{Structure of Report} \label{structure_of_report}
 
 Chapter \ref{introduction} provides an introduction to compilers as well as
 reasons to study parallel compilation methods.
 \newline \newline
-Chapter \ref{litreview} describes exisiting approaches for compiling
+Chapter \ref{litreview} describes approaches for compiling
 in parallel.
 \newline \newline
-Chapter \ref{design} elaborates on the issues associated with designing a
-parallel compiler aswell as the design of my compiler implementation. I discuss
-the various approaches mentioned in the literature review, including their
-advantages and disadvantages where appropriate.
+Chapter \ref{design} will elaborate on the issues associated with designing a
+parallel compiler, presenting suggested approaches from literature to overcome
+these, prior to focusing on the compiler design and implementation decisions
+specific to this work.
 \newline \newline
 Chapter \ref{implementation} explains the details of my implementation,
-referring to things like external code dependancies and program structure.
+referring to aspects such as external code dependancies and program structure.
 \newline \newline
-Chapter \ref{evalandtesting} describes my testing methodologies and the evaluation of my compilers performance.
+Chapter \ref{evalandtesting} describes my testing methodologies and the
+evaluation of my compilers performance.
 \newline \newline
 Chapter \ref{conclusion} concludes the report with a summary of the report and
 concluding remarks.
