@@ -74,8 +74,18 @@ sequences of bits for less frequently occurring items}
     description={}
 }
 
-\newglossaryentry{astg}{
-	name={finite state machine},
+\newglossaryentry{llg}{
+	name={LL parsing},
+    description={}
+}
+
+\newglossaryentry{lrg}{
+	name={LR parsing},
+    description={}
+}
+
+\newglossaryentry{opgg}{
+	name={operator precedence grammar},
     description={}
 }
 
@@ -103,6 +113,30 @@ sequences of bits for less frequently occurring items}
 	description = {Abstract Syntax Tree},
 	first = {Abstract Syntax Tree (AST)\glsadd{astg}},
 	see = [Glossary:]{astg}
+}
+
+\newglossaryentry{opg}{
+	type = \acronymtype, 
+	name = {OPG},
+	description = {Operator Precedence Grammar},
+	first = {Operator Precedence Grammar (OPG)\glsadd{opgg}},
+	see = [Glossary:]{opgg}
+}
+
+\newglossaryentry{lr}{
+	type = \acronymtype, 
+	name = {LR},
+	description = {Left-to-right, Right-most-derivation},
+	first = {Left-to-right, Right-most-derivation (LR)\glsadd{lrg}},
+	see = [Glossary:]{lrg}
+}
+
+\newglossaryentry{ll}{
+	type = \acronymtype, 
+	name = {LL},
+	description = {Left-to-right, Left-most-derivation},
+	first = {Left-to-right, Left-most-derivation (LL)\glsadd{llg}},
+	see = [Glossary:]{llg}
 }
 
 \newglossaryentry{fsm}{

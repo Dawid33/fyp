@@ -1,5 +1,4 @@
 new_tab code
-layout horizontal
 launch --title "code" bash 
 
 new_tab terminal 
