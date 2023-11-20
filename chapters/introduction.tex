@@ -31,7 +31,7 @@ The focus of my \gls{fyp} is to study a subset of compiler research techniques
 concerning aspects of parallel compilation. Research in this niche has been
 historically of low priority. Traditional compiler architecture since the
 1970’s has focused on minimising memory use and optimising for single threaded
-performance (\textbf{citation needed}). This was at a time when computers
+performance (\textbf{tough to find citation}). This was at a time when computers
 did not even have enough random access memory to store all the data necessary
 for compiling large amounts of source code. Commodity hardware has improved
 significantly since then. The memory available in a computer is much more
@@ -120,15 +120,15 @@ This type of architecture has traditionally been driven by a need to optimise
 for memory use and single threaded performance. For example, in the C
 programming language, programmers are forced to declare functions before they
 are called. This was originally done to allow the compiler to fully compile
-each function independantly, without needing to keep all the other functions
-in memory and avoiding a costly second pass over code (\textbf{citation
-needed}). As a result of these decisions aswell as historical circumstances,
-the stages of a compiler that are reponsible  for taking a file containing
-source code to code generation are often implemented with little to no
-parallelisation (\textbf{citation needed}). An example of going from source code
-to machine code is the process of compiling a C file into an object file. As can
-be seen from figure \ref{fig:compiler}, this envelopes a significant portion of
-the compiler. The next section describes parallel compilation.
+each function independantly, without needing to keep all the other functions in
+memory and avoiding a costly second pass over code (\textbf{citation needed}).
+As a result of these decisions aswell as historical circumstances, the stages
+of a compiler that are reponsible  for taking a file containing source code
+to code generation are often implemented with little to no parallelisation
+(\textbf{citation needed}). An example of going from source code to machine code
+is the process of compiling a C file into an object file. As can be seen from
+figure \ref{fig:compiler}, this envelopes a significant portion of the compiler.
+The next section describes parallel compilation.
 
 \section{Advantages of Parallel Compilation} \label{advantages_parallel_compilation}
 \begin{comment}

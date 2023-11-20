@@ -4,13 +4,12 @@ Introduction - Tell the person what you're going to tell them. Talk about what
 this chapter is about with reference to the various subsections of the chapter.
 \end{sectionplan}
 
-As part of this literature review I research existing techniques used to create
-parallel compilers. This form of study has allowed me to better understand how
-parallel compilers work and how to approach implementing one. Due to a large
-amount of literture on the topic, I only review as many exisiting approaches
-as time allows. An important reference used througout the literature review is by
-\cite{scott_programming_2015}  which introduces various parts of a compiler at
-a high-level.
+In this literature review I research techniques I can use to create a parallel
+compiler. This review has helped me to develop a better understanding of how
+parallel compilers work and how to approach implementing one. Time constraints
+make it impossible to review all existing literature on the topic however
+an attempt is made to cover important developments in parallel compilation
+research.
 \newline \newline
 Section \ref{parallelisation_methods} describes general methods of executing
 code in parallel.
@@ -19,8 +18,7 @@ Section \ref{compiler_parallel_methods} describes different ways of designing a 
 such that parts of it can be executed simulatneously.
 \newline \newline
 Section \ref{lit_review_lexing} describes various algorithms to perform lexing
-in parallel. \cite{pai_t_systematic_2020} describes a literature review of parallel lexing
-approaches.
+in parallel. 
 \newline \newline
 Section \ref{lit_review_parsing} describes various algorithms to perform parsing
 in parallel.
@@ -30,71 +28,75 @@ analysis in parallel.
 \newline \newline
 
 \section{Parallelisation Methods} \label{parallelisation_methods}
-There exist various hardware solutions for executing code in parallel.
-The choice of parallel processing methods strongly influences the ease of
-implementation and performance of the final program. This makes it worthwhile to
-research and analyze the various forms so parallelisation so as to make informed
-decisions about how they are used in a parallel program.
+This section describes various hardware solutions for executing code in
+parallel. The choice of parallel processing methods used in in a parallel
+program can strongly influences its ease of implementation as well as its
+performance. This makes it worthwhile to research and analyze various forms of
+parallelisation in order to make informed decisions about how they will be used
+in the final implementation.
+\newline \newline
+Section \ref{simd} describes \gls{simd} instructions which are use to  implement
+instruction-level parallelism.
+\newline \newline
+Section \ref{multithreading} describes a more granular form of parallelisation
+called multi-threading or multi-processing.
+\newline \newline
+Section \ref{gpgpu} describes highly parallel computing on graphic cards.
 
-\subsection{Single Instruction Multiple Data (SIMD)}
-\gls{simd} instructions are assembly instructions, that can process more data
-at the same time than typical assembly instructions. Instead of processing data
-with normal registers, \gls{simd} instructions use special registers that are
-several times bigger than a typical register (\textbf{find citation}). This allows
-the processor to compute a given instruction over each part of the register in
-parallel. These instructions are also known as vector instructions since they
-process lists or vectors of data. As an example, the arm ADD insturction can be
-contrasted with its corresponding vector instruction UQADD8 which adds 4 8bit
-numbers with 4 other 8bit numbers (\textbf{cite amd's website}).
+\subsection{Single Instruction Multiple Data (SIMD)} \label{simd}
 
-This form of parallelisation mimics the sequential approach as vector
-instructions do multiple sequential instructions at the same time. This makes
-it possible for compilers to automatically utilise these instructions to speed
-up sequential programs in a process called vectorisation. Vector instructions
-can also be manually written by the programmer in order to improve performance.
-The performance gains using this method are clearly demonstrated with simdJSON
-(\textbf{citation needed for simdjson}). Although using vector instructions can
-be significantly faster than the sequential case, this performance benefit is
-only up to a point. Increasing performance requires larger registers which takes
-a long time to architect and standardize in a \gls{cpu}. The methods described
-next scale better in this regard at the cost of potentially having a more
-complex implementation.
+\gls{simd} instructions are assembly instructions that can process more data
+at the same time than typical assembly instructions. Instead of processing
+data with normal registers, \gls{simd} instructions use special registers
+that are several times larger than normal registers. This allows a processor
+to compute an assembly instruction over parts of the register in parallel.
+These instructions are also known as vector instructions since they process
+lists or vectors of data. As an example, in the Advanced RISC Machines (ARM)
+instruction set, the ADD instructions can be contrasted with its corresponding
+vector instruction UQADD8 which adds 4 8bit numbers with 4 other 8bit numbers
+\citep{noauthor_arm_nodate}.
 
-\subsection{Multithreading/Multiprocessing}
+Since vector instructions are functionally similar to a collection of assembly
+instructions being executed simultaneusly, a program written using vector
+instructions can be similar in structure to an equivalent sequential one. This
+makes it possible for compilers to automatically utilise these instructions
+to speed up exising sequential programs in a process called vectorisation.
+Vector instructions can also be manually written by the programmer in order to
+improve performance \cite{langdale_parsing_2019, mytkowicz_data-parallel_2014}.
+Although using vector instructions can be significantly faster than the
+sequential case, this performance benefit is only up to a point. Increasing
+performance past a certain point requires larger registers which take a long
+time to architect and standardize in a \gls{cpu}. The methods described in
+Section \ref{multithreading} scale better at the cost of having a more complex
+implementation.
+
+\subsection{Multithreading/Multiprocessing} \label{multithreading}
+
 Multicore parallelism makes it possible to have multiple programs exectute at
 the same time. Each process can have its own call stack and its own view of
-memory. This gives a programmer tremendous freedom with the things that can be
-implemented in parallel. The down side is the difficulty in creating reliable
-multi-threaded programs. Managing shared memory is difficult and can lead to
-very complex bugs.
+memory. This gives a programmer lot of options with the amount of things
+that can be done in parallel. The down side is the difficulty in creating
+reliable multi-threaded programs. Managing shared memory is difficult and can
+lead to very complex bugs.
 
-When coverting a sequential program to a \gls{data_parallel} one, it is usually
-necessary to re-architect significant portions of it in order to better fit
-this processing model. The advantage to this is the potential of near-linear
-performance improvement that scales with additional available cores. For
-example, if a strongly parallel program can run in 1 second on one thread then
-in it should run in a quarter of a second on four threads. In other words, a
-four times speed up. In practice there is overhead which prevents prefectly
-linear performance improvement.
+When coverting a sequential program to a multi-threaded \gls{data_parallel}
+one, it is usually necessary to re-architect significant portions of it in
+order to better fit this processing model. The advantage to this approach is  a
+significant performance improvement that can potentially scale with the number
+of threads used. For example, if a parallel program can run in 1 second on
+one thread then in it should run in a quarter of a second on four threads. In
+practice there is overhead from thread creation, synchronisation and management
+which prevent a prefectly linear performance improvement.
 
+\subsection{General Purpose Computing on GPUs} \label{gpgpu}
 
-\subsection{General Purpose Computing on GPUs}
 It is possible to use graphics cards for general purpose computing, called
-\gls{gpgpu}. It is conceptually like programming a specialised \gls{cpu} that has
-potentially thousands of cores. This might seem like an obvious advantage over
-programming a multicore \gls{cpu} however a program that runs on the \gls{gpu} has
-many peculiarities and restrictions placed on it that it requires a programmer
-to re-architect a program even further in order to fit its programming model, as
-compared to the multicore case. As an example, memory latency between a \gls{gpu}
-and main memory is usually so big that it makes the \gls{gpu} significantly worse
-at for processing small amounts of data.
-
-\subsection{Very Large Instruction Word}
-\begin{sectionplan}
-     VLIW can be used to make any program parallel - general purpose VLIW cpu's
-not available for this purpose, mostly use in DSP's - esoteric.
-\end{sectionplan}
-\cite{fisher_parallel_2004}
+\gls{gpgpu}. It is conceptually like programming a specialised \gls{cpu} that
+has hundreds if not thousands of cores. Programming for a \gls{gpu} requires a
+programmer to significantly re-architect a program in order to fit the \gls{gpu}
+programming model. Additional issues arrise such as memory latency between a
+\gls{gpu} and main memory being so big that it makes the \gls{gpu} significantly
+worse at for processing small amounts of data.
 
 \section{Methods of Parallelising A Compiler} \label{compiler_parallel_methods}
 \begin{sectionplan}
@@ -104,91 +106,89 @@ aforementioned parallel processing methods.
 \end{sectionplan}
 
 \cite{gross_parallel_1989} outlines three main approaches for parallising a
-compiler. The first approach is splitting up the input and processing each chunk
-individually. Many compilers divide up data at the file system level where each
-file of source code can be compiled seperately from other files it may depend
-on. Although this approach is already \gls{data_parallel}, it can be taken even
-further where each file is split up into even smaller chunks with each chunk
-being processed independantly.
+compiler. The first approach is splitting the source code of a program a program
+into chunks and processing each chunk individually. Many compilers divide up
+source code at the file system level where each file of source code can be
+compiled separatly from other parts of the program. Although this approach is
+already somewhat \gls{data_parallel}, it can be taken even further where each
+file is split up into even smaller chunks, with each of these chunks being
+processed independantly.
 
-Computation partitioning on the other hand assumes that a series of sequential
-computations can be divided up and processed in parallel with results of
-each computation being joined together at the end.
+Computation partitioning describes a series of sequential computations that can
+be divided up and processed in parallel with the results of each computation
+being joined together at the end.
 
-The final method is pipeling which is similar to computation partitioning.
-Pipelining involves dividing up a computation into some number of phases
-where each phase depends on the output from the previous phase. A complier can
-conveniently be divided up into such a pipline where, for example, the lexer,
-parser and semantic analyzer can be potentially executed simultaneously. 
+The final method is pipeling involves dividing up a computation into some
+number of phases where each phase depends on the output from the previous
+phase. 
 
-\cite{mark_thierry_vandevoorde_parallel_1988} implements a parallel C compiler
-which attampts to introduce finer-grained parallel processing, similar to a
-\gls{data_parallel} approach, while staying with a two-pass compiler with a
-traditional architecture.
+\cite{mark_thierry_vandevoorde_parallel_1988} attempts to implement a parallel
+C compiler using a \gls{data_parallel} approach with a traditional a two-pass
+compiler architecture.
 
 \section{Lexing} \label{lit_review_lexing}
 
 \cite{scott_programming_2015} describes lexing as the process of removing
-unneccesary characters from the source code and grouping characters of interest
-together into tokens. This stage emits a list of tokens that are passed on
-to the parser. The purpose of lexing is to simplify the task of the parser by
-reducing the size of the input. Lexing is sometimes  called tokenisation or
-lexical analysis and it is performed by a lexer, sometimes called a tokenizer or
-lexical analyzer. Its task of finding groupings of characters can be performed
-by using \glspl{reg_exp} that define what sequence of characters need to be
-found in the source code. The use of \glspl{reg_exp} means that a lexer can be
-described as a \gls{fsm}.
+unneccesary characters from source code and grouping characters of interest
+together into lexemes. This compilation stage emits a list of lexemes that are
+later passed on to the parser. The purpose of lexing is to simplify the task
+of the parser by reducing the size of the input. Lexing is sometimes  called
+tokenisation or lexical analysis and it is performed by a lexer, sometimes
+called a tokenizer or lexical analyzer. Lexers are primarly defined using
+\glspl{reg_exp} that describe what sequences of characters need to be found in
+the source code. Since \glspl{reg_exp} can be described as a \gls{fsm}, a lexer
+can similarly be described as a \gls{fsm}.
 
 A \gls{fsm} is a model of an abstract machine that can be in one of a finite
 number of states at any given time. A \gls{fsm} works by accepting input symbols
-which potentially cause the state of the \gls{fsm} to change according to a set
-of state transition rules that define the \gls{fsm}. Finite state machines can
+which can cause the state of the \gls{fsm} to change according to a set of
+state transition rules that define the \gls{fsm}. Finite state machines can
 be be described as either a \gls{nfa} or as a \gls{dfa}. In a parallel lexer
-where the output in one thread may depend on the output of another thread, it
-is undesirable to have different results based on the same input as it leads
-to bugs and an unpredictable output for a given input. This situation can occur
-in a \gls{nfa} which makes it non-trivial to design a parallel lexer around
-an \gls{nfa}. The determinstic property of a \gls{dfa} enusures that the that
-the changes in state incurred from a given input and inital state will always
-be the same for that input. As such, structuring a lexer as a \gls{dfa} can
-ensure a consistent and repeatable computation for a given chunk of source code.
-(\textbf{possibly include formal definition of a DFA})
+where the output in one thread may depend on the output of another thread,
+it is undesirable to have different results based on the same input because
+it can lead to bugs and an unpredictable output. This situation can occur in
+a \gls{nfa} which makes it non-trivial to design a parallel lexer around an
+\gls{nfa}. The determinstic property of a \gls{dfa} enusures that the that the
+resulting state of a \gls{dfa} will always be the same for a given input.  As
+such, structuring a lexer as a \gls{dfa} can ensure a consistent and repeatable
+computation for a given chunk of source code. (\textbf{include formal definition
+of a DFA})
 
-A common approach to multi-threaded lexing involves structuring the lexer as
-a \gls{dfa}, splitting the input into some number of parts, lexing each part on
+A common approach to multi-threaded lexing involves structuring the lexer as a
+\gls{dfa}, splitting the input into some number of parts, lexing each part on
 its own thread and joining up the results at the end. Due to the inherent data
 dependancy between state transitions in a \gls{dfa}, the initial state for a
 chunk of code depends on the output computed from lexing the code just before
-it. This causes exists an issue of determining the initial start state of all
-the lexers besides the one responsible for computing the first part of the code.
-A solution to this problem is through speculative simulation where an algorithm
-speculates on the unkown initial states of the \gls{dfa}s.
+it. This causes an issue of determining the initial start state of all the
+lexers besides the one computing the first part of the overall input. A solution
+to this problem is through speculative simulation where an algorithm speculates
+on the unkown initial states of these \gls{dfa}s.
 
 \subsection{Speculative Simulation of DFA}
 
-One approach to speculative simulation is the brute force method of computing
-a \gls{dfa} for every possible initial state  Such a lexer starts by splitting
-its input into chunks and processing each chunk independantly on a separate
-thread. Once all threads are finished lexing, the outputs from each thread are
-checked, starting from the first chunk of code, such that the finishing state
-of the lexer corresponds to the initial state of the lexer that computed the
-subsequent chunk of code. The correctness of computing a \gls{dfa} in this
-way relies on the  associativity of state transition functions as described in
-the parallel prefix sum algorithm in \cite{hillis_data_1986}. This algorithm
-is explained more formally wth both a message passing and a shared memory
-implementation by \cite{holub_parallel_2009} and a variation of it in a cloud
-computing environment is shown by \cite{ko_speculative_2012}. The need to
-compute the output for every possible initial state can result in a large number
-of unneccesary computations which can significantly impact perfromance for
-\gls{dfa}s with a large number of states.
+One approach to speculative simulation is a brute force method of computing
+a \gls{dfa} for every possible state it can be initialized with. Such a
+lexer beings by splitting its input into chunks and processing each chunk
+independantly on a separate thread. Once all threads are finished lexing,
+the outputs from each thread are checked, starting from the first chunk of
+code, such that the finishing state of the lexer corresponds to the initial
+state of the lexer that computed the subsequent chunk of code. The correctness
+of computing a \gls{dfa} in this way relies on the  associativity of state
+transition functions as described in the parallel prefix sum algorithm in
+\cite{hillis_data_1986}. This algorithm is explained more formally wth both a
+message passing and a shared memory implementation by \cite{holub_parallel_2009}
+and a variation of it in a cloud computing environment is shown by
+\cite{ko_speculative_2012}. The need to compute the output for every possible
+initial state can result in a large number of unneccesary computations which can
+significantly impact perfromance for \glspl{dfa} with a large number of states.
 
-\cite{barenghi_parallel_2015} optimise this by using a heuristic whereby the
+\cite{barenghi_parallel_2015} optimise this by using a heuristic where the
 source code is split into chunks that start with symbols that have known and
-consistent initial states. These symbols are found by scanning ahead when
-the source code is being split until such a symbol is found. The symbols
-that a chunk of code can start with are langauge dependant. If a symbol is
-allowed to appear in a lexeme, such a string or comment, then multiple initial
-states must be additionally computed. 
+consistent initial states. These symbols are found by scanning ahead when the
+source code is being split until such a symbol is found. The symbols that a
+chunk of code can start with are langauge dependant. If a symbol is allowed to
+appear in a lexeme, such a string or comment, then multiple initial states must
+be additionally computed.
 
 Instead of using a language specific heuristic,
 \cite{mytkowicz_data-parallel_2014} aim optmise speculative simulation for
@@ -198,21 +198,21 @@ every possible initial state the input can be in. Instead of using a language
 specific heuristic like \cite{barenghi_parallel_2015}, which is determined ahead
 of time, \cite{mytkowicz_data-parallel_2014} define a convergence algorithm
 which reduces the number of states that need to be computed at runtime. It
-follows from the observation that many states transition to the same state on
-a given input symbol. Once this convergence of state occurs, looking up the
-state transisition for each state becomes redundant as it is going to be the
-same for subsequent input symbols. By factoring out these common states, the
-number of actual state transitions that need to be computed drops significantly
-for most \gls{dfa}s, especially structured and non-adverserial ones. Heuristics
-are used to determine when to check for a  convergence of states. The ahead of
-time heuristic as well as this convergence algorithm are fundamentally similar
-however the solution proposed by \cite{mytkowicz_data-parallel_2014} is more
-generally applicable by not being tied to a specific language.
+follows from the observation that many states transition to the same state on a
+given input symbol. Once this convergence of state occurs, looking up the state
+transisition for each state becomes redundant as it is going to be the same
+for subsequent input symbols. By factoring out these common states, the number
+of actual state transitions that need to be computed drops significantly for
+most \gls{dfa}s, especially structured and non-adverserial ones. Heuristics are
+used to determine when to check for a  convergence of states. The ahead of time
+heuristic as well as this convergence algorithm are similar in some ways however
+the solution proposed by \cite{mytkowicz_data-parallel_2014} is more generally
+applicable by not being tied to a specific language.
 
 \cite{mytkowicz_data-parallel_2014} additionally utilise \gls{simd} instructions
-in order to perform the state transitions for a given set of states and
-transition function. This parallelises an important part of the algorithm and
-significantly improves performance. An technique called range coalescing is
+in order to perform the state transitions for a given transition function
+and set of states. This parallelises an important part of the algorithm and
+significantly improves performance. A technique called range coalescing is also
 used to reduce the number of memory addresses accessed when computing state
 transitions for a large number of states (\textbf{possibly elaborate}).
 
@@ -237,15 +237,15 @@ source code as well as find strings, comments and identifiers, among other
 tokens, in distinct passes over the source code. It is not table driven and is
 instead specialised for APL. Since the computational complexity of the compiler
 is high and its performance is not evaluated by the authors, it remains unknown
-if is an improved approach to tokenizing APL.
+if is an improved approach to parallel lexing.
 
 A variation of the heuristic apporach by \cite{barenghi_parallel_2015} is
 implemented by \cite{li_plex_2021} that generalizes it and makes it langauge
 independant. It builds on work from \cite{sinya_simultaneous_2013} and
-\cite{zhao_--fly_2015} to perform a backtrack-free prescanning phase by
-generating and executing a \gls{dfa} based on the lexical grammar that determines
-the context for \gls{dfa} in a subsequent tokenisation phase. (\textbf{its a
-tough one with tough prior work, needs elaboration})
+\cite{zhao_--fly_2015} to perform a prescanning phase by generating and
+executing a \gls{dfa} based on the lexical grammar that determines the context
+for \glspl{dfa} in a subsequent tokenisation phase. (\textbf{its a tough one
+with tough prior work, needs elaboration})
 
 
 \subsection{Other Approaches}
@@ -268,61 +268,60 @@ barve_improved_2015}
     What factors generally influence parallel parsing methods?
 \end{sectionplan}
 
-\cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
-
-Parsing is the second canoncial stage of a generic compiler.
-\cite{scott_programming_2015} describes the goal of a parser is take a list
-of tokens from a lexer and structure them as a graph. This structure makes it
-easier to navigate and manipulate the source code using concepts defined by the
-language like variables, functions and control structures. The graph strucuture
-created by a parser is typically called a syntax tree or a parse tree. This
-structure is created according to a parsing grammar that defines how it should
-be built. The rules that govern how tokens in a parsing grammar should be
-processed in order to validate the langauge and build a parse tree representing
-it are called production rules. The tokens A parser might addtionally process
-a parse tree as it is getting built, or during a separate susequent processing
-step, which produces an AST. This datastructure is later analysed during the
-semantic analysis phase which is described in Section \ref{lit_review_analysis}.
-There exist different families of parsers that group parsers by similarities in
-their method of parsing.
+Parsing is the second canoncial stage of a generic compiler. The goal of a
+parser is take a list of lexemes from a lexer and structure them as a graph
+\citep{scott_programming_2015}. This structure makes it easier to navigate
+and manipulate the source code using concepts defined by the language like
+variables, functions and control structures. The graph strucuture created
+by a parser is typically called a syntax tree or a parse tree. It is created
+according to a parsing grammar that defines how it should be built. The rules
+of a parsing grammar that govern how lexemes should be processed in order to
+validate and instance of the langauge and build a parse tree representing it are
+called production rules. A parser might addtionally process a parse tree as it
+is getting built, or during a separate susequent processing step, which produces
+an \gls{ast}. This datastructure is later analysed during the semantic analysis
+phase which is described in Section \ref{lit_review_analysis}. There exist
+different families of parsers that group parsers by similarities in their method
+of parsing.
 
 \gls{ll} parsers read the source code from left to right and construct a
 parse tree from the root node down, predicting at each step wihch production
-will be used to expand the current node, based on the next available token
-of input. \gls{ll} parsers are also called reursive descent parsers due to
-their typical implementation of resursively calling a function for every
-predicted non-terminal. Many modern compilers use recursive descent parsers
-(\textbf{citation needed}) because they can easily be implemented by hand and they
+will be used to expand the current node, based on the next available token of
+input. \gls{ll} parsers are also called reursive descent parsers due to their
+typical implementation of resursively calling a function for every non-terminal
+in a production. Many modern compilers use recursive descent parsers
+(\textbf{citation needed}) because they can easily be implemented by hand and
 make it is easier to generate good error messages for the user (\textbf{citation
 needed}). An alternative approach is to create an \gls{ll} parse table for a
-given grammar and use a driver program that  parses tokens according to the
-rules stored in the parsing table. A program that uses this table to generate
-and output source code for a recursive descent parser is a parser generator.
+given grammar and use a driver program that parses tokens according to the rules
+stored in the parsing table. A program that uses this table to generate and
+output source code for a recursive descent parser is a parser generator.
 
 In \gls{lr} parsing, source code is read left to right but the parse tree is
 constructed by first creating the leaf nodes and later grouping these nodes
-together into trees. This kind of parser works by keeping a stack of tokens and
-parse tree nodes. The parser will match this list against the right side of the
-grammars production rules. If a match occurs, the tokens on the stack become
-children of a new node corresponding the left side of rule. This new node,
-corresponding to a sub-tree of the final parse tree, is pushed onto the stack.
-Parsing finishes once the root node (axiom) is built from the nodes on the
-stack. This type of parser is also called a shift-reduce parser due to its two
-main operations, shifting tokens on the stack and reducing them into new parse
-tree nodes. 
+together into trees. This kind of parser works by maintaining a stack of tokens
+and parse tree nodes during parsing. The parser will match this list against
+the right side of the grammars production rules. If a match occurs, the tokens
+on the stack become children of a new node corresponding the left side of rule.
+This new node, corresponding to a sub-tree of the final parse tree, is pushed
+onto the stack. Parsing finishes once the root node (axiom) is built from the
+nodes on the stack. This type of parser is also called a shift-reduce parser due
+to its two main operations, shifting tokens on the stack and reducing them into
+new parse tree nodes.
 
-\gls{ll}($k$) and \gls{lr}($k$) denotes how many tokens these parse must look
-ahead in in the input in order to resolve ambiguities between production rules.
+\gls{ll}($k$) and \gls{lr}($k$) denotes how many tokens these parsers must look
+ahead in the input in order to resolve ambiguities between production rules.
 
 \subsection{Parallel LR Parsing}
+
 \cite{barenghi_parallel_2015} proposes and implements a non-speculative \gls{lr}
-(0) parallel parser generator for \gls{opg}s. A key insight is in contraining
+(0) parallel parser generator for \gls{opg}s. A key insight is in constraining
 the grammar sufficiently such that it can be deterministically decided whether
 a string of bounded length contains the right hand side of a production
 and can be unequivocally replaced by its corresponding left-hand side. This
 is in contrast to other approaches that require the parser to speculate on
 possible production rules in order to reduce them when parsing in parallel
-\cite{mickunas_parallel_1978}.
+\citep{mickunas_parallel_1978}.
 
 \cite{li_associative_2023} builds on the work by \cite{barenghi_parallel_2015}
 and optimises the parser for a common case encountered in real word data. When
@@ -333,9 +332,9 @@ operation which reduces the stack will be deffered until all the threads have
 finished. Moreover, if there is little work for the parser to do per element
 in the list, then the bulk of the parsing will be left until the final joining
 phase of the parser. The contribution from \cite{li_associative_2023} is a way
-of recognizing operators in the grammar that are associative so that elements
-of such lists can be reduced into a parse treee before knowing they are part of
-a list.
+of recognizing operators in the grammar that are associative so that elements of
+such lists can be more effectively reduced into parse tree nodes before knowing
+they are part of a list.
 
 \subsection{Parallel LL Parsing} 
 
@@ -346,6 +345,8 @@ a list.
     LLP(q, k) \cite{robin_voetter_parallel_2021}
     \newline \newline
     CYK Parsing \cite{skrzypczak_parallel_nodate}
+    \newline \newline
+    also mention \cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
 \end{roughwork}
 
 \section{Semantic Analysis} \label{lit_review_analysis}
