@@ -23,8 +23,29 @@ however for my \gls{fyp} I intend to only focus on the multi-threaded case.
 There are other methods that exist today besides the ones I’ve mentioned so far
 however they are arguably niche and not commonly available.
 
-\section{Lexer}
+\section{Lexer} \label{lexer}
 
-\section{Parser}
+The core issue with lexing in parallel is figuring out the inital state
+of the \gls{fsm} for all but the \gls{fsm} processing the first chunk of
+input. This can be solved through enumerating through all possible initial
+states or simply guessing the most likely state and backtracking if guessed
+incorrectly. Speculative approaches that guess the inital \gls{fsm} states
+can be effective, as shown by \cite{luchaup_speculative_2011}, however
+\cite{mytkowicz_data-parallel_2014} points out two major issues that can
+arise. The efficacy of the speculative approach is difficult to predict and
+it is limited by the sequential implementation on a single core. In contrast,
+enumerating through all possible inital states is predictable against even
+randomly generated input and can benefit from fine-grained paralleism afforded
+by a single core.
 
-\section{Semantic Analyzer}
+For my implementation I've chosen to use the enumerative approach where I will
+enumerate over all possible inital states for the \glspl{fsm}. I hope  this will
+lead to a more rohbust system that is resistant to edge cases and adverserial
+input. Although I initially aim to create a hand written lexer that works in
+parallel, I hope to create a table driven lexer if time allows. This will help
+me in quickly iterating over the lexical grammar to better fit the parsing
+grammar.
+
+\section{Parser} \label{parser}
+
+\section{Semantic Analyzer} \label{semantic_analyzer}

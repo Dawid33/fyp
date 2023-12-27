@@ -164,7 +164,7 @@ lexers besides the one computing the first part of the overall input. A solution
 to this problem is through speculative simulation where an algorithm speculates
 on the unkown initial states of these \gls{dfa}s.
 
-\subsection{Speculative Simulation of DFA}
+\subsection{Simulation of DFA} \label{simulation_of_dfa}
 
 One approach to speculative simulation is a brute force method of computing
 a \gls{dfa} for every possible state it can be initialized with. Such a
@@ -220,8 +220,10 @@ transitions for a large number of states (\textbf{possibly elaborate}).
 one described by  \cite{mytkowicz_data-parallel_2014}. (\textbf{elaborate on
 additional optmizations by zhao})
 
-Another method of speculative simulation attempts to simply guess the initial
-state of the \gls{dfa}s, possibly with a way to back track or validate
+\subsection{Speculative Simulation} \label{speculative_simulation}
+
+Another method is speculative simulation which attempts to simply guess the
+initial state of the \gls{dfa}s, possibly with a way to back track or validate
 its result in case of an incorrect guess. \cite{luchaup_multi-byte_2009,
 luchaup_speculative_2011} implements a speculative method which simply guesses
 the unknown inital \gls{dfa} state. This optmization works due to its specifc
@@ -248,7 +250,7 @@ for \glspl{dfa} in a subsequent tokenisation phase. (\textbf{its a tough one
 with tough prior work, needs elaboration})
 
 
-\subsection{Other Approaches}
+\subsection{Other Approaches} \label{other_approaches}
 
 \begin{roughwork}
 \cite{sinya_simultaneous_2013} propose a novel type of finite automata called
@@ -312,7 +314,7 @@ new parse tree nodes.
 \gls{ll}($k$) and \gls{lr}($k$) denotes how many tokens these parsers must look
 ahead in the input in order to resolve ambiguities between production rules.
 
-\subsection{Parallel LR Parsing}
+\subsection{Parallel LR Parsing} \label{parallel_lr_parsing}
 
 \cite{barenghi_parallel_2015} proposes and implements a non-speculative \gls{lr}
 (0) parallel parser generator for \gls{opg}s. A key insight is in constraining
@@ -336,11 +338,11 @@ of recognizing operators in the grammar that are associative so that elements of
 such lists can be more effectively reduced into parse tree nodes before knowing
 they are part of a list.
 
-\subsection{Parallel LL Parsing} 
+\subsection{Parallel LL Parsing} \label{parallel_ll_parsing}
 
 
 
-\subsection{}
+\subsection{TODO}
 \begin{roughwork}
     LLP(q, k) \cite{robin_voetter_parallel_2021}
     \newline \newline
