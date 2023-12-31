@@ -1,24 +1,20 @@
 \chapter{Literature Review} \label{litreview}
-\begin{sectionplan}
-Introduction - Tell the person what you're going to tell them. Talk about what
-this chapter is about with reference to the various subsections of the chapter.
-\end{sectionplan}
 
-In this literature review I research techniques I can use to create a parallel
+In this literature review I research techniques for creating a parallel
 compiler. This review has helped me to develop a better understanding of how
 parallel compilers work and how to approach implementing one. Time constraints
 make it impossible to review all existing literature on the topic however
 an attempt is made to cover important developments in parallel compilation
 research.
 \newline \newline
-Section \ref{parallelisation_methods} describes general methods of executing
+Section \ref{parallelisation_methods} describes hardware capable of executing
 code in parallel.
 \newline \newline
-Section \ref{compiler_parallel_methods} describes different ways of designing a compiler
-such that parts of it can be executed simulatneously.
+Section \ref{compiler_parallel_methods} describes different ways of designing a
+compiler such that parts of it can be executed simulatneously.
 \newline \newline
 Section \ref{lit_review_lexing} describes various algorithms to perform lexing
-in parallel. 
+in parallel.
 \newline \newline
 Section \ref{lit_review_parsing} describes various algorithms to perform parsing
 in parallel.
@@ -29,8 +25,8 @@ analysis in parallel.
 
 \section{Parallelisation Methods} \label{parallelisation_methods}
 This section describes various hardware solutions for executing code in
-parallel. The choice of parallel processing methods used in in a parallel
-program can strongly influences its ease of implementation as well as its
+parallel. The choice of parallel processing methods used in a parallel
+program can strongly influence its ease of implementation as well as its
 performance. This makes it worthwhile to research and analyze various forms of
 parallelisation in order to make informed decisions about how they will be used
 in the final implementation.
@@ -99,11 +95,6 @@ programming model. Additional issues arrise such as memory latency between a
 worse at for processing small amounts of data.
 
 \section{Methods of Parallelising A Compiler} \label{compiler_parallel_methods}
-\begin{sectionplan}
-    Mention the different ways to architect a parallel compiler program using
-aforementioned parallel processing methods.
-\cite{hillis_data_1986, gross_parallel_1989, jena_design_2018, baer_model_1977}
-\end{sectionplan}
 
 \cite{gross_parallel_1989} outlines three main approaches for parallising a
 compiler. The first approach is splitting the source code of a program a program
@@ -212,13 +203,11 @@ applicable by not being tied to a specific language.
 \cite{mytkowicz_data-parallel_2014} additionally utilise \gls{simd} instructions
 in order to perform the state transitions for a given transition function
 and set of states. This parallelises an important part of the algorithm and
-significantly improves performance. A technique called range coalescing is also
-used to reduce the number of memory addresses accessed when computing state
-transitions for a large number of states (\textbf{possibly elaborate}).
-
-\cite{zhao_--fly_2015} implements a convergence algorthim similar to the
-one described by  \cite{mytkowicz_data-parallel_2014}. (\textbf{elaborate on
-additional optmizations by zhao})
+significantly improves performance. A technique called range coalescing is
+also used to reduce the number of memory addresses accessed when computing
+state transitions for a large number of states. \cite{zhao_--fly_2015}
+implements a convergence algorthim similar to the one described by
+\cite{mytkowicz_data-parallel_2014}.
 
 \subsection{Speculative Simulation} \label{speculative_simulation}
 
@@ -252,7 +241,7 @@ with tough prior work, needs elaboration})
 
 \subsection{Other Approaches} \label{other_approaches}
 
-\begin{roughwork}
+\begin{comment}
 \cite{sinya_simultaneous_2013} propose a novel type of finite automata called
 \gls{sfa}.
 \newline \newline
@@ -263,12 +252,9 @@ li_plex_2021, asthagiri_associative_1992} Go and look at references cited in
 Could mention these but the fella doesn't do anything novel (and his
 grammar is questionable) \cite{barve_parallel_2014, barve_parallel_2012,
 barve_improved_2015}
-\end{roughwork}
+\end{comment}
 
 \section{Parsing} \label{lit_review_parsing}
-\begin{sectionplan}
-    What factors generally influence parallel parsing methods?
-\end{sectionplan}
 
 Parsing is the second canoncial stage of a generic compiler. The goal of a
 parser is take a list of lexemes from a lexer and structure them as a graph
@@ -338,18 +324,13 @@ of recognizing operators in the grammar that are associative so that elements of
 such lists can be more effectively reduced into parse tree nodes before knowing
 they are part of a list.
 
-\subsection{Parallel LL Parsing} \label{parallel_ll_parsing}
-
-
-
-\subsection{TODO}
-\begin{roughwork}
+\begin{comment}
     LLP(q, k) \cite{robin_voetter_parallel_2021}
     \newline \newline
     CYK Parsing \cite{skrzypczak_parallel_nodate}
     \newline \newline
     also mention \cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
-\end{roughwork}
+\end{comment}
 
 \section{Semantic Analysis} \label{lit_review_analysis}
 \begin{sectionplan}

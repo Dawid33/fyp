@@ -31,17 +31,17 @@ The focus of my \gls{fyp} is to study a subset of compiler research techniques
 concerning aspects of parallel compilation. Research in this niche has been
 historically of low priority. Traditional compiler architecture since the
 1970’s has focused on minimising memory use and optimising for single threaded
-performance (\textbf{tough to find citation}). This was at a time when computers
-did not even have enough random access memory to store all the data necessary
-for compiling large amounts of source code. Commodity hardware has improved
-significantly since then. The memory available in a computer is much more
-abundant than before and single threaded processor speed is not improving at
-the same rate as it once did \citep{shalf_future_2020, williams_whats_2017}.
-Nowadays, in fact, were seeing commodity processors compri sing several
-cores capable of running dozens of processes concurrently. I believe this is
-sufficient cause to consider alternative architectures that more efficiently
-utilise this environment. A parallel compiler utilises these methods of
-executing code in parallel in order to speed up the compilation process
+performance. This was at a time when computers did not even have enough random
+access memory to store all the data necessary for compiling large amounts of
+source code. Commodity hardware has improved significantly since then. The
+memory available in a computer is much more abundant than before and single
+threaded processor speed is not improving at the same rate as it once did
+\citep{shalf_future_2020, williams_whats_2017}. Nowadays, in fact, were seeing
+commodity processors compri sing several cores capable of running dozens
+of processes concurrently. I believe this is sufficient cause to consider
+alternative architectures that more efficiently utilise this environment. A
+parallel compiler utilises these methods of executing code in parallel in order
+to speed up the compilation process
 
 Modern compilers in use today implement varying amounts of parallelism in order
 to speed up compilation times. The \gls{rustc} compiler team reports a 50\%
@@ -116,19 +116,19 @@ a compilation stage to completion prior to moving onto the next stage.
 Difficulties with implementing this architecutre using parallel processing
 methods is described in Section \ref{compiler_parallel_methods}.
 
-This type of architecture has traditionally been driven by a need to optimise
-for memory use and single threaded performance. For example, in the C
-programming language, programmers are forced to declare functions before they
-are called. This was originally done to allow the compiler to fully compile
-each function independantly, without needing to keep all the other functions in
-memory and avoiding a costly second pass over code (\textbf{cite page 188 of \cite{scott_programming_2015}}).
-As a result of these decisions aswell as historical circumstances, the stages
-of a compiler that are reponsible  for taking a file containing source code
-to code generation are often implemented with little to no parallelisation
-(\textbf{citation needed}). An example of going from source code to machine code
-is the process of compiling a C file into an object file. As can be seen from
-figure \ref{fig:compiler}, this envelopes a significant portion of the compiler.
-The next section describes parallel compilation.
+This type of architecture has traditionally been driven by a need to
+optimise for memory use and single threaded performance. For example, in
+the C programming language, programmers are forced to declare functions
+before they are called. This was originally done to allow the compiler
+to fully compile each function independantly, without needing to keep all
+the other functions in memory and avoiding a costly second pass over code
+\cite{scott_programming_2015}. As a result of these decisions aswell as
+historical circumstances, the stages of a compiler that are reponsible  for
+taking a file containing source code to code generation are often implemented
+with little to no parallelisation . An example of going from source code to
+machine code is the process of compiling a C file into an object file. As can be
+seen from figure \ref{fig:compiler}, this envelopes a significant portion of the
+compiler. The next section describes parallel compilation.
 
 \section{Advantages of Parallel Compilation} \label{advantages_parallel_compilation}
 \begin{comment}

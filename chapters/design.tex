@@ -40,12 +40,16 @@ by a single core.
 
 For my implementation I've chosen to use the enumerative approach where I will
 enumerate over all possible inital states for the \glspl{fsm}. I hope  this will
-lead to a more rohbust system that is resistant to edge cases and adverserial
+lead to a more robust system that is resistant to edge cases and adverserial
 input. Although I initially aim to create a hand written lexer that works in
 parallel, I hope to create a table driven lexer if time allows. This will help
 me in quickly iterating over the lexical grammar to better fit the parsing
 grammar.
 
 \section{Parser} \label{parser}
+
+There are many parser design available in the literature. The one I have chosen
+is the \gls{opg} parser by \cite{barenghi_parallel_2015}. It has a simple design
+that allows for a straightforward implementation. 
 
 \section{Semantic Analyzer} \label{semantic_analyzer}
