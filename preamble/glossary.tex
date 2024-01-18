@@ -25,7 +25,11 @@ semantic analysis}
 \newglossaryentry{linker}
 {
     name=linker,
-    description={TODO}
+    description={
+	A linker is a software tool that performs the final step of creating an
+executable program known as linking. This step involves combining object files
+created by a compiler and resolving external symbol references
+	}
 }
 
 \newglossaryentry{data_parallel}
@@ -71,17 +75,14 @@ sequences of bits for less frequently occurring items}
 
 \newglossaryentry{fsmg}{
 	name={finite state machine},
-    description={TODO}
-}
-
-\newglossaryentry{llg}{
-	name={LL parsing},
-    description={TODO}
-}
-
-\newglossaryentry{lrg}{
-	name={LR parsing},
-    description={TODO}
+    description={
+		A finite state machine (FSM) is a mathematical model used to represent systems
+with distinct states and transitions between those states. It consists of a
+set of states, a set of transitions, and an initial state. At any given time,
+the system is in one of its defined states. Transitions between states occur
+in response to specific inputs, and these transitions are governed by a set of
+rules or conditions
+	}
 }
 
 \newglossaryentry{opgg}{
@@ -91,7 +92,15 @@ sequences of bits for less frequently occurring items}
 
 \newglossaryentry{astg}{
 	name={abstract syntax tree},
-    description={TODO}
+    description={
+		An abstract syntax tree (AST) is a hierarchical, tree-like data structure that
+represents the syntactic structure of source code in a programming
+language, excluding details of the concrete syntax like punctuation or
+whitespace. Each node in the tree corresponds to a syntactic construct
+in the source code, such as expressions, statements, or declarations. The
+tree's structure reflects the grammatical relationships and nesting of these
+constructs, with parent-child relationships indicating how they are related in
+the code}
 }
 
 %%
@@ -132,16 +141,14 @@ sequences of bits for less frequently occurring items}
 	type = \acronymtype, 
 	name = {LR},
 	description = {Left-to-right, Right-most-derivation},
-	first = {Left-to-right, Right-most-derivation (LR)\glsadd{lrg}},
-	see = [Glossary:]{lrg}
+	first = {Left-to-right, Right-most-derivation (LR)},
 }
 
 \newglossaryentry{ll}{
 	type = \acronymtype, 
 	name = {LL},
 	description = {Left-to-right, Left-most-derivation},
-	first = {Left-to-right, Left-most-derivation (LL)\glsadd{llg}},
-	see = [Glossary:]{llg}
+	first = {Left-to-right, Left-most-derivation (LL)},
 }
 
 \newglossaryentry{fsm}{
@@ -211,9 +218,9 @@ sequences of bits for less frequently occurring items}
 
 \newglossaryentry{rocm}{
 	type=\acronymtype, 
-  name = {Rocm},
+  name = {ROCm},
   description  = {Radeon Open Compute platforM},
-	first={Radeon Open Compute platforM (Rocm)},
+	first={Radeon Open Compute platforM (ROCm)},
 }
 
 \newglossaryentry{nfa}{
