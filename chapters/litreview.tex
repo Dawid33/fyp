@@ -230,7 +230,7 @@ source code as well as find strings, comments and identifiers, among other
 tokens, in distinct passes over the source code. It is not table driven and is
 instead specialized for APL. Since the computational complexity of the compiler
 is high and its performance is not evaluated by the authors, it remains unknown
-if is an improved approach to parallel lexing.
+if it is an improved approach to parallel lexing.
 
 A variation of the heuristic approach by \cite{barenghi_parallel_2015} is
 implemented by \cite{li_plex_2021} that generalizes it and makes it language
@@ -257,8 +257,8 @@ barve_improved_2015}
 
 \section{Parsing} \label{lit_review_parsing}
 
-Parsing is the second canonical stage of a generic compiler. The goal of a
-parser is to take a list of lexemes from a lexer and structure them as a graph
+Parsing is the second canonical stage of a compiler. The goal of a parser
+is to take a list of lexemes from a lexer and structure them as a graph
 \citep{scott_programming_2015}. This structure makes it easier to navigate
 and manipulate the source code using concepts defined by the language like
 variables, functions and control structures. The graph structure created by

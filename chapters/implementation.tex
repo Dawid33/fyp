@@ -1,17 +1,35 @@
 \chapter{Implementation} \label{implementation}
 
+For my first implementation attempt, I decided to use the Java programming
+language. I chose Java because of its extensive standard library, advanced
+parallel processing facilities and my existing familiarity with it. Due to
+these factors I was able to quickly iterate on the programs architecture and
+data structures. After finishing and testing a simple lexer and parser, I
+found that the performance of the program was very dissatisfactory. Optimizing
+its performance would have required a deep understanding of the Java virtual
+machine. The amount of additional effort required to achieve satisfactory
+performance was substantial and besides the topic of my \gls{fyp}.
 
-\section{Initial Experimentation}
+I started the project over from scratch using the Rust programming language.
+Rust, like Java, has very good parallel programming facilities and an extensive
+software ecosystem. The experience I gained from the Java implementation meant I
+had a working prototype much sooner than with my first attempt. The performance
+of the Rust implementation was orders of magnitude faster, even without any
+optimization. I continued implementing the relevant research and, once complete
+to a satisfactory degree, I submitted this implementation. The following
+sections describe its various aspects in more detail.
+\newline \newline
+Section \ref{dependancies}
+\newline \newline
+Section \ref{structure}
+\newline \newline
+Section \ref{outputs_and_visualizations}
+\newline \newline
+Section \ref{debugging}
 
-For my first attempt, I chose to implement my project using the Java programming
-language. I chose Java due to its extensive standard library, its advanced parallel
-processing facilities and existing familiarity with it.
 
-I decided to create an experimental implementation in order to better understand
-the structure of the implementation,
-
-\section{Dependancies} \label{dependancies}
+\section{Dependencies} \label{dependancies}
 \section{Structure} \label{structure}
 \subsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
-\section{Outputs and Visualisations} \label{outputs_and_visualisations}
+\section{Outputs and Visualizations} \label{outputs_and_visualizations}
 \section{Debugging} \label{debugging}
