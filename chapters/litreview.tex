@@ -325,33 +325,67 @@ of recognizing operators in the grammar that are associative so that elements of
 such lists can be more effectively reduced into parse tree nodes before knowing
 they are part of a list.
 
-\begin{comment}
-    LLP(q, k) \cite{robin_voetter_parallel_2021}
-    \newline \newline
-    CYK Parsing \cite{skrzypczak_parallel_nodate}
-    \newline \newline
-    also mention \cite{mark_thierry_vandevoorde_parallel_1988, alblas_bibliography_1994}
-\end{comment}
+
+\cite{vagner_parallel_2007} A deterministic parallel LL parsing algorithm is
+presented. The algorithm is based on a transformation from a parsing problem to
+parallel reduction. First, a nondeterministic version of a parallel LL parser
+is introduced. Then, it is transformed into the deterministic version — the
+LLP parser. The deterministic LLP(q, k) parser uses two kinds of information to
+select the next operation — a lookahead string of length up to k symbols and a
+lookback string of length up to q symbols. Deterministic parsing is available
+for LLP grammars, a subclass of LL grammars. Since the pre- sented deterministic
+and nondeterministic parallel parsers are both based on parallel reduction, they
+are suitable for most parallel architectures.
+
+\cite{mark_thierry_vandevoorde_parallel_1988}
+
+\cite{alblas_bibliography_1994}
+
+CYK Parsing \cite{skrzypczak_parallel_nodate}
 
 \section{Semantic Analysis} \label{lit_review_analysis}
-% \begin{comment}
 \begin{itemize}
-    \item Identify what is in semantic anlysis
+    \item Identify what is in semantic analysis
     \item What occurs during semantic analysis?
     \begin{itemize}
         \item Correcting parse tree if only subset of possible grammar productions are accepted
         \item Symbol table generation
     \end{itemize}
-% \end{comment}
+    \item Ways of navigating an AST in parallel
+\end{itemize}
+
+Semantic analysis is the compilation stage which follows from syntactic
+analysis. Informally, syntactic analysis attempts to find the structure of
+a program whereas semantic analysis tries to find its meaning. A program's
+meaning describes the processes a computer follows when executing a program
+in that specific language. \cite{scott_programming_2015} describes this
+further:``Meaning [...] allows us to enforce rules (e.g., type consistency)
+that go beyond mere form, and it provides the information we need in order to
+generate an equivalent output program. It is conventional to say that the syntax
+of a language is precisely that portion of the language definition that can be
+described conveniently by a context-free grammar, while the semantics is that
+portion of the definition that cannot. [...] In general, any rule that requires
+the compiler to compare things that are separated by long distances, or to count
+things that are not properly nested, ends up being a matter of semantics.''
+
 
 \cite{komathukattil_evaluating_nodate} outlines methods of checking whether an
 identifier has been used before it is declared.
 
-\cite{seshadri_investigation_1991}
-    \item Ways of navigating an AST in parallel
-\end{itemize}
+\cite{seshadri_investigation_1991} describes \gls{dky} issues in
+parallel semantic analysis, along with three approaches to avoid or minimize its
+impact. The DKY problem is encountered in concurrent compilers where a worker
+doesn't know if a variable hasn't been declared since it only has a limited view
+of the whole program. If a variable was declared in an earlier portion of the
+code, workers who can only access subsequent portions will not know about it.
 
-
+\begin{enumerate}
+    \item DKY Avoidance - involves scheduling processes in the compiler in order
+to avoid DKYs during semantic analysis. This technique was used by Parallel
+Compilation for a Parallel Machine.
+    \item DKY Handling
+    \item Two part DKY Handling
+\end{enumerate}
 
 
 
