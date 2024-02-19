@@ -18,23 +18,26 @@ paralleization method. This decision is important because it can impact the
 performance of the compiler, as well as the programming language and algorithms
 used in its implementation. For this project I considered between using the
 parallel facilities of GPUs, multicore CPU's and SIMD capable CPU's. There exist
-other ways of executing code in parallel however those methods were available to
-me at the time.
+other ways of executing code in parallel however those methods were unavailable
+at the time of writing.
 
 Computing on the GPU affords the highest peak performance due to being built
-with data-parallism in mind. Unfortunately however, programming on a GPU is
+with data-parallism in mind. Unfortunately, however, programming on a GPU is
 difficult, running small tasks on it is impractical and trying to create a
-compiler that runs on the GPU requires making big concessions in regard to
-the compiler architecture and language design. This leaves a combination
-of multicore and \gls{simd} processing which would be most performant in
-the general case, however for my \gls{fyp} I intend to only focus on the
-multithreaded case. There are other methods that exist today besides the
-ones I’ve mentioned so far however they are arguably niche and not commonly
-available.
+compiler that runs on the GPU requires making big concessions in regard to the
+compiler architecture and language design. Although promising results were shown
+by \cite{skrzypczak_parallel_2012}, even for input as small as 200 lexemes,
+other work such as that by \cite{voetter_compilation_2022} shows very large
+overhead for average sized inputs. Due to these issues I determined that writing
+a parallel compiler frontend to work on the GPU would be impractical.
+
+On the other hand, multicore parallelism is much more flexible and commonly
+available. 
+
 
 \section{Lexer} \label{lexer}
 
-The core issue with lexing in parallel is figuring out the inital state
+The core issue with parallel lexing is figuring out the inital state
 of the \gls{fsm} for all but the \gls{fsm} processing the first chunk of
 input. This can be solved through enumerating through all possible initial
 states or simply guessing the most likely state and backtracking if guessed
@@ -61,3 +64,7 @@ There are many parser designs available in the literature. The one I have chosen
 is the \gls{opg} parser by \cite{barenghi_parallel_2015}. It has a simple design
 that allows for a straightforward implementation. 
 
+\section{Semantic Analyzer} \label{parser}
+
+For this compilation stage I intend to create my own algorithm for finding if
+all variables had been declared before use.

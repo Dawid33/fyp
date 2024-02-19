@@ -3,19 +3,21 @@
 \input{preamble/glossary}
 \input{preamble/newcommands}
 
+\counterwithout{figure}{chapter}
+\counterwithout{listing}{chapter}
+
 \setcitestyle{citesep={;}}
 \titleformat{\chapter}[hang] 
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter:}{0.5em}{} 
 
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue}
 
-\definecolor{verylightgray}{rgb}{0.902, 0.902, 0.902}
+\definecolor{darkgray}{rgb}{0.700, 0.700, 0.700}
 
 \mdfdefinestyle{writersnote}{%
-    linecolor=lightgray,linewidth=2pt,%
-    backgroundcolor=verylightgray,%
+    linecolor=darkgray,linewidth=2pt,%
     topline=false,rightline=false,bottomline=false,%
-    innertopmargin=2pt, frametitle=Section Plan,
+    innertopmargin=2pt,
 }
 
 \mdfdefinestyle{roughwork}{%
@@ -60,8 +62,8 @@
 }
 \makeatother
 
-\newenvironment{sectionplan}
-  {\begin{mdframed}[style=writersnote]\small}
+\newenvironment{code}
+  {\begin{mdframed}[style=writeresnote]\small}
   {\end{mdframed} }
 \newenvironment{roughwork}
   {\begin{mdframed}[style=roughwork]
