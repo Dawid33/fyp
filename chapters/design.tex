@@ -13,15 +13,24 @@
 
 \section{Parallelization Method} \label{design_parallel_method}
 
-Computing on the GPU is theoretically the option with the most available
-performance. Unfortunately however, programming on a GPU is difficult, running
-small tasks on it is impractical and trying to create a compiler that runs
-on the GPU requires making big concessions in regard to the compiler
-architecture and language design. This leaves a combination of multicore and
-\gls{simd} processing which would be most performant in the general case,
-however for my \gls{fyp} I intend to only focus on the multithreaded case.
-There are other methods that exist today besides the ones I’ve mentioned so far
-however they are arguably niche and not commonly available.
+When designing a parallel compiler, one must first choose an appropriate
+paralleization method. This decision is important because it can impact the
+performance of the compiler, as well as the programming language and algorithms
+used in its implementation. For this project I considered between using the
+parallel facilities of GPUs, multicore CPU's and SIMD capable CPU's. There exist
+other ways of executing code in parallel however those methods were available to
+me at the time.
+
+Computing on the GPU affords the highest peak performance due to being built
+with data-parallism in mind. Unfortunately however, programming on a GPU is
+difficult, running small tasks on it is impractical and trying to create a
+compiler that runs on the GPU requires making big concessions in regard to
+the compiler architecture and language design. This leaves a combination
+of multicore and \gls{simd} processing which would be most performant in
+the general case, however for my \gls{fyp} I intend to only focus on the
+multithreaded case. There are other methods that exist today besides the
+ones I’ve mentioned so far however they are arguably niche and not commonly
+available.
 
 \section{Lexer} \label{lexer}
 

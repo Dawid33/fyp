@@ -3,7 +3,7 @@
 In this literature review I research techniques for creating a parallel
 compiler. This review has helped me to develop a better understanding of how
 parallel compilers work and how to approach implementing one. Time constraints
-make it impossible to review all existing literature on the topic however
+make it impossible to review all literature on the topic however
 an attempt is made to cover important developments in parallel compilation
 research.
 \newline \newline
@@ -43,13 +43,14 @@ Section \ref{gpgpu} describes highly parallel computing on graphics cards.
 
 \gls{simd} instructions are assembly instructions that can process more data
 than a typical assembly instruction. Instead of processing data with normal
-registers, \gls{simd} instructions use special registers that are several times
-larger than normal registers. This allows a processor to compute an assembly
-instruction over parts of the register in parallel. These instructions are
-also known as vector instructions since they process lists or vectors of data.
-As an example, in the Advanced RISC Machines (ARM) instruction set, the ADD
-instructions can be contrasted with its corresponding vector instruction UQADD8
-which adds 4 8-bit numbers with 4 other 8-bit numbers \citep{noauthor_arm_nodate}.
+registers, \gls{simd} instructions use special registers that are several
+times larger than normal registers. This allows a processor to compute an
+assembly instruction over parts of the register in parallel. These instructions
+are also known as vector instructions since they process lists or vectors
+of data. As an example, in the Advanced RISC Machines (ARM) instruction
+set, the ADD instructions can be contrasted with its corresponding vector
+instruction UQADD8 which adds four 8-bit numbers with four other 8-bit numbers
+\citep{noauthor_arm_nodate}.
 
 Since vector instructions are functionally similar to a collection of assembly
 instructions being executed simultaneously, a program written using vector
@@ -72,8 +73,8 @@ at the same time through the multi-threading facilities exposed by most
 modern \glspl{cpu}. Each process can have its own call stack and its own view
 of memory. This freedom in program execution and memory access allows for
 performant designs of complex parallel algorithms. The performance of a well
-implemented program can potentially scale with then number of \gls{cpu} cores
-available to the program. For example, if a parallel program can run in 1 second
+implemented program can potentially scale with the number of \gls{cpu} cores
+available to the program. For example, if a parallel program can run in one second
 on one thread then in it should run in a quarter of a second on four threads. In
 reality, there is overhead from thread creation, synchronization and management
 that prevents a perfectly linear performance improvement.
@@ -101,20 +102,20 @@ environment.
 
 \section{Methods of Parallelizing A Compiler} \label{compiler_parallel_methods}
 
-\cite{gross_parallel_1989} outlines three main approaches for parallelizing a
+\cite{gross_parallel_1989} outline three key approaches for parallelizing a
 compiler. The first approach consists of splitting the source code of a program
 into chunks and processing each chunk individually. Many compilers divide up
 source code at the filesystem-level where each file of source code can be
 compiled separately from other parts of the program. Although this approach is
 already somewhat \gls{data_parallel}, it can be taken even further where each
-file is split up into even smaller chunks, with each of these chunks being
+file is split into even smaller chunks, with each of these chunks being
 processed independently.
 
 The second approach is termed computation partitioning. This is described as
 a series of sequential computations that can be divided up and processed in
 parallel with the results of each computation being joined together at the end.
 
-The final method is pipeling which involves dividing up a computation into some
+The final method is pipeling which involves dividing a computation into some
 number of phases where each phase depends on the output from the previous phase.
 
 \cite{mark_thierry_vandevoorde_parallel_1988} attempts to implement a parallel
@@ -126,7 +127,7 @@ compiler architecture.
 \cite{scott_programming_2015} describes lexing as the process of removing
 unnecessary characters from source code and grouping characters of interest
 together into lexemes. This compilation stage emits a list of lexemes that are
-later passed on to the parser. The purpose of lexing is to simplify the task
+later passed to the parser. The purpose of lexing is to simplify the task
 of the parser by reducing the size of its input. Lexing is sometimes  called
 tokenization or lexical analysis and it is performed by a lexer, sometimes
 called a tokenizer or lexical analyser. Lexers are defined using \glspl{reg_exp}
@@ -137,12 +138,12 @@ lexer can similarly be described as one.
 A \gls{fsm} is a model of an abstract machine that can be in one of a finite
 number of states at any given time. A \gls{fsm} works by accepting input symbols
 which can cause the state of the \gls{fsm} to change according to a set of
-state transition rules that define the \gls{fsm}. \gls{fsm} can be described
+state transition rules that define the \gls{fsm}. A \gls{fsm} can be described
 as either a \gls{nfa} or as a \gls{dfa}. In a parallel lexer where the output
 in one thread may depend on the output of another thread, it is undesirable to
 have different results based on the same input because it can lead to bugs and
 an unpredictable output. This situation can occur in a \gls{nfa} which makes
-it non-trivial to design a parallel lexer around an \gls{nfa}. The deterministic
+it non-trivial to design a parallel lexer around \gls{nfa}. The deterministic
 property of a \gls{dfa} ensures that the resulting state of a
 \gls{dfa} will always be the same for a given input.  As such, structuring a
 lexer as a \gls{dfa} can ensure a consistent and repeatable computation for a
@@ -185,7 +186,7 @@ appear in a lexeme, such a string or comment, then multiple initial states must
 be additionally computed.
 
 Instead of using a language specific heuristic,
-\cite{mytkowicz_data-parallel_2014} aim to optimize speculative simulation for
+\cite{mytkowicz_data-parallel_2014} attempted to optimize speculative simulation for
 any given \gls{dfa}. The core algorithm is very similar to the one previously
 described. It begins with the assumption of needing to compute the \gls{dfa} for
 every possible initial state the input can be in. Instead of using a language
@@ -208,7 +209,7 @@ in order to perform the state transitions for a given transition function
 and set of states. This parallelizes an important part of the algorithm and
 significantly improves performance. A technique called range coalescing is also
 used to reduce the number of memory addresses accessed when computing state
-transitions for many states. \cite{zhao_--fly_2015} implements a convergence
+transitions for many states. \cite{zhao_--fly_2015} implement a convergence
 algorthim similar to the one described by \cite{mytkowicz_data-parallel_2014}.
 
 \subsection{Speculative Simulation} \label{speculative_simulation}
@@ -334,14 +335,12 @@ they are part of a list.
 
 \section{Semantic Analysis} \label{lit_review_analysis}
 % \begin{comment}
+\begin{itemize}
+    \item Identify what is in semantic anlysis
+    \item What occurs during semantic analysis?
     \begin{itemize}
-        \item Identify what is in semantic anlysis
-        \item What occurs during semantic analysis?
-        \begin{itemize}
-            \item Correcting parse tree if only subset of possible grammar productions are accepted
-            \item Symbol table generation
-        \end{itemize}
-        \item Ways of navigating an AST in parallel
+        \item Correcting parse tree if only subset of possible grammar productions are accepted
+        \item Symbol table generation
     \end{itemize}
 % \end{comment}
 
@@ -349,5 +348,10 @@ they are part of a list.
 identifier has been used before it is declared.
 
 \cite{seshadri_investigation_1991}
+    \item Ways of navigating an AST in parallel
+\end{itemize}
+
+
+
 
 
