@@ -1,70 +1,71 @@
 \chapter{Design} \label{design}
-\begin{comment}
+
+\section{Lexer}
 \begin{itemize}
-	\item Discuss the various approaches mentioned in the literature review, mentioning
-		  their pros and cons. Write about the issues with designing a parallel compiler,
-		  e.g issues common to all approaches. Elaborate on why tech choices are being
-		  made e.g using rust. 
-	\item Discuss my plan / design for the compiler.
+	\item Lexical grammar, defined with regex's and parsed with regex syntax crate.
+	\item Use that to create NFA graph using Thompson's construction.
+	\item Convert the NFA into a DFA using powerset construction.
+	\item Generate a state transition table by traversing the graph.
+	\item During generation, look for duplicate state transitions where the
+		  characters are the same, but states differ. This indicates that those
+		  states are potential start states of the lexer.
+	\item Split up the source code into n chunks and put them onto a work queue.
+	\item These chunks are taken off the work queue by a thread pool. Each chunk
+		  is lexed for each possible start state, resulting in n number of outputs for n
+		  number of start states, per chunk.
+	\item 
+	Once all chunks have been processed, the correct output from each chunk is
+		  chosen such that its start state is the same as the previous chunk's finish
+    	  state. Remaining outputs are discarded.
+\end{itemize}
+
+The goal of a lexer is to recognise patterns in text and emit lexemes associated
+with these patterns. For this purpose I decided to use regular expressions as they 
+are expressive
+
+\begin{comment}
+Insert a figure here like the one in data-parallel finite state machines.
+\end{comment}
+
+\begin{enumerate}
+	\item 
+\end{enumerate}
+
+The first step of the lexer is to create a state transition table from a
+lexical grammar. A lexical grammar is defined as a mapping between lexemes and
+regular expressions. The lexer should output a lexeme if the regular expression
+associated with it is encountered in the source code. In order to tokenize the source code 
+
+
+	\item Split the source code into many parts and tokenize each part using the
+		  state transition table from the previous step.
+	\item Once all parts have been processed, the correct output from each chunk is
+		  chosen such that its start state is the same as the previous chunk's finish
+    	  state. Remaining outputs are discarded.
+\end{enumerate}
+
+
+
+The goal of the lexer is to use this lexical grammar
+in order to generate a state transition table that can be used
+
+
+\section{Parser}
+\begin{itemize}
+	\item Read grammar from file that defines terminals, non-terminals nad production rules.
+	\item Transform grammar into floyd normal form as defined in \cite{barenghi_parallel_2015}
+	\item Build operator precedence table according to \cite{grune_parsing_2008}
+	\item Take the lexer output from the previous step and parse each chunk using the same
+  		  thread pool approach. The parsing algorithm returns a partial parse tree and a stack of lexemes.
+	\item Take the outputs from each chunks and join the paritial parse trees using
+  		  the same parsing algorithm.
+\end{itemize}
+
+\section{Semantic Analysis}
+\begin{itemize}
+	\item Iterate over the parse tree in post-order DFS in order to generate the Abstract syntax tree.
+	\item Iterate over AST using pre-order DFS, creating a new thread and symbol table for certain nodes.
+	\item Check if variables are defined before they are used by checking if they exist in ancestor symbol tables.
 \end{itemize}
 
 
-\end{comment}
-
-\section{Parallelization Method} \label{design_parallel_method}
-
-When designing a parallel compiler, one must first choose an appropriate
-paralleization method. This decision is important because it can impact the
-performance of the compiler, as well as the programming language and algorithms
-used in its implementation. For this project I considered between using the
-parallel facilities of GPUs, multicore CPU's and SIMD capable CPU's. There exist
-other ways of executing code in parallel however those methods were unavailable
-at the time of writing.
-
-Computing on the GPU affords the highest peak performance due to being built
-with data-parallism in mind. Unfortunately, however, programming on a GPU is
-difficult, running small tasks on it is impractical and trying to create a
-compiler that runs on the GPU requires making big concessions in regard to the
-compiler architecture and language design. Although promising results were shown
-by \cite{skrzypczak_parallel_2012}, even for input as small as 200 lexemes,
-other work such as that by \cite{voetter_compilation_2022} shows very large
-overhead for average sized inputs. Due to these issues I determined that writing
-a parallel compiler frontend to work on the GPU would be impractical.
-
-On the other hand, multicore parallelism is much more flexible and commonly
-available. 
-
-
-\section{Lexer} \label{lexer}
-
-The core issue with parallel lexing is figuring out the inital state
-of the \gls{fsm} for all but the \gls{fsm} processing the first chunk of
-input. This can be solved through enumerating through all possible initial
-states or simply guessing the most likely state and backtracking if guessed
-incorrectly. Speculative approaches that guess the initial \gls{fsm} states
-can be effective, as shown by \cite{luchaup_speculative_2011}, however
-\cite{mytkowicz_data-parallel_2014} points out two major issues that can
-arise. The efficacy of the speculative approach is difficult to predict and
-it is limited by the sequential implementation on a single core. In contrast,
-enumerating through all possible inital states is predictable against even
-randomly generated input and can benefit from fine-grained parallelism afforded
-by a single core.
-
-For my implementation I've chosen to use the enumerative approach where I will
-enumerate over all possible initial states for the \glspl{fsm}. I hope this will
-lead to a more robust system that is resistant to edge cases and adversarial
-input. Although I initially aim to create a handwritten lexer that works in
-parallel, I hope to create a table driven lexer if time allows. This will help
-me in quickly iterating over the lexical grammar to better fit the parsing
-grammar.
-
-\section{Parser} \label{parser}
-
-There are many parser designs available in the literature. The one I have chosen
-is the \gls{opg} parser by \cite{barenghi_parallel_2015}. It has a simple design
-that allows for a straightforward implementation. 
-
-\section{Semantic Analyzer} \label{parser}
-
-For this compilation stage I intend to create my own algorithm for finding if
-all variables had been declared before use.

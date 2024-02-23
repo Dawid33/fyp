@@ -1,23 +1,9 @@
 \chapter{Implementation} \label{implementation}
 
-For my first implementation attempt, I decided to use the Java programming
-language. I chose Java because of its extensive standard library, advanced
-parallel processing facilities and my existing familiarity with it. Due to
-these factors I was able to quickly iterate on the programs architecture and
-data structures. After finishing and testing a simple lexer and parser, I
-found that the performance of the program was very dissatisfactory. Optimizing
-its performance would have required a deep understanding of the Java virtual
-machine. The amount of additional effort required to achieve satisfactory
-performance was substantial and besides the topic of my \gls{fyp}.
-
-I started the project over from scratch using the Rust programming language.
-Rust, like Java, has very good parallel programming facilities and an extensive
-software ecosystem. The experience I gained from the Java implementation meant I
-had a working prototype much sooner than with my first attempt. The performance
-of the Rust implementation was orders of magnitude faster, even without any
-optimization. I continued implementing the relevant research and, once completed
-to a satisfactory degree, I submitted this implementation. The following
-sections describe its various aspects in more detail.
+For this project I decided to use the Rust programming language. I chose
+it because it makes performant, memory safe code much easier to write than
+alternative systems languages such as C++ or C. Additionally, it has very good
+parallel programming facilities and an extensive software ecosystem.
 
 \begin{listing}[H]
 \begin{minted}[linenos]{text}

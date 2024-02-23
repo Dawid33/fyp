@@ -371,4 +371,65 @@ order to avoid DKYs during semantic analysis. This technique was also used by
 \end{enumerate}
 
 
+\section{Conclusion}
+
+My 
+
+\subsection{Parallelization Method} \label{design_parallel_method}
+
+When designing a parallel compiler, one must first choose an appropriate
+paralleization method. This decision is important because it can impact the
+performance of the compiler, as well as the programming language and algorithms
+used in its implementation. For this project I considered between using the
+parallel facilities of GPUs, multicore CPU's and SIMD capable CPU's. There exist
+other ways of executing code in parallel however those methods were unavailable
+at the time of writing.
+
+Computing on the GPU affords the highest peak performance due to being built
+with data-parallism in mind. Unfortunately, however, programming on a GPU is
+difficult, running small tasks on it is impractical and trying to create a
+compiler that runs on the GPU requires making big concessions in regard to the
+compiler architecture and language design. Although promising results were shown
+by \cite{skrzypczak_parallel_2012}, even for input as small as 200 lexemes,
+other work such as that by \cite{voetter_compilation_2022} shows very large
+overhead for average sized inputs. Due to these issues I determined that writing
+a parallel compiler frontend to work on the GPU would be impractical.
+
+On the other hand, multicore parallelism is much more flexible and commonly
+available. 
+
+
+\subsection{Lexer} \label{lexer}
+
+The core issue with parallel lexing is figuring out the inital state
+of the \gls{fsm} for all but the \gls{fsm} processing the first chunk of
+input. This can be solved through enumerating through all possible initial
+states or simply guessing the most likely state and backtracking if guessed
+incorrectly. Speculative approaches that guess the initial \gls{fsm} states
+can be effective, as shown by \cite{luchaup_speculative_2011}, however
+\cite{mytkowicz_data-parallel_2014} points out two major issues that can
+arise. The efficacy of the speculative approach is difficult to predict and
+it is limited by the sequential implementation on a single core. In contrast,
+enumerating through all possible inital states is predictable against even
+randomly generated input and can benefit from fine-grained parallelism afforded
+by a single core.
+
+For my implementation I've chosen to use the enumerative approach where I will
+enumerate over all possible initial states for the \glspl{fsm}. I hope this will
+lead to a more robust system that is resistant to edge cases and adversarial
+input. Although I initially aim to create a handwritten lexer that works in
+parallel, I hope to create a table driven lexer if time allows. This will help
+me in quickly iterating over the lexical grammar to better fit the parsing
+grammar.
+
+\subsection{Parser} \label{parser}
+
+There are many parser designs available in the literature. The one I have chosen
+is the \gls{opg} parser by \cite{barenghi_parallel_2015}. It has a simple design
+that allows for a straightforward implementation. 
+
+\subsection{Semantic Analyzer} \label{parser}
+
+For this compilation stage I intend to create my own algorithm for finding if
+all variables had been declared before use.
 
