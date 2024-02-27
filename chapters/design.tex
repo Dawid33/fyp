@@ -44,11 +44,8 @@ associated with it is encountered in the source code. In order to tokenize the s
     	  state. Remaining outputs are discarded.
 \end{enumerate}
 
-
-
 The goal of the lexer is to use this lexical grammar
 in order to generate a state transition table that can be used
-
 
 \section{Parser}
 \begin{itemize}
@@ -57,9 +54,53 @@ in order to generate a state transition table that can be used
 	\item Build operator precedence table according to \cite{grune_parsing_2008}
 	\item Take the lexer output from the previous step and parse each chunk using the same
   		  thread pool approach. The parsing algorithm returns a partial parse tree and a stack of lexemes.
-	\item Take the outputs from each chunks and join the paritial parse trees using
+	\item Take the outputs from each chunk and join the partial parse trees using
   		  the same parsing algorithm.
 \end{itemize}
+
+\cite{barenghi_parallel_2015} explains an algorithm for parsing operator
+precedence grammars. An operator precedence grammar is a kind of context-free
+grammar  where the right hand-side of each production rule contains at least
+one terminal or non-terminal and no right-hand side contains two consecutive
+non-terminals. In order to parse such a grammar using the algorithm described by
+\cite{barenghi_parallel_2015}, it is necessary to transform the grammar into a
+floyd normal form.
+
+Once the initial grammar has been transformed into a bounded context grammar, it
+can then be parsed by the algorithm described by \cite{barenghi_parallel_2015}.
+This algorithm requires the construction of a standard operator precedence table
+that contains the precedence relationships between terminals in the grammar.
+
+\subsection{Generating the Operator Precedence Table}
+
+Setting up the precedence table for such grammars is a relatively
+straightforward process. Initially, we determine the set FIRSTOP(A) for each
+non-terminal A, representing the operators that can appear as the first operator
+in sentential forms derived from A. It's important to note that this initial
+operator can be preceded by at most one non-terminal in an operator grammar. The
+construction of FIRSTOP sets for all non-terminals occurs simultaneously through
+the following steps:
+
+\begin{enumerate}
+
+	\item For each non-terminal A, identify all right-hand sides of its rules.
+	For each right-hand side R, include the first operator in R (if present) in
+	FIRSTOP(A). This step establishes the initial values for all FIRSTOP sets.
+
+    \item For each non-terminal A, examine all right-hand sides of its rules.
+For each right-hand side R that commences with a non-terminal, denoted as
+B, incorporate the elements of FIRSTOP(B) into FIRSTOP(A). This step is
+justified by the possibility that a sentential form of A may initiate with B,
+necessitating the inclusion of all operators in FIRSTOP(B) into FIRSTOP(A).
+
+    \item Iteratively repeat step 2 until no further changes occur in any
+FIRSTOP set. At this point, we have determined the FIRSTOP sets for all
+non-terminals.
+\end{enumerate}
+
+Additionally, we require the set LASTOP(A), defined in a similar manner. An analogous algorithm involves utilizing the last operator in R during step 1 and incorporating the elements of FIRSTOP(B) where B terminates A in step 2. These steps facilitate the determination of LASTOP sets.
+
+
 
 \section{Semantic Analysis}
 \begin{itemize}
@@ -67,5 +108,6 @@ in order to generate a state transition table that can be used
 	\item Iterate over AST using pre-order DFS, creating a new thread and symbol table for certain nodes.
 	\item Check if variables are defined before they are used by checking if they exist in ancestor symbol tables.
 \end{itemize}
+
 
 
