@@ -1,51 +1,40 @@
 \chapter{Design} \label{design}
 
 \section{Lexer}
-\begin{itemize}
-	\item Lexical grammar, defined with regex's and parsed with regex syntax crate.
-	\item Use that to create NFA graph using Thompson's construction.
-	\item Convert the NFA into a DFA using powerset construction.
-	\item Generate a state transition table by traversing the graph.
-	\item During generation, look for duplicate state transitions where the
-		  characters are the same, but states differ. This indicates that those
-		  states are potential start states of the lexer.
-	\item Split up the source code into n chunks and put them onto a work queue.
-	\item These chunks are taken off the work queue by a thread pool. Each chunk
-		  is lexed for each possible start state, resulting in n number of outputs for n
-		  number of start states, per chunk.
-	\item 
-	Once all chunks have been processed, the correct output from each chunk is
-		  chosen such that its start state is the same as the previous chunk's finish
-    	  state. Remaining outputs are discarded.
-\end{itemize}
+Lexers are defined using \glspl{reg_exp} that describe the character sequences
+which need to be found and emitted from the lexer as lexemes. These regular
+expressions can be used to construct a \gls{dfa} that accepts the source
+code as input and is capable of recognising whether the input matches any of
+the original regular expressions. In order to construct the \gls{dfa}, it is
+necessary to convert the regular expression into a \gls{nfa} using Thompson's
+construction algorithm, which results in a graph where nodes represent the
+states within the \gls{nfa} and the edges represent possible transitions that
+can be caused by input symbols. This \gls{nfa} can then be converted into a
+\gls{dfa} through the powerset construction algorithm. 
 
-The goal of a lexer is to recognise patterns in text and emit lexemes associated
-with these patterns. For this purpose I decided to use regular expressions as they 
-are expressive
+% Insert a figure here like the one in data-parallel finite state machines.
 
-\begin{comment}
-Insert a figure here like the one in data-parallel finite state machines.
-\end{comment}
+Instead of using the \gls{dfa} directly when lexing, it is more efficient
+to instead keep track of the current state in a variable and compute the
+state transition by using a lookup table. This state transition table has the
+potential input symbols on one axis and potential states the lexer can be in on
+the other axis. The table can be constructed by travering the \gls{dfa} from its
+initial state and populating it the states to which the lexer can transition to.
 
-\begin{enumerate}
-	\item 
-\end{enumerate}
+% During generation, look for duplicate state transitions where the characters
+% are the same, but states differ. This indicates that those states are potential
+% start states of the lexer.
 
-The first step of the lexer is to create a state transition table from a
-lexical grammar. A lexical grammar is defined as a mapping between lexemes and
-regular expressions. The lexer should output a lexeme if the regular expression
-associated with it is encountered in the source code. In order to tokenize the source code 
-
-
-	\item Split the source code into many parts and tokenize each part using the
-		  state transition table from the previous step.
-	\item Once all parts have been processed, the correct output from each chunk is
-		  chosen such that its start state is the same as the previous chunk's finish
-    	  state. Remaining outputs are discarded.
-\end{enumerate}
-
-The goal of the lexer is to use this lexical grammar
-in order to generate a state transition table that can be used
+In order to lex the source code in parallel, the source code is split into
+roughly equal sized parts. These parts are put onto a queue that can be
+concurrently accessed by a thread pool. Each thread then takes a part of the
+source code and tokenizes from every possible initial state, resultling in as
+many outputs as there are possible initial states. These outputs are collected
+in a concurrently accessible array until all parts of the source code are
+tokenized. Once the work queue is emtpy, the correct output from each part is
+chosen such that its start state is the same as the previous chunk's finish
+state. Remaining outputs are discarded. This list of token lists, reprsenting
+the tokenized version of the input source code, is then passed on to the parser.
 
 \section{Parser}
 \begin{itemize}
@@ -99,7 +88,6 @@ non-terminals.
 \end{enumerate}
 
 Additionally, we require the set LASTOP(A), defined in a similar manner. An analogous algorithm involves utilizing the last operator in R during step 1 and incorporating the elements of FIRSTOP(B) where B terminates A in step 2. These steps facilitate the determination of LASTOP sets.
-
 
 
 \section{Semantic Analysis}
