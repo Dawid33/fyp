@@ -1,25 +1,25 @@
 \chapter{Design} \label{design}
 
-The design of my compiler is based on ideas and techniques I encountered during
-my literature review. Instead of creating a compiler for a specific language
-instance, I intend to implement a table-driven lexer and parser that will
-make it easy to implement parsers for different kinds of language grammars.
-The semantic analysis phase cannot easily be made generic and will require a
-distinct implementation per language. I believe this approach will let me more
-easily evaluate the impact of parallel processing on compilation by testing not
-only my own bespoke language but also common languages such as JSON or Lua.
+The design of my compiler is based on the ideas and techniques I encountered
+during my literature review. Instead of creating a compiler for a specific
+language instance, I intend to implement a table-driven lexer and parser that
+will make it easy to implement different kinds of languages. The semantic
+analysis phase cannot easily be made generic and will require a distinct
+implementation per language. I believe this approach will help me evaluate the
+impact of parallel processing on compilation by testing not only my own bespoke
+language but also common languages such as JSON or Lua.
 \newline\newline
 Section \ref{design_lexer} describes the design of the table-driven lexer.
 This includes my method of defining lexical grammars, the algorithms used in
-pre-processing the lexical grammar and those used during the actual parallel
+pre-processing the lexical grammar and the algorithms used during the parallel
 lexical analysis.
 \newline\newline
 Section \ref{design_parser} describes the design of the table-driven parser.
 This includes my method of defining the parsing grammar, its limitations,
 the transformation of the grammar into a bounded context grammar and parallel
-parsing algorithm used to parse the grammar.
+parsing algorithm.
 \newline\newline
-Section \ref{design_analyser} describes the general approach for desingning the
+Section \ref{design_analyser} describes the general approach for designing the
 semantic analyser.
 
 \section{Lexer} \label{design_lexer}
@@ -30,27 +30,27 @@ expressions can be used to construct a \gls{dfa} that accepts the source code
 as input and is capable of recognizing whether the input matches any of the
 original regular expressions. An example of such a lexical grammar for JSON is
 attached in the addendum as listing \ref{lst:json_lexical_grammar}. In order
-to construct the \gls{dfa}, it is necessary to convert the regular expression
-into a \gls{nfa} using Thompson's construction algorithm, which results in a
+to construct the \gls{dfa}, it is necessary to convert the regular expressions
+into an \gls{nfa} using Thompson's construction algorithm, which results in a
 graph where nodes represent the states and the edges represent state transitions
 within the \gls{nfa}. This \gls{nfa} can then be converted into a \gls{dfa}
 through the powerset construction algorithm.
 
-During this conversion, it is necessary to look for duplicate state transitions
-where the input symbols are the same, but the states being transitioned to are
-different. This process enumerates every potential start state of the lexer
-and solves the issue posed in section \ref{lit_review_lexing}. These states
-are recorded and used during the parallel lexing algorithm. 
+During this conversion, it is necessary to look for duplicate edges where the
+input symbols are the same, but the states being transitioned to are different.
+This process enumerates every potential start state of the lexer and solves the
+issue posed in section \ref{lit_review_lexing}. These states are recorded and
+used during the parallel lexing algorithm.
 
 Sequential lexical analysis can be now be performed by iterating over the
-input text and, starting at the \glspl{dfa} initial state, following the
-edges that correspond to each input symbol. If an edge is found, the state
-changes accordingly and the symbol is considered consumed or, in other words,
-discarded. This continues until a node is reached where no edge can be found for
-the current input symbol. If such a node represents a terminal of the grammar,
-that terminal is emitted by the lexer.  If it doesn't, the lexer emits an error.
-In either case, its state is reset to its initial state and the input symbol
-is re-consumed.
+input text, starting at the \glspl{dfa} initial state and following the edges
+that correspond to each input symbol. If an edge is found, the state changes
+accordingly and the symbol is discarded. This continues until a node is
+reached where no edge can be found for the current input symbol. If such a node
+represents a terminal of the grammar, that terminal is emitted by the lexer.
+If it doesn't, the lexer emits an error. In either case, the lexer's state is
+reset to its initial state and the input symbol is processed again instead of
+being discarded.
 
 % Insert a figure here like the one in data-parallel finite state machines.
 
@@ -76,7 +76,6 @@ the same as the previous chunk's finish state. Remaining outputs are discarded.
 This list of token lists, representing the tokenized version of the input source
 code, is then passed on to the parser.
 
-\subsection{Summary}
 The following is a summary of the overall steps that need to be performed before
 and during lexical analysis:
 
@@ -118,7 +117,7 @@ context of what came before or after it.
 
 An \gls{opg} is in \gls{fnf} if and only if an axiom S does not
 occur in any right-hand side; no two rules have the same right-hand side;
-no rule, possibly except one with the axiom as the left-hand side, has ε as
+no rule, possibly except one with the axiom as the left-hand side, has $\epsilon$ as
 the right-hand side; renaming rules, i.e., those with a single non-terminal
 character as right-hand side, are those and only those with S as the left-hand
 side.
@@ -138,13 +137,12 @@ The list of lexemes from the lexer is split into roughly same sized chunks
 that are put onto a concurrently accessible queue. A threadpool of parsers is
 initialized and begins working through the queue, parsing each chunk of lexemes
 and outputting a partial parse tree into a concurrently accessible output array.
-These partial parse trees contain the parse tree of the lexems that could be
+These partial parse trees contain the parse tree of the lexemes that could be
 reduced, aswell as the internal stack of tokens that could not yet be reduced
 due to an insufficient amount of context. Once the queue is empty, the internal
 stacks of these partial parse trees are joined and the same parsing algorithm is
 used to produce the final parse tree.
 
-\subsection{Summary}
 The following is a summary of the overall steps that need to be performed before
 and during syntax analysis:
 
@@ -161,7 +159,7 @@ and during syntax analysis:
 		  the same parsing algorithm. This results in a parse tree of the whole input.
 \end{enumerate}
 
-\section{Semantic Analysis}
+\section{Semantic Analysis} \label{design_analyser}
 
 In order to perform semantic analysis, the parse tree from the previous
 step must be transformed in an \gls{ast}. This can be done by traversing the
@@ -171,23 +169,19 @@ the parse tree resulting from the parsing step can be stored as an array whereby
 traversing the array from start to finish equates to a post-order traversal of
 the tree. 
 
-Semantic analysis is performed by traversing the \gls{ast} with a pre-order
-depth first traversal and keeping a record of  identifiers and their metadata in
-a symbol table. A symbol table is a lookup table between identifiers and their
-metadata.
+Semantic analysis is performed by traversing the \gls{ast} with a
+pre-order depth first traversal and keeping a record of identifiers
+and their metadata in a symbol table. Parallel semantic analysis can be
+performed by splitting the work based on nested scopes in the \gls{ast}
+\citep{seshadri_investigation_1991}. If during a pre-order depth first traversal
+of the \gls{ast} a new scope is encountered, the analyser starts a new thread
+for parsing that inner scope while passing to it the symbol table it has
+constructed thus far. Working from the top to bottom of the \gls{ast} this way
+ensures that the whole of the \gls{ast} is analysed correctly. The drawback with
+this approach is that the efficacy of this parallelism is limited to the number
+and size of the nested scopes, which additionally makes splitting the work
+equally between threads a challenge.
 
-Parallel semantic analysis can be performed by splitting the work based on
-nested scopes in the \gls{ast} \citep{seshadri_investigation_1991}. If during
-a pre-order depth first traversal of the \gls{ast} a new scope is encountered,
-the analyser starts a new thread for parsing that inner scope while passing
-to it the symbol table it has constructed thus far. Working from the top to
-bottom of the \gls{ast} this way ensures that the whole of the \gls{ast} is
-analysed correctly. The drawback with this approach is that the efficacy of
-this parallelism is limited to the number and size of the nested scopes, which
-additionally makes splitting the work equally between threads a challenge.
-
-
-\subsection{Summary}
 Summary of the overall steps that need to be performed during semantic
 analysis:
 
