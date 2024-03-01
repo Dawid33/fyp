@@ -325,7 +325,6 @@ of recognizing operators in the grammar that are associative so that elements of
 such lists can be more effectively reduced into parse tree nodes before knowing
 they are part of a list.
 
-
 \subsection{Parallel LL Parsing} \label{parallel_ll_parsing}
 
 \cite{vagner_parallel_2007} A deterministic parallel LL parsing algorithm is
@@ -335,32 +334,30 @@ is introduced. Then, it is transformed into the deterministic version — the
 LLP parser. The deterministic LLP(q, k) parser uses two kinds of information to
 select the next operation — a lookahead string of length up to k symbols and a
 lookback string of length up to q symbols. Deterministic parsing is available
-for LLP grammars, a subclass of LL grammars. Since the pre- sented deterministic
-and nondeterministic parallel parsers are both based on parallel reduction, they
-are suitable for most parallel architectures.
+for LLP grammars, a subclass of LL grammars. 
 
 \cite{mark_thierry_vandevoorde_parallel_1988} exploits C's syntax and semantics
 by forking his recursive descent parser (an \gls{ll} parser) in places where
 the code under parse does not depend on the code surrounding it. 
 
 \cite{skrzypczak_parallel_2012} Implments a \gls{cpu} and \gls{gpu}
-implementation of the CYK parsing algorithm.
+implementation of the \gls{cyk} parsing algorithm.
 
 \section{Semantic Analysis} \label{lit_review_analysis}
 
-Semantic analysis is the third stage canonical stage of compilation. The goal of
-this stage is to analyze the output from the parser to see whether it conforms
-to  the semantic rules that define the language. Informally, parsing attempts
-to find the structure of a program whereas semantic analysis tries to find its
-meaning. 
+Semantic analysis is the third canonical stage of compilation. The goal of this
+stage is to analyse the output from the parser to see whether it conforms to
+the semantic rules of the language. Informally, parsing attempts to find the
+structure of a program whereas semantic analysis tries to find its meaning.
 
-\cite{seshadri_investigation_1991} implements a parallel semantic analyzer for
+\cite{seshadri_investigation_1991} implements a parallel semantic analyser for
 a regular, block structured language. It checks whether variables have been
 declared before being used. The \gls{dky} problem is introduced which describes
-the issues with analyzing code without full context. The \gls{dky} problem is
-encountered when the analysis process is performed somewhere within the code
-and it isn't yet known whether a variable has been declared. The authors then
-propose three approaches to avoid or minimize its impact.
+certain issues with analysing code without the context surrounding the code.
+An example of the \gls{dky} problem is encountered when the analysis process
+is performed within the code and it isn't yet known whether a variable has been
+declared. The authors propose three approaches to avoid or minimize the impact
+of this problem.
 
 \begin{enumerate}
     \item DKY Avoidance - involves scheduling processes in the compiler in
@@ -371,22 +368,25 @@ order to avoid DKYs during semantic analysis. This technique was also used by
 \end{enumerate}
 
 
-\section{Conclusion}
+\section{Conclusion} \label{litreview_conclusion}
 
-
-
-\subsection{Parallelization Method} \label{design_parallel_method}
+After conducting this literature review, I have gained a broader understanding
+of the issues involved in parallel compilation and the potential solutions posed
+by various authors. This experience has been invaluably helpful in designing
+and implementing my own frontend. This chapter discusses my findings and
+considerations for the design of my compiler frontend.
 
 When designing a parallel compiler, one must first choose an appropriate
 paralleization method. This decision is important because it can impact the
 performance of the compiler, as well as the programming language and algorithms
-used in its implementation. For this project I considered between using the
-parallel facilities of GPUs, multicore CPU's and SIMD capable CPU's. There exist
-other ways of executing code in parallel however those methods were unavailable
-at the time of writing.
+used in its implementation. For this project I considered between using the eral
+context of the source code under analysis. I intend to base my own algorithm off
+the findings by \cite{seshadri_investigation_1991} parallel facilities of GPUs,
+multicore CPU's and SIMD capable CPU's. There exist other ways of executing code
+in parallel however those methods were unavailable at the time of writing.
 
 Computing on the GPU affords the highest peak performance due to being built
-with data-parallism in mind. Unfortunately, however, programming on a GPU is
+with data-parallelism in mind. Unfortunately, however, programming on a GPU is
 difficult, running small tasks on it is impractical and trying to create a
 compiler that runs on the GPU requires making big concessions in regard to the
 compiler architecture and language design. Although promising results were shown
@@ -395,14 +395,16 @@ other work such as that by \cite{voetter_compilation_2022} shows very large
 overhead for average sized inputs. Due to these issues I determined that writing
 a parallel compiler frontend to work on the GPU would be impractical.
 
-On the other hand, multicore parallelism is much more flexible and commonly
-available. 
+In contrast to the GPU programming, multicore parallelism is more commonly
+available, flexible and scalable. Although the peak performance of a \gls{gpu}
+is higher than a \gls{cpu} for specific workloads, I believe the benefits
+of using multicore parallelism outweigh the benefits of \gls{gpu} paralleism
+when taking into account the issues associated with \gls{gpu} programming.
+After choosing a parallelization method, such as multicore parallelism, it is
+necessary to choose an appropriate lexing algorithm.
 
-
-\subsection{Lexer} \label{lexer}
-
-The core issue with parallel lexing is figuring out the inital state
-of the \gls{fsm} for all but the \gls{fsm} processing the first chunk of
+The core issue with parallel lexing is figuring out the initial state
+of the \gls{dfa} for all but the \gls{dfa} processing the first chunk of
 input. This can be solved through enumerating through all possible initial
 states or simply guessing the most likely state and backtracking if guessed
 incorrectly. Speculative approaches that guess the initial \gls{fsm} states
@@ -410,26 +412,27 @@ can be effective, as shown by \cite{luchaup_speculative_2011}, however
 \cite{mytkowicz_data-parallel_2014} points out two major issues that can
 arise. The efficacy of the speculative approach is difficult to predict and
 it is limited by the sequential implementation on a single core. In contrast,
-enumerating through all possible inital states is predictable against even
+enumerating through all possible initial states is predictable against even
 randomly generated input and can benefit from fine-grained parallelism afforded
 by a single core.
 
 For my implementation I've chosen to use the enumerative approach where I will
 enumerate over all possible initial states for the \glspl{fsm}. I hope this will
 lead to a more robust system that is resistant to edge cases and adversarial
-input. Although I initially aim to create a handwritten lexer that works in
-parallel, I hope to create a table driven lexer if time allows. This will help
-me in quickly iterating over the lexical grammar to better fit the parsing
-grammar.
+input. I hope to create a table driven lexer which help me in quickly iterating
+over the lexical grammar to better fit the parsing grammar.
 
-\subsection{Parser} \label{parser}
+There are many parser designs available in the literature. After considering the
+expressiveness of the parsing grammar, the complexity of the implementation and
+performance results of each parser design, I have chosen the \gls{opg} parser
+by \cite{barenghi_parallel_2015}. It has a simple design that allows for a
+straightforward implementation while remaining with an expressive enough parsing
+grammar for implementing fully-featured programming languages.
 
-There are many parser designs available in the literature. The one I have chosen
-is the \gls{opg} parser by \cite{barenghi_parallel_2015}. It has a simple design
-that allows for a straightforward implementation. 
-
-\subsection{Semantic Analyzer} \label{parser}
-
-For this compilation stage I intend to create my own algorithm for finding if
-all variables had been declared before use.
+The semantic analysis stage requires parallel traversing of the \gls{ast},
+possibly with some amount of synchronization between threads in order to
+fill in information a thread may be missing about the general context of
+the source code under analysis. I intend to base my own algorithm off the
+findings by \cite{seshadri_investigation_1991}, as described in section
+\ref{lit_review_analysis}.
 

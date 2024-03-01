@@ -1,5 +1,24 @@
 \chapter{Conclusion} \label{conclusion}
 
+\chapter{Addendum} \label{addendum}
+\begin{listing}
+\begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
+CHAR = "[a-zA-Z]"
+BOOL = "true|false"
+NUMBER = "[0-9][0-9]*"
+WHITESPACE = "( |\n|\t|\r)*"
+LBRACE = "\{"
+RBRACE = "\}"
+LSQUARE = "\["
+RSQUARE = "\]"
+COMMA = ","
+COLON = ":"
+QUOTES = "\""
+\end{minted}
+\caption{JSON lexical grammar keywords and their corresponding regular expressions}
+\label{lst:json_lexical_grammar}
+\end{listing}
+
 \begin{listing}
 \begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
 %nonterminal OBJECT
@@ -60,6 +79,6 @@ ELEMENTS : VALUE
          | VALUE COMMA ELEMENTS
          ;
 \end{minted}
-\caption{JSON Grammar in OPG Form.}
+\caption{An operator precedence parsing grammar for JSON.}
 \label{lst:json_grammar}
 \end{listing}
