@@ -136,8 +136,8 @@ The input to the parser is prepared similarly to the previous lexing step.
 The list of lexemes from the lexer is split into roughly same sized chunks
 that are put onto a concurrently accessible queue. A threadpool of parsers is
 initialized and begins working through the queue, parsing each chunk of lexemes
-and outputting a partial parse tree into a concurrently accessible output array.
-These partial parse trees contain the parse tree of the lexemes that could be
+and outputting a partial parse tree into a concurrently accessible output
+array. These partial parse trees contain the parse tree of the lexemes that were
 reduced, aswell as the internal stack of tokens that could not yet be reduced
 due to an insufficient amount of context. Once the queue is empty, the internal
 stacks of these partial parse trees are joined and the same parsing algorithm is

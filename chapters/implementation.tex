@@ -5,14 +5,14 @@ it because it makes performant, memory safe code much easier to write than
 alternative systems languages such as C++ or C. Additionally, it has very good
 parallel programming facilities and an extensive software ecosystem.
 
-\subsection{Generating the Operator Precedence Table}
+% \subsection{Generating the Operator Precedence Table}
 
 \begin{listing}[H]
 \begin{minted}[linenos]{text}
 fn factorial[n: int] {
     if n == 0 {
         return 1;
-    } 
+    % } 
 
     return (n * factorial(n - 1));
 }
