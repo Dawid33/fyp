@@ -80,20 +80,20 @@ The following is a summary of the overall steps that need to be performed before
 and during lexical analysis:
 
 \begin{enumerate}
-	\item Define the lexical grammar with a mapping between regex's and terminals.
-	\item Use that to create NFA graph using Thompson's construction.
-	\item Convert the NFA into a DFA using powerset construction.
-	\item During generation, look for duplicate state transitions where the
-		  characters are the same, but states differ. This indicates that those
-		  states are potential start states of the lexer.
-	\item Generate a state transition table by traversing the graph.
-	\item Split up the source code into $n$ chunks and put them onto a work queue.
-	\item These chunks are taken off the work queue by a thread pool. Each chunk
-		  is lexed for each possible start state, resulting in $x$ number of outputs for $x$
-		  number of start states, per chunk $n$.
-	\item Once all chunks have been processed, the correct output from each chunk is
-		  chosen such that its start state is the same as the previous chunk's finish
-    	  state. Remaining outputs are discarded.
+\item Define the lexical grammar with a mapping between regex's and terminals.
+\item Use that to create NFA graph using Thompson's construction.
+\item Convert the NFA into a DFA using powerset construction.
+\item During generation, look for duplicate state transitions where the
+	  characters are the same, but states differ. This indicates that those
+	  states are potential start states of the lexer.
+\item Generate a state transition table by traversing the graph.
+\item Split up the source code into $n$ chunks and put them onto a work queue.
+\item These chunks are taken off the work queue by a thread pool. Each chunk
+	  is lexed for each possible start state, resulting in $x$ number of outputs for $x$
+	  number of start states, per chunk $n$.
+\item Once all chunks have been processed, the correct output from each chunk is
+	  chosen such that its start state is the same as the previous chunk's finish
+	  state. Remaining outputs are discarded.
 \end{enumerate}
 
 \section{Parser} \label{design_parser}

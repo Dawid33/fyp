@@ -1,0 +1,1081 @@
+Introduction introduction
+comment
+sectionplan
+     itemize
+          General introduction about how important compilers are and how
+                 everyone and is using them in some form or another.
+
+          Talk about research into parallel compilers at a highlevel,
+                ie the current state of research, when research has been done,
+                parallel compilers historically of low importance.
+
+          Justify further research into compilers based on their use
+                in software development and other fields.
+
+          Link to next section that describes how compilers work at a
+                high level
+     itemize
+sectionplan
+comment
+
+A compiler is an important part of the interface between a programmer
+and the underlying hardware of a computer. The modern software ecosystem
+could not exist without the frequent and extensive use of compilers in
+the software development process. It is of no surprise that the study of
+compilers and programming languages has been an important field of research
+in computer science for many decades. Any improvements in compiler technology
+can have wide and long lasting affects on software development as a whole
+hall_compiler_2009.
+
+The focus of my fyp is to study a subset of compiler research techniques
+concerning aspects of parallel compilation. Research in this niche has been
+historically of low priority. Traditional compiler architecture since the
+1970’s has focused on minimizing memory use and optimizing for single threaded
+performance. This was at a time when computers did not even have enough random
+access memory to store all the data necessary for compiling large amounts of
+source code. Commodity hardware has improved significantly since then. The
+memory available in a computer is much more abundant than before and single
+threaded processor speed is not improving at the same rate as it once did
+shalf_future_2020, williams_whats_2017. Nowadays, in fact, we are
+seeing commodity processors comprising of several cores capable of running
+dozens of processes concurrently. I believe this is sufficient cause to consider
+alternative architectures that more efficiently utilize this environment. A
+parallel compiler utilizes these methods of executing code in parallel in order
+to speed up the compilation process.
+
+Modern compilers in use today implement varying amounts of parallelism in order
+to speed up compilation times. The rustc compiler team reports a 50%
+performance improvement after making parts of the compiler_frontend work
+in parallelpnicholas_nethercote_faster_2023. Such improvements are not
+limited to the compiler_frontend. The mold linker project boasts
+significantly better performance than its competitors due to its extensive and
+clever use of parallelismprui_ueyama_design_nodate. The potential for
+performance improvements is evident in modern compilers and tools. Moreover,
+compiler research and development can generalize to other areas outside of
+software development.
+
+Applications of techniques traditionally associated with compilers can
+be found in network_packet_parsingpwang_hyperscan_2019,
+roesch_snort_1999 and huffman_coding in lossless image compression
+howard_parallel_1996. These areas, among others, can benefit from
+research directed at improving compiler technology due to a significant
+overlap in the underlying theorypmytkowicz_data-parallel_2014. Futher
+development in compiler theory can benefit not only software development but
+also tangential fields of research.
+
+Before delving any further into parallel compilation, Section seq_comp
+will describe compilation in general, paying particular reference to the
+traditional method of sequential compilation.
+
+Sequential Compilation seq_comp
+comment
+sectionplan
+     Short explanation of compiler technology and the structure of a compiler.
+     Explain the compilation process and the use cases for compilation.
+sectionplan
+comment
+
+figure[t]
+images/generic_compiler.png
+Compilation phases in a generic compiler
+fig:compiler
+figure
+
+Compilation is the process of translating a program written in a high-level
+programming language into a semantically equivalent program written in a
+lower-level programming language such as assembly or machine language. During
+this process, a compiler will usually lose information in the source code that
+is useful to the programmer but is useless to the machine that will ultimately
+execute the program. Inside a compiler, the source code passes through several
+algorithms that transform the code in various ways. These compilation stages are
+shown in Figure fig:compiler
+
+The work of a compiler can be described as a multi-stage process resembling a
+pipeline, where each stage works on the output of the previous stage thereby
+producing the input for the next stage. The lexer splits the source code into
+lexemes which are then tokenized for the next stage. In the parser stage, based
+on the rules of the source language the code’s syntax is verified. During this
+stage, an ast is created, reflecting the hierarchy of the elements in the
+code such as, tokens, variables and statements, and the relationships between
+them. This AST is then analysed during the semantic analysis stage, considering
+type checking, variable declaration prior to usage, unused variables and so
+forth. The parts of the compiler up to this point are colloquially called the
+frontend of the compiler.
+
+These stages of compilation are often executed sequentially with each stage
+doing the least amount of work necessary before passing control to the
+subsequent stage. For example, the lexer will do only enough work to retrieve
+the next token before passing that token to the parser. The parser will then
+begin executing, doing as much work as it can with the input it got from the
+lexer. Once it has done that, it might request more tokens from the lexer,
+in which case control is returned to the lexer. This process repeats until
+the entire contents of the source code in the input file has been processed.
+Compiling in this way is much more memory efficient compared to performing
+a compilation stage to completion prior to moving onto the next stage.
+Difficulties with implementing this architecture using parallel processing
+methods is described in Section compiler_parallel_methods.
+
+This type of architecture has traditionally been driven by a need to
+optimize for memory use and single threaded performance. For example, in
+the C programming language, programmers are forced to declare functions
+before they are called. This was originally done to allow the compiler
+to fully compile each function independently, without needing to keep all
+the other functions in memory and avoiding a costly second pass over code
+scott_programming_2015. As a result of these decisions as well as
+historical circumstances, the stages of a compiler that are responsible  for
+taking a file containing source code to code generation are often implemented
+with little to no parallelization. An example of going from source code to
+machine code is the process of compiling a C file into an object file. As can be
+seen from figure fig:compiler, this envelopes a significant portion of the
+compiler. The next section describes parallel compilation.
+
+Advantages of Parallel Compilation advantages_parallel_compilation
+comment
+sectionplan
+	What is meant by parallel compilation?
+
+     Reasons why parallel compilation is good / better compared to sequential
+	 compilation.
+
+     itemize
+          More cores used during compilation increase compiler performance
+                and better overall system usage
+
+          Hardware investments in the industry involve specialisation
+                and increasing reliance on performance gained from parallel
+                architectures. Existing compilers cannot benefit from this.
+
+          Choosing a language syntax as a language designer based on how
+                well it can be processed in parallel in the future is necessary
+                early on. Making those choices is difficult due to a lack of
+                research.
+     itemize
+sectionplan
+comment
+
+Parallel compilation uses parallel processing methods in order to perform
+various compilation stages at the same time. Parallel processing involves
+executing more than one piece of code simultaneously. This can be achieved in
+various ways depending on the available hardware. The most common of these
+methods are reviewed in Section parallelisation_methods. Potential ways
+to structure a compiler that uses such methods is discussed in Section
+compiler_parallel_methods. This section considers the motivation for
+performing various stages of compilation in parallel.
+
+Increased Compilation Speed with Additional Cores
+
+Using multiple cpu cores during compilation can significantly speed
+up compilation time. IBM researchers created an optimized lexer for a
+machine that had a large number of cores that could run code in parallel
+scarpazza_high-performance_2009. It had eight cpu cores where each
+core could run eight threads in parallel for a total of 64 parallel threads.
+More recent research into parallel lexing from 2014 achieved a 14 times speed
+up for lexing HTML on a 16 core systempmytkowicz_data-parallel_2014.
+Substantial performance gains can clearly be achieved through parallelization.
+This shows how using parallel processing to speed up compilation tasks is not a
+new idea.
+
+Parallel Compilation Research Aids Language Design
+
+For several programming languages, once their syntax goes into general
+use, it becomes nearly impossible to reverse or change it, without breaking
+programs already written in the particular language. This leads to programming
+languages becoming complicated and difficult to define as new features
+are added. For example, languages like C++ are very difficult to compile
+sequentially, let alone in a parallel mannerpnoauthor_most_2022,
+noauthor_difficulties_nodate. Research into and the development of parallel
+compilers can aid future developers when they are choosing their syntax or
+what features they want to implement without making their language difficult
+to compile in parallel.barenghi_parallel_2015 demonstrate how this is
+possible by, restricting the grammar of a language to an opg.
+It is currently rather difficult to design a language that can easily be
+compiled in parallel due to a lack of research and prior work as compared to
+sequential approaches.
+
+Advantages of Data-Parallel Compilation advantages_of_data_p_comp
+comment
+sectionplan
+	Justify looking at alternative forms of parallelism besides the status quo 	
+	method of compiling source files in parallel and linking them together in the
+	end.
+
+	itemize
+     	Finer grained parallelism is better suited for running code on 	
+	  massively parallel hardware like GPU's.
+
+     	Error handling potential improved by being able to independantly
+	  process any part of text. No need for complex parser recovery.
+
+     	More parts of a program can be compiled in parallel which makes
+	  better use of a computers parallel processing facilities. Mention 
+	  ahmdals law.
+
+	Significant speedups in other fields where only one stage of is 
+	  needed like lexing and parsing very large amounts of structured 
+	  data. Mention PAPAGENO parser with relation to simdjson.
+	itemize
+sectionplan
+comment
+
+Several current compilers can operate in parallel by compiling several source
+code files at the same time. In this work I am looking at methods employing
+data_parallel techniques where various stages of a compiler can be executed in
+parallel when compiling the same file. Due to a lack of prior work comparing
+the two approaches directly, it is difficult to make an objective statement
+regarding which approach is better. I will instead focus on the potential
+advantages and disadvantages of using such a fine-grained approach.
+
+Parser Error Recovery
+
+An important responsibility of a compiler is to detect syntax errors and
+present useful error messages to the programmer. Such syntax errors are often
+detected during the parsing stage. An issue arises when a parser must then try
+to continue parsing after encountering a syntax error. This parser recovery
+process is frequently complicated and suboptimalpmedeiros_syntax_2018,
+hutchison_pika_2020. Certain parallel parsing algorithms, such as those
+described intclarke_error_1993 andbarenghi_parallel_2015, allow
+a compiler to forgo a complicated parsing recovery process by being able to
+restart the parsing process immediately after encountering an error.
+
+Applications in Massively Parallel Computing
+
+There have been increasingly larger investments in the hardware industry for
+specialized hardware beyond the typical cpu.  For example, smart nic
+ that offload network packet parsing from the cpu or dpu to provide
+more facilities for networking and input/output related tasks than a typical
+cpu. A recent article from October 2023 outlined how the software stack
+of amd for general purpose computing on graphics cards known as rocm
+is now among their top prioritiespward-foxton_rocm_2023. As time goes
+on, we are likely to see increasingly specialized and heterogenous hardware
+stefan_lets_2021.
+
+Current compilation algorithms scale poorly on massively parallel hardware
+such as gpu. This is due to the restrictions imposed on programs by
+computing in such an environment. An approach utilizing data_parallel
+data structures described byhillis_data_1986 was applied by
+voetter_compilation_2022 in order to create a parallel compiler
+implementation that could run on a gpu. This shows how  re-architecting
+the compilation process makes it possible to execute a compiler in a massively
+parallel environment, potentially achieving a linear performance increase that
+scales with the number of available processing cores. This can only be achieved
+by efficiently using data_parallel techniques.
+
+Increased Performance in Individual Compilation Stages
+
+Data parallelism can massively improve the performance of various workloads
+that utilise individual compilation stages. Tasks that involve processing large
+amounts of data benefit the most.barenghi_parallel_2015 demonstrated
+how json parsing can be performed much faster using a parallel parser.
+mytkowicz_data-parallel_2014 optimized a parallel regular expression
+matching algorithm which has a large number of uses beyond lexical analysis.
+
+Project Objectives
+
+The goal of my fyp is to research parallel compilation techniques for
+a compiler frontend. In order to reach this goal, I intend to carry out a
+literature review of exiting approaches in order to better understand the best
+currently available techniques. Based on that literature review I will choose
+a compiler frontend design, implement as much of it as time allows and evaluate
+its performance. The compiler frontend will consist of the lexing, parsing and
+semantic analysis stages.
+
+Structure of Report structure_of_report
+
+Chapter introduction provides an introduction to compilers as well as
+reasons to study parallel compilation methods.
+Chapter litreview describes approaches for compiling
+in parallel.
+Chapter design will elaborate on the issues associated with designing a
+parallel compiler, presenting suggested approaches from literature to overcome
+these, prior to focusing on the compiler design and implementation decisions
+specific to this work.
+Chapter implementation explains the details of my implementation,
+referring to aspects such as external code dependancies and program structure.
+Chapter evalandtesting describes my testing methodologies and the
+evaluation of my compilers performance.
+Chapter conclusion concludes the report with a summary of the report and
+concluding remarks.
+Literature Review litreview
+
+In this literature review I research techniques for creating a parallel
+compiler. This review has helped me to develop a better understanding of how
+parallel compilers work and how to approach implementing one. Time constraints
+make it impossible to review all literature on the topic however
+an attempt is made to cover important developments in parallel compilation
+research.
+Section parallelisation_methods describes hardware capable of executing
+code in parallel.
+Section compiler_parallel_methods describes different ways of designing a
+compiler such that parts of it can be executed simultaneously.
+Section lit_review_lexing describes various algorithms to perform lexing
+in parallel.
+Section lit_review_parsing describes various algorithms to perform parsing
+in parallel.
+
+
+
+
+Parallelization Methods parallelisation_methods
+This section describes various hardware solutions for executing code in
+parallel. Parallel processing methods can strongly impact the performance
+for a parallel program as well as the complexity of its implementation. This
+makes it worthwhile to research and analyse various forms of parallelization
+in order to make informed decisions about how they will be used in the final
+implementation.
+Section simd describes simd instructions which are used to implement
+instruction-level parallelism.
+Section multithreading describes a more granular form of parallelization
+called multi-threading or multiprocessing.
+Section gpgpu describes highly parallel computing on graphics cards.
+
+Single Instruction Multiple Data simd
+
+simd instructions are assembly instructions that can process more data
+than a typical assembly instruction. Instead of processing data with normal
+registers, simd instructions use special registers that are several
+times larger than normal registers. This allows a processor to compute an
+assembly instruction over parts of the register in parallel. These instructions
+are also known as vector instructions since they process lists or vectors
+of data. As an example, in the Advanced RISC Machines (ARM) instruction
+set, the ADD instructions can be contrasted with its corresponding vector
+instruction UQADD8 which adds four 8-bit numbers with four other 8-bit numbers
+noauthor_arm_nodate.
+
+Since vector instructions are functionally similar to a collection of assembly
+instructions being executed simultaneously, a program written using vector
+instructions can be similar in structure to an equivalent sequential one. This
+makes it possible for compilers to automatically utilize these instructions
+to speed up existing sequential programs in a process called vectorization.
+Vector instructions can also be manually written by the programmer in order to
+improve performancelangdale_parsing_2019, mytkowicz_data-parallel_2014.
+Although using vector instructions can be significantly faster than the
+sequential case, this performance benefit is only up to a point. Increasing
+performance past a certain threshold requires larger registers which take a
+long time to architect and standardize in a cpu. The methods described in
+Section multithreading scale better at the cost of having a more complex
+implementation.
+
+Multithreading/Multiprocessing multithreading
+
+Multicore parallelism makes it possible to have multiple programs execute
+at the same time through the multi-threading facilities exposed by most
+modern cpu. Each process can have its own call stack and its own view
+of memory. This freedom in program execution and memory access allows for
+performant designs of complex parallel algorithms. The performance of a well
+implemented program can potentially scale with the number of cpu cores
+available to the program. For example, if a parallel program can run in one second
+on one thread then in it should run in a quarter of a second on four threads. In
+reality, there is overhead from thread creation, synchronization and management
+that prevents a perfectly linear performance improvement.
+
+The downside of multithreading is the difficulty in creating reliable, bug free
+programs.  This processing model adds new classes of bugs, such as data races
+that can occur in shared memory scenarios.  When converting a sequential program
+to a multithreaded one, it is usually necessary to re-architect significant
+portions of it in order to better fit this processing model. Furthermore,
+managing shared memory is difficult and can lead to subtle yet complex bugs.
+
+General Purpose Computing on GPUs gpgpu
+
+It is possible to use graphics cards for general purpose computing, called
+gpgpu. It is conceptually like programming a specialized cpu that
+has hundreds if not thousands of cores. Programming for a gpu requires
+a programmer to significantly re-architect a program in order to fit the
+gpu programming model. There are additional issues, such as the time it
+takes to compile gpu programs and the large latency between a gpu
+and main memory. In fact, this latency can be so large that processing small
+amounts of data can be much less performant than a single-threaded cpu
+implementation. In general, large scale computing on a gpu can be
+strongly worthwhile if program can operate within the constraints of a gpu
+environment. 
+
+Methods of Parallelizing A Compiler compiler_parallel_methods
+
+gross_parallel_1989 outline three key approaches for parallelizing a
+compiler. The first approach consists of splitting the source code of a program
+into chunks and processing each chunk individually. Many compilers divide up
+source code at the filesystem-level where each file of source code can be
+compiled separately from other parts of the program. Although this approach is
+already somewhat data_parallel, it can be taken even further where each
+file is split into even smaller chunks, with each of these chunks being
+processed independently.
+
+The second approach is termed computation partitioning. This is described as
+a series of sequential computations that can be divided up and processed in
+parallel with the results of each computation being joined together at the end.
+
+The final method is pipeling which involves dividing a computation into some
+number of phases where each phase depends on the output from the previous phase.
+
+mark_thierry_vandevoorde_parallel_1988 attempts to implement a parallel
+C compiler using a data_parallel approach with a traditional a two-pass
+compiler architecture.
+
+Lexing lit_review_lexing
+
+scott_programming_2015 describes lexing as the process of removing
+unnecessary characters from source code and grouping characters of interest
+together into lexemes. This compilation stage emits a list of lexemes that are
+later passed to the parser. The purpose of lexing is to simplify the task
+of the parser by reducing the size of its input. Lexing is sometimes  called
+tokenization or lexical analysis and it is performed by a lexer, sometimes
+called a tokenizer or lexical analyser. Lexers are defined using reg_exp
+that describe the character sequences which need to be found and emitted from
+the lexer as lexemes. Since reg_exp can be described as a fsm, a
+lexer can similarly be described as one.
+
+A fsm is a model of an abstract machine that can be in one of a finite
+number of states at any given time. A fsm works by accepting input symbols
+which can cause the state of the fsm to change according to a set of
+state transition rules that define the fsm. A fsm can be described
+as either a nfa or as a dfa. In a parallel lexer where the output
+in one thread may depend on the output of another thread, it is undesirable to
+have different results based on the same input because it can lead to bugs and
+an unpredictable output. This situation can occur in a nfa which makes
+it non-trivial to design a parallel lexer around nfa. The deterministic
+property of a dfa ensures that the resulting state of a
+dfa will always be the same for a given input.  As such, structuring a
+lexer as a dfa can ensure a consistent and repeatable computation for a
+given chunk of source code.
+
+A common approach to multithreaded lexing involves structuring the lexer as a
+dfa, splitting the input into some number of parts, lexing each part on
+its own thread and joining up the results at the end. Due to the inherent data
+dependency between state transitions in a dfa, the initial state for a
+chunk of code depends on the output computed from lexing the code just before
+it. This causes the issue of determining the initial start state of all the
+lexers besides the one computing the first part of the overall input. A solution
+to this problem is through speculative simulation where an algorithm speculates
+on the unkown initial states of these dfas.
+
+Simulation of DFA simulation_of_dfa
+
+One approach to speculative simulation is the brute force method of computing
+a dfa for every possible state it can be initialized with. Such a
+lexer begins by splitting its input into chunks and processing each chunk
+independently on a separate thread. Once all threads are finished lexing,
+the outputs from each thread are checked, starting from the first chunk of
+code, such that the finishing state of the lexer corresponds to the initial
+state of the lexer that computed the subsequent chunk of code. The correctness
+of computing a dfa in this way relies on the  associativity of state
+transition functions as described in the parallel prefix sum algorithm in
+hillis_data_1986. This algorithm is explained more formally with both a
+message passing and a shared memory implementation byholub_parallel_2009
+and a variation of it in a cloud computing environment is shown by
+ko_speculative_2012. The need to compute the output for every possible
+initial state can result in many unnecessary computations which can
+significantly impact performance for dfa with many states.
+
+barenghi_parallel_2015 optimize this by using a heuristic where the
+source code is split into chunks that start with symbols that have known and
+consistent initial states. These symbols are found by scanning ahead when the
+source code is being split until such a symbol is found. The symbols that a
+chunk of code can start with are language dependant. If a symbol is allowed to
+appear in a lexeme, such a string or comment, then multiple initial states must
+be additionally computed.
+
+Instead of using a language specific heuristic,
+mytkowicz_data-parallel_2014 attempted to optimize speculative simulation for
+any given dfa. The core algorithm is very similar to the one previously
+described. It begins with the assumption of needing to compute the dfa for
+every possible initial state the input can be in. Instead of using a language
+specific heuristic likebarenghi_parallel_2015, which is determined ahead
+of time,mytkowicz_data-parallel_2014 define a convergence algorithm
+which reduces the number of states that need to be computed at runtime. It
+follows from the observation that many states transition to the same state on
+a given input symbol. Once this convergence of state occurs, looking up the
+state transition for each state becomes redundant as it is going to be the same
+for subsequent input symbols. By factoring out these common states, the number
+of actual state transitions that need to be computed drops significantly for
+most dfas, especially structured and non-adversarial ones. Heuristics
+are used to determine when to check for a  convergence of states. The previous
+heuristic as well as this convergence algorithm are similar in some ways however
+the solution proposed bymytkowicz_data-parallel_2014 is more generally
+applicable by not being tied to a specific language.
+
+mytkowicz_data-parallel_2014 additionally utilize simd instructions
+in order to perform the state transitions for a given transition function
+and set of states. This parallelizes an important part of the algorithm and
+significantly improves performance. A technique called range coalescing is also
+used to reduce the number of memory addresses accessed when computing state
+transitions for many states.zhao_-fly_2015 implement a convergence
+algorthim similar to the one described bymytkowicz_data-parallel_2014.
+
+Speculative Simulation speculative_simulation
+
+Another method is speculative simulation which attempts to simply guess the
+initial state of the dfas, possibly with a way to back track or validate
+its result in case of an incorrect guess.luchaup_multi-byte_2009,
+luchaup_speculative_2011 implements a speculative method which simply guesses
+the unknown initial dfa state. This optimization works due to its specifc
+use in intrusion detection systems where a dfa spends most of its time
+in a small number of states which can be guessed with sufficient accuracy to
+outweigh the cost of validation in case of failure.
+
+Prescanning lit_prescanning
+
+bernecky_spmdsimd_2003 describes a multi-pass parallel APL tokenizer
+written in APL which performs several scanning phases in order to pre-process
+source code as well as find strings, comments and identifiers, among other
+tokens, in distinct passes over the source code. It is not table driven and is
+instead specialized for APL. Since the computational complexity of the compiler
+is high and its performance is not evaluated by the authors, it remains unknown
+if it is an improved approach to parallel lexing.
+
+A variation of the heuristic approach bybarenghi_parallel_2015 is
+implemented byli_plex_2021 that generalizes it and makes it language
+independent. It builds on work fromsinya_simultaneous_2013 and
+zhao_-fly_2015 to perform a pre-scanning phase by generating and
+executing a dfa based on the lexical grammar that determines the context
+for dfa in a subsequent tokenization phase.
+
+
+
+
+comment
+sinya_simultaneous_2013 propose a novel type of finite automata called
+sfa.
+Mentionlin_accelerating_2013, wang_hyperscan_2019,
+li_plex_2021, asthagiri_associative_1992 Go and look at references cited in
+zhao_-fly_2015
+Could mention these but the fella doesn't do anything novel (and his
+grammar is questionable)barve_parallel_2014, barve_parallel_2012,
+barve_improved_2015
+comment
+
+Parsing lit_review_parsing
+
+Parsing is the second canonical stage of a compiler. The goal of a parser
+is to take a list of lexemes from a lexer and structure them as a graph
+scott_programming_2015. This structure makes it easier to navigate
+and manipulate the source code using concepts defined by the language like
+variables, functions and control structures. The graph structure created by
+a parser is typically called a syntax tree or a parse tree. It is created
+according to a parsing grammar that defines how it should be built. The rules
+of a parsing grammar that govern how lexemes should be processed in order to
+validate an instance of the language and build a parse tree representing it
+are called production rules. A parser might additionally process a parse tree
+as it is getting built, or during a separate subsequent processing step, which
+produces an ast. This data structure is later analysed during the semantic
+analysis phase. There exist different families of parsers that group parsers by
+similarities in their method of parsing.
+
+ll parsers read the source code from left to right and construct a parse
+tree from the root node down, predicting at each step which production will be
+used to expand the current node, based on the next available token of input.
+ll parsers are also called recursive descent parsers due to their typical
+implementation of recursively calling a function for every non-terminal in a
+production. Many modern compilers use recursive descent parsers because they
+can easily be implemented by hand and make it is easier to generate good error
+messages for the user. An alternative approach is to create an ll parse
+table for a given grammar and use a driver program that parses tokens according
+to the rules stored in the parsing table. A program that uses this table to
+generate and output source code for a recursive descent parser is a parser
+generator.
+
+In lr parsing, source code is read left to right but the parse tree is
+constructed by first creating the leaf nodes and later grouping these nodes
+together into trees. This kind of parser works by maintaining a stack of tokens
+and parse tree nodes during parsing. The parser will match this list against
+the right side of the grammars production rules. If a match occurs, the tokens
+on the stack become children of a new node corresponding the left side of rule.
+This new node, corresponding to a subtree of the final parse tree, is pushed
+onto the stack. Parsing finishes once the root node (axiom) is built from the
+nodes on the stack. This type of parser is also called a shift-reduce parser due
+to its two main operations, shifting tokens on the stack and reducing them into
+new parse tree nodes.
+
+ll() and lr() denotes how many tokens these parsers must look
+ahead in the input in order to resolve ambiguities between production rules.
+
+Parallel LR Parsing parallel_lr_parsing
+
+barenghi_parallel_2015 proposes and implements a non-speculative lr
+(0) parallel parser generator for opgs. A key insight is in constraining
+the grammar sufficiently such that it can be deterministically decided whether
+a string of bounded length contains the right-hand side of a production
+and can be unequivocally replaced by its corresponding left-hand side. This
+is in contrast to other approaches that require the parser to speculate on
+possible production rules in order to reduce them when parsing in parallel
+mickunas_parallel_1978.
+
+li_associative_2023 builds on the work bybarenghi_parallel_2015
+and optimizes the parser for a common case encountered in real word data. When
+parsing a long list described by a recursive production rule, the whole list
+must be parsed in order to reduce it into a parse tree node. This means that
+if the list is large enough to be parsed by multiple threads then the final
+operation which reduces the stack will be deferred until all the threads have
+finished. Moreover, if there is little work for the parser to do per element
+in the list, then the bulk of the parsing will be left until the final joining
+phase of the parser. The contribution fromli_associative_2023 is a way
+of recognizing operators in the grammar that are associative so that elements of
+such lists can be more effectively reduced into parse tree nodes before knowing
+they are part of a list.
+
+Parallel LL Parsing parallel_ll_parsing
+
+vagner_parallel_2007 A deterministic parallel LL parsing algorithm is
+presented. The algorithm is based on a transformation from a parsing problem to
+parallel reduction. First, a nondeterministic version of a parallel LL parser
+is introduced. Then, it is transformed into the deterministic version — the
+LLP parser. The deterministic LLP(q, k) parser uses two kinds of information to
+select the next operation — a lookahead string of length up to k symbols and a
+lookback string of length up to q symbols. Deterministic parsing is available
+for LLP grammars, a subclass of LL grammars. 
+
+mark_thierry_vandevoorde_parallel_1988 exploits C's syntax and semantics
+by forking his recursive descent parser (an ll parser) in places where
+the code under parse does not depend on the code surrounding it. 
+
+skrzypczak_parallel_2012 Implments a cpu and gpu
+implementation of the cyk parsing algorithm.
+
+Semantic Analysis lit_review_analysis
+
+Semantic analysis is the third canonical stage of compilation. The goal of this
+stage is to analyse the output from the parser to see whether it conforms to
+the semantic rules of the language. Informally, parsing attempts to find the
+structure of a program whereas semantic analysis tries to find its meaning.
+
+seshadri_investigation_1991 implements a parallel semantic analyser for
+a regular, block structured language. It checks whether variables have been
+declared before being used. The dky problem is introduced which describes
+certain issues with analysing code without the context surrounding the code.
+An example of the dky problem is encountered when the analysis process
+is performed within the code and it isn't yet known whether a variable has been
+declared. The authors propose three approaches to avoid or minimize the impact
+of this problem.
+
+enumerate
+    DKY Avoidance - involves scheduling processes in the compiler in
+order to avoid DKYs during semantic analysis. This technique was also used by
+gross_parallel_1989.
+    DKY Handling
+    Two part DKY Handling
+enumerate
+
+
+Conclusion litreview_conclusion
+
+After conducting this literature review, I have gained a broader understanding
+of the issues involved in parallel compilation and the potential solutions posed
+by various authors. This experience has been invaluably helpful in designing
+and implementing my own frontend. This chapter discusses my findings and
+considerations for the design of my compiler frontend.
+
+When designing a parallel compiler, one must first choose an appropriate
+paralleization method. This decision is important because it can impact the
+performance of the compiler, as well as the programming language and algorithms
+used in its implementation. For this project I considered between using the eral
+context of the source code under analysis. I intend to base my own algorithm off
+the findings byseshadri_investigation_1991 parallel facilities of GPUs,
+multicore CPU's and SIMD capable CPU's. There exist other ways of executing code
+in parallel however those methods were unavailable at the time of writing.
+
+Computing on the GPU affords the highest peak performance due to being built
+with data-parallelism in mind. Unfortunately, however, programming on a GPU is
+difficult, running small tasks on it is impractical and trying to create a
+compiler that runs on the GPU requires making big concessions in regard to the
+compiler architecture and language design. Although promising results were shown
+byskrzypczak_parallel_2012, even for input as small as 200 lexemes,
+other work such as that byvoetter_compilation_2022 shows very large
+overhead for average sized inputs. Due to these issues I determined that writing
+a parallel compiler frontend to work on the GPU would be impractical.
+
+In contrast to the GPU programming, multicore parallelism is more commonly
+available, flexible and scalable. Although the peak performance of a gpu
+is higher than a cpu for specific workloads, I believe the benefits
+of using multicore parallelism outweigh the benefits of gpu paralleism
+when taking into account the issues associated with gpu programming.
+After choosing a parallelization method, such as multicore parallelism, it is
+necessary to choose an appropriate lexing algorithm.
+
+The core issue with parallel lexing is figuring out the initial state
+of the dfa for all but the dfa processing the first chunk of
+input. This can be solved through enumerating through all possible initial
+states or simply guessing the most likely state and backtracking if guessed
+incorrectly. Speculative approaches that guess the initial fsm states
+can be effective, as shown byluchaup_speculative_2011, however
+mytkowicz_data-parallel_2014 points out two major issues that can
+arise. The efficacy of the speculative approach is difficult to predict and
+it is limited by the sequential implementation on a single core. In contrast,
+enumerating through all possible initial states is predictable against even
+randomly generated input and can benefit from fine-grained parallelism afforded
+by a single core.
+
+For my implementation I've chosen to use the enumerative approach where I will
+enumerate over all possible initial states for the fsm. I hope this will
+lead to a more robust system that is resistant to edge cases and adversarial
+input. I hope to create a table driven lexer which help me in quickly iterating
+over the lexical grammar to better fit the parsing grammar.
+
+There are many parser designs available in the literature. After considering the
+expressiveness of the parsing grammar, the complexity of the implementation and
+performance results of each parser design, I have chosen the opg parser
+bybarenghi_parallel_2015. It has a simple design that allows for a
+straightforward implementation while remaining with an expressive enough parsing
+grammar for implementing fully-featured programming languages.
+
+The semantic analysis stage requires parallel traversing of the ast,
+possibly with some amount of synchronization between threads in order to
+fill in information a thread may be missing about the general context of
+the source code under analysis. I intend to base my own algorithm off the
+findings byseshadri_investigation_1991, as described in section
+lit_review_analysis.
+
+Design design
+
+The design of my compiler is based on the ideas and techniques I encountered
+during my literature review. Instead of creating a compiler for a specific
+language instance, I intend to implement a table-driven lexer and parser that
+will make it easy to implement different kinds of languages. The semantic
+analysis phase cannot easily be made generic and will require a distinct
+implementation per language. I believe this approach will help me evaluate the
+impact of parallel processing on compilation by testing not only my own bespoke
+language but also common languages such as JSON or Lua.
+Section design_lexer describes the design of the table-driven lexer.
+This includes my method of defining lexical grammars, the algorithms used in
+pre-processing the lexical grammar and the algorithms used during the parallel
+lexical analysis.
+Section design_parser describes the design of the table-driven parser.
+This includes my method of defining the parsing grammar, its limitations,
+the transformation of the grammar into a bounded context grammar and parallel
+parsing algorithm.
+Section design_analyser describes the general approach for designing the
+semantic analyser.
+
+Lexer design_lexer
+
+Lexers are defined using reg_exp that describe the character sequences
+which need to be found and emitted from the lexer as lexemes. These regular
+expressions can be used to construct a dfa that accepts the source code
+as input and is capable of recognizing whether the input matches any of the
+original regular expressions. An example of such a lexical grammar for JSON is
+attached in the addendum as listing lst:json_lexical_grammar. In order
+to construct the dfa, it is necessary to convert the regular expressions
+into an nfa using Thompson's construction algorithm, which results in a
+graph where nodes represent the states and the edges represent state transitions
+within the nfa. This nfa can then be converted into a dfa
+through the powerset construction algorithm.
+
+During this conversion, it is necessary to look for duplicate edges where the
+input symbols are the same, but the states being transitioned to are different.
+This process enumerates every potential start state of the lexer and solves the
+issue posed in section lit_review_lexing. These states are recorded and
+used during the parallel lexing algorithm.
+
+Sequential lexical analysis can be now be performed by iterating over the
+input text, starting at the dfa initial state and following the edges
+that correspond to each input symbol. If an edge is found, the state changes
+accordingly and the symbol is discarded. This continues until a node is
+reached where no edge can be found for the current input symbol. If such a node
+represents a terminal of the grammar, that terminal is emitted by the lexer.
+If it doesn't, the lexer emits an error. In either case, the lexer's state is
+reset to its initial state and the input symbol is processed again instead of
+being discarded.
+
+
+
+Although it is possible to use the dfa directly to perform lexical
+analysis, it is more efficient to keep track of the current state in a variable
+and compute the state transition by using a lookup table. This state transition
+table has the input symbols on one axis and the lexers states on the other axis.
+The table can be constructed by traversing the dfa from its initial state
+and populating it with the state / input symbol pairs represented by edges,
+where the state is the superseding state.
+
+In order to lex the source code in parallel, the source code is first split
+into roughly equal sized parts and it is inserted into a concurrently accessible
+queue. A threadpool of lexers is initialized and each thread takes a part of the
+source code and begins to tokenize it. Each thread initialises an instance of
+a lexer for every possible initial state the lexer can be in, resulting in as
+many outputs as there are possible initial states. In other words, an individual
+output is a list of lexemes generated by a lexer when it begins lexing from
+some initial state. These outputs are collected in a concurrently accessible
+array until all parts of the source code are tokenized. Once the work queue is
+empty, the correct output from each part is chosen such that its start state is
+the same as the previous chunk's finish state. Remaining outputs are discarded.
+This list of token lists, representing the tokenized version of the input source
+code, is then passed on to the parser.
+
+The following is a summary of the overall steps that need to be performed before
+and during lexical analysis:
+
+enumerate
+Define the lexical grammar with a mapping between regex's and terminals.
+Use that to create NFA graph using Thompson's construction.
+Convert the NFA into a DFA using powerset construction.
+During generation, look for duplicate state transitions where the
+	  characters are the same, but states differ. This indicates that those
+	  states are potential start states of the lexer.
+Generate a state transition table by traversing the graph.
+Split up the source code into  chunks and put them onto a work queue.
+These chunks are taken off the work queue by a thread pool. Each chunk
+	  is lexed for each possible start state, resulting in  number of outputs for 
+	  number of start states, per chunk .
+Once all chunks have been processed, the correct output from each chunk is
+	  chosen such that its start state is the same as the previous chunk's finish
+	  state. Remaining outputs are discarded.
+enumerate
+
+Parser design_parser
+
+As mentioned in section litreview_conclusion, I will implement
+an algorithm for parsing operator precedence grammars as shown by
+barenghi_parallel_2015. An operator precedence grammar is a kind of
+context-free grammar where the right hand-side of each production rule contains
+at least one terminal or non-terminal and no right-hand side contains two
+consecutive non-terminals. 
+
+In order for it to be possible to parse the grammar in parallel, there must
+be a bound on the number of tokens the parser must see in order to reduce
+the righthand side of a rule to its left hand side. A grammar that has such a
+bound is called a bounded-context grammar, as is described in the literature
+grune_parsing_2008.barenghi_parallel_2015 define a set of
+restrictions which, when adhered to, ensure that an opg is also a
+bounded-context grammar with a bound one. They call this fnf and it
+ensures that the parser is able to parse portions of the code without the
+context of what came before or after it.
+
+An opg is in fnf if and only if an axiom S does not
+occur in any right-hand side; no two rules have the same right-hand side;
+no rule, possibly except one with the axiom as the left-hand side, has  as
+the right-hand side; renaming rules, i.e., those with a single non-terminal
+character as right-hand side, are those and only those with S as the left-hand
+side.
+
+Once a grammar is in fnf, it can then be parsed by the algorithm
+described bybarenghi_parallel_2015. A traditional linear time parser
+for opg languages operates on terminals and results in a parse tree of
+only terminals. In order to parse this kind of grammar in parallel, a more
+general parsing algorithm is presented which allows analysing strings that
+contain non-terminals. Implementing this algorithm requires the construction of
+an operator precedence table that contains the precedence relationships between
+terminals in the grammar. The algorithm to construct such a table is described
+bygrune_parsing_2008.
+
+The input to the parser is prepared similarly to the previous lexing step.
+The list of lexemes from the lexer is split into roughly same sized chunks
+that are put onto a concurrently accessible queue. A threadpool of parsers is
+initialized and begins working through the queue, parsing each chunk of lexemes
+and outputting a partial parse tree into a concurrently accessible output
+array. These partial parse trees contain the parse tree of the lexemes that were
+reduced, aswell as the internal stack of tokens that could not yet be reduced
+due to an insufficient amount of context. Once the queue is empty, the internal
+stacks of these partial parse trees are joined and the same parsing algorithm is
+used to produce the final parse tree.
+
+The following is a summary of the overall steps that need to be performed before
+and during syntax analysis:
+
+enumerate
+	Read grammar from file that defines terminals, non-terminals and
+  	  production rules.
+	Transform grammar into fnf as defined in
+	 barenghi_parallel_2015
+	Build operator precedence table according togrune_parsing_2008
+	Take the lexer output from the previous step and parse each chunk using
+	  the same thread pool approach as the lexer. The parsing algorithm returns a
+	  partial parse tree and a stack of lexemes.
+	Take the outputs from each chunk and join the partial parse trees using
+	  the same parsing algorithm. This results in a parse tree of the whole input.
+enumerate
+
+Semantic Analysis design_analyser
+
+In order to perform semantic analysis, the parse tree from the previous
+step must be transformed in an ast. This can be done by traversing the
+ast in post-order depth first traversal, reducing leaf nodes into ast nodes,
+thereby producing the ast bottom-up. This can be done in linear time as
+the parse tree resulting from the parsing step can be stored as an array whereby
+traversing the array from start to finish equates to a post-order traversal of
+the tree. 
+
+Semantic analysis is performed by traversing the ast with a
+pre-order depth first traversal and keeping a record of identifiers
+and their metadata in a symbol table. Parallel semantic analysis can be
+performed by splitting the work based on nested scopes in the ast
+seshadri_investigation_1991. If during a pre-order depth first traversal
+of the ast a new scope is encountered, the analyser starts a new thread
+for parsing that inner scope while passing to it the symbol table it has
+constructed thus far. Working from the top to bottom of the ast this way
+ensures that the whole of the ast is analysed correctly. The drawback with
+this approach is that the efficacy of this parallelism is limited to the number
+and size of the nested scopes, which additionally makes splitting the work
+equally between threads a challenge.
+
+Summary of the overall steps that need to be performed during semantic
+analysis:
+
+enumerate
+	Iterate over the parse tree in post-order DFS in order to generate the Abstract syntax tree.
+	Iterate over AST using pre-order DFS, creating a new thread and symbol table for certain nodes.
+	Check if variables are defined before they are used by checking if they exist in ancestor symbol tables.
+enumerate
+
+
+
+Implementation implementation
+
+For this project I decided to use the Rust programming language. It is a
+performant, memory safe language that is similar to C++. Additionally, it has
+very good parallel programming facilities and an extensive software ecosystem
+that makes it ideal for this kind of project.
+
+The implementation is a command line application that takes a source code file
+as input and generates a 
+
+
+Generating the Operator Precedence Table
+
+listing[H]
+minted[linenos]text
+fn factorial[n: int] 
+    if n == 0 
+        return 1;
+    
+
+    return (n * factorial(n - 1));
+
+minted
+Factorial in the test language.
+lst:factorial_example
+listing
+
+listing[H]
+minted[linenos]json
+
+  "a": 100,
+  "b": 
+    "x": [
+      100,
+      "a"
+    ]
+  
+
+minted
+Example of parsable JSON.
+lst:json_example
+listing
+
+Section dependancies
+Section structure
+Section outputs_and_visualizations
+Section debugging
+
+Dependencies dependancies
+Structure structure
+Parsing Grammar Transformation parsing_grammar_transformation
+Outputs and Visualizations outputs_and_visualizations
+
+figure[t]
+images/nfa.png
+NFA of the lexical grammar
+fig:nfa
+figure
+
+figure[t]
+images/dfa.png
+DFA of the lexical grammar
+fig:dfa
+figure
+
+figure[t]
+images/ptree.png
+Graphviz visualization of the parse tree.
+fig:parse_tree
+figure
+
+Debugging debugging
+Evaluation evalandtesting
+komathukattil_evaluating_nodate
+Unit Testing
+Integration Testing
+Benchmarks
+
+Conclusion conclusion
+
+
+
+Addendum addendum
+listing
+minted[linenos, breaklines=true, fontsize=]text
+CHAR = "[a-zA-Z]"
+BOOL = "truefalse"
+NUMBER = "[0-9][0-9]*"
+WHITESPACE = "( )*"
+LBRACE = ""
+RBRACE = ""
+LSQUARE = ""
+RSQUARE = ""
+COMMA = ","
+COLON = ":"
+QUOTES = ""
+minted
+JSON lexical grammar keywords and their corresponding regular expressions
+lst:json_lexical_grammar
+listing
+
+listing
+minted[linenos, breaklines=true, fontsize=]text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OBJECT : LBRACE RBRACE
+        LBRACE MEMBERS RBRACE
+       ;
+
+MEMBERS : PAIR
+         PAIR COMMA MEMBERS
+        ;
+
+PAIR : STRING COLON VALUE
+     ;
+
+VALUE : STRING
+       NUMBER
+       OBJECT
+       ARRAY
+       BOOL
+      ;
+
+STRING : QUOTES QUOTES
+        QUOTES CHARS QUOTES
+       ;
+
+CHARS : CHAR
+       CHAR CHARS
+      ;
+
+ARRAY : LSQUARE RSQUARE
+       LSQUARE ELEMENTS RSQUARE
+      ;
+
+ELEMENTS : VALUE
+          VALUE COMMA ELEMENTS
+         ;
+minted
+An operator precedence parsing grammar for JSON.
+lst:json_grammar
+listing
