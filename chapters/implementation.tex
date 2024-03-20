@@ -9,22 +9,94 @@ robust and performant code. It additionally has very good parallel programming
 facilities and an extensive software ecosystem that makes it ideal for this kind
 of project. 
 
-Section \ref{structure}
+\begin{listing}[H]
+\begin{minted}[linenos]{text}
+fn factorial[n: int] {
+    if n == 0 {
+        return 1;
+    } 
+
+    return (n * factorial(n - 1));
+}
+\end{minted}
+\caption{Factorial in the test language.}
+\label{lst:factorial_example}
+\end{listing}
+
+Due to a generic lexical and syntatic analysis implementation, as described in the previous chapter,
+the compiler supports parsing JSON aswell as a bespoke test language with syntax similar to Rust,
+shown in Listing \ref{lst:factorial_example}.
+
+Section \ref{structure} provides an explanation of the programs structure and implementation
+details.
 \newline \newline
-Section \ref{dependancies}
+Section \ref{outputs_and_visualizations} shows example outputs from the compiler as well as some
+graphs which proved useful during debugging the individual compilation stages.
 \newline \newline
-Section \ref{outputs_and_visualizations}
-\newline \newline
-Section \ref{debugging}
+Section \ref{dependancies} concludes with a description of the dependancies used and their purpose
+in the implementation.
+
+\section{Structure} \label{structure}
+
+I will explain the implemention in the order of its execution. The program is divided into three
+general stages: lexical, syntactic and semantic analysis. There are significant pre-processing
+steps that need to happen prior to the core lexing and parsing algorithms, which can be computed at
+compile time, but I nevertheless chose to do at runtime. The following section begins by describing
+this pre-processing work that initializes some datastructures that are used later in the compiler.
+The subsequent three sections describe the implementation of each of the compilation stages.
+
+\subsection{Preprocessing}
+
+In order for the compiler to support different languages, while sharing as much code as possible,
+it is neccessary to generate datastructures that can be used by a generic lexer and parser
+implemenentation. Furthermore, the datastructures required for bottom-up parsing are very difficult
+to create without some form for automatic generation. Although a hand-written, language specific
+implementation has significant optimisation potential, as shown by \cite{langdale_parsing_2019},
+the focus of my implementation is to demonstrate the effectiveness of data-parallel compilation.
+Single threaded optimisations that leverage the language or \gls{simd} instructions are sufficiently
+orthogonal to this goal to put them outside the scope of the FYP. 
+
+In order to for the lexer to work, a state transition table must be obtained. This is done
+by use a a handwritten lexer and parser to read a file containing the mapping between the
+lexemes a corresponding regular expressions. An example of the syntax can be seen in Listing
+\ref{lst:json_lexical_grammar}. The \gls{ast} of each regular expression is then traversed and
+converted into one, large joint \gls{nfa} graph using thompson's construction algorithm. This graph
+is then turned into a \gls{dfa} through powerset construction. The \gls{dfa} is then used to create
+a state transition table that can be used by the lexical analyser. The parser similarly requires an
+operator precedence table that cannot be written by hand.
+
+
+The following sections further elaborate on each of these preprocessing steps.
+
+\subsubsection{Reading The Lexer Definition}
+
+
+
+\subsubsection{NFA Generation}
+
+\subsubsection{DFA Generation}
+
+\subsubsection{Reading the Parser Definition}
+
+\subsubsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
+
+\subsubsection{Generating the Operator Precedence Table}
+
+\subsection{Lexical Analysis}
+
+\subsection{Syntactic Analysis}
+
+\subsection{Semantic Analysis}
+
+\section{Outputs and Visualizations} \label{outputs_and_visualizations}
 
 \section{Dependencies} \label{dependancies}
 
-Code dependencies in the Rust code ecosystem that are  available through the
-cargo package manager are called crates. These crates are comparable to small,
-open source, third party libraries that can easily be integrated into a rust
-project. In this section I mention the code dependencies I've used in my
-implementation in order to illustrate what parts of my project were accomplished
-through the use of third party code.
+Code dependencies in the Rust code ecosystem that are  available through the cargo package manager
+are called crates. These crates are comparable to small, open source, third party libraries that can
+easily be integrated into a rust project. In this section I mention the code dependencies I've used
+in my implementation in order to illustrate what parts of my project were accomplished through the
+use of third party code.
 
 \subsection{Core}
 
@@ -69,93 +141,6 @@ read large files is  faster than using the standard read syscall.
 store. This enables a compact representation as well as faster set operations in
 the parser where sets of terminals and non-terminals are used.
 
-\section{Structure} \label{structure}
-\subsection{Lexical Analyser}
-\subsubsection{NFA Generation}
-\subsubsection{DFA Generation}
-\subsection{Parser}
-\subsubsection{Generating the Operator Precedence Table}
-\subsubsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
-\subsection{Semantic Semantic Analysis}
-
-\section{Outputs and Visualizations} \label{outputs_and_visualizations}
-
-\section{Debugging} \label{debugging}
-
-The Rust code in the fern repository showcases a comprehensive implementation of
-a language processing system, including lexical analysis, parsing, and possibly
-semantic analysis and code generation. Here's an overview of the implementation
-based on the provided Rust code files: Key Components:
-Lexical Analysis (src/lexer.rs, src/grammar/lg.rs)
-
-    Lexer Implementation: The lexer component is responsible for tokenizing
-the input source code. It uses a set of rules defined in src/grammar/lg.rs to
-match patterns in the input text and convert them into tokens. This process is
-crucial for the parsing stage, as it simplifies the input by abstracting away
-the textual representation into a series of tokens with assigned meanings.
-
-Parsing (src/parser.rs, src/parsetree.rs)
-    Parser and Parse Tree: The parser takes the tokens generated by the lexer
-    and constructs a parse tree based on the grammar of the language being
-    analyzed. This tree represents the syntactic structure of the input code.
-    The implementation in src/parser.rs and src/parsetree.rs likely involves
-    recursive descent parsing or another parsing technique to handle the
-    language's grammar.
-
-Semantic Analysis (src/analysis.rs)
-
-    Analysis: After parsing, the src/analysis.rs file suggests that the code
-performs some form of semantic analysis. This could involve checking variable
-declarations before use, type checking, or other compile-time checks that ensure
-the program's semantic correctness.
-
-Intermediate Representation (src/ir.rs)
-
-    Intermediate Representation (IR): The src/ir.rs file indicates the
-generation of an intermediate representation of the code. IR is a lower-level
-representation of the program that is easier for a compiler or interpreter to
-optimize and translate into machine code or another target language.
-
-Language Specific Implementations (src/eslang.rs, src/json.rs, src/fern.rs)
-
-    Language Implementations: The repository includes specific implementations
-for different languages or formats, such as a custom language (src/eslang.rs),
-JSON (src/json.rs), and possibly "fern" itself (src/fern.rs). These files
-contain the rules and logic for parsing and analyzing these specific languages.
-
-Implementation Overview for Report:
-In your report's implementation section, you could describe how the project
-is structured around the core components of a compiler or interpreter: lexical
-analysis, parsing, semantic analysis, and intermediate representation. Highlight
-the modular design that allows for the processing of different languages, as
-evidenced by the separate implementations for each language. Discuss the use of
-Rust's powerful type system and ownership model to manage resources efficiently
-and ensure memory safety throughout the compilation process.
-
-You might also want to mention the use of external libraries (if any are used)
-and how they integrate with the project's codebase to enhance functionality,
-such as for parallel processing or handling complex data structures.
-
-Finally, consider discussing the project's testing strategy, based on the
-presence of tests/ and benches/ directories, to ensure the reliability and
-performance of the language processing system.
-
-Would you like more detailed information or assistance with another part of
-your report?
-
-\begin{listing}[H]
-\begin{minted}[linenos]{text}
-fn factorial[n: int] {
-    if n == 0 {
-        return 1;
-    % } 
-
-    return (n * factorial(n - 1));
-}
-\end{minted}
-\caption{Factorial in the test language.}
-\label{lst:factorial_example}
-\end{listing}
 
 \begin{listing}[H]
 \begin{minted}[linenos]{json}
