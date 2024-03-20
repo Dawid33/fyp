@@ -1,12 +1,89 @@
 \chapter{Implementation} \label{implementation}
 
-For this project I decided to use the Rust programming language. It is a
-performant, memory safe language that is similar to C++. Additionally, it has
-very good parallel programming facilities and an extensive software ecosystem
-that makes it ideal for this kind of project.
+For this project I implemented the design as described in the previous chapter.
+It is a command line application that takes a source code file as input and
+performs semantic analysis on its \gls{ast}. I chose to write my implementation
+using the Rust programming language. It is a memory safe language that leverages
+the LLVM backend for highly optimized code. This makes it easy to write
+robust and performant code. It additionally has very good parallel programming
+facilities and an extensive software ecosystem that makes it ideal for this kind
+of project. 
 
-The implementation is a command line application that takes a source code file
-as input and generates a 
+
+
+
+Section \ref{structure}
+\newline \newline
+Section \ref{dependancies}
+\newline \newline
+Section \ref{outputs_and_visualizations}
+\newline \newline
+Section \ref{debugging}
+
+\section{Dependencies} \label{dependancies}
+
+Code dependencies in the Rust code ecosystem that are  available through the
+cargo package manager are called crates. These crates are comparable to small,
+open source, third party libraries that can easily be integrated into a rust
+project. In this section I mention the code dependencies I've used in my
+implementation in order to illustrate what parts of my project were accomplished
+through the use of third party code.
+
+\subsection{Core}
+
+\textbf{crossbeam} - Common data structures for implementing parallel systems.
+This crate implements a concurrently accessible queue, skiplist and a
+multi-producer, multi-consumer message passing channel. All of these data
+structures are important for reliably sharing data across threads.
+\newline\newline
+\textbf{regex-syntax} - A crate for parsing standard regular expression syntax.
+It provides a simple \gls{ast} that the lexer uses to read the mappings from
+lexemes to regular expression patterns.
+\newline\newline
+\textbf{dot} - A crate that makes it easier to generate graphs in the dot
+language. Its used to visualise the parse tree and \gls{ast}.
+\gls{ast}.
+\newline\newline
+\textbf{criterion} - Reliable benchmarking facilities for testing the performance of the
+compiler with differently sized inputs.
+
+\subsection{Utility or Minor Contribution}
+\textbf{tinyrand} - A lightweight implementation of random number
+generation. It is used for creating unique IDs for bathes of work in the work
+queue.
+\textbf{serde} - Serialization and deserialization capabilities for transferring
+code to and from the javascript runtime when running in the browser.
+\newline\newline
+\textbf{wasm-bindgen} - Macro's for easily creating bindings to javascript when
+compiling to web assembly.
+\newline\newline
+\textbf{log, flexi\_logger ,wasm\-logger, console\_error\_panic\_hook} - Various
+crates for logging to files as well as to the terminal, improved formatting and
+correct logging when running in the browser.
+\newline\newline
+\textbf{simple-error} - A simple library for creating errors from error messages
+instead of creating types for every error.
+
+\subsection{Optimisation}
+\textbf{memmap} - An interface for using linux's memmap syscall. Using memap to
+read large files is  faster than using the standard read syscall.
+\newline\newline
+\textbf{bittyset} - A set implementation that uses a bit vector as a backing
+store. This enables a compact representation as well as faster set operations in
+the parser where sets of terminals and non-terminals are used.
+
+\section{Structure} \label{structure}
+\subsection{Lexical Analyser}
+\subsubsection{NFA Generation}
+\subsubsection{DFA Generation}
+\subsection{Parser}
+\subsubsection{Generating the Operator Precedence Table}
+\subsubsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
+\subsection{Semantic Semantic Analysis}
+
+\section{Outputs and Visualizations} \label{outputs_and_visualizations}
+
+\section{Debugging} \label{debugging}
 
 The Rust code in the fern repository showcases a comprehensive implementation of
 a language processing system, including lexical analysis, parsing, and possibly
@@ -70,7 +147,6 @@ Would you like more detailed information or assistance with another part of
 your report?
 
 
-\subsection{Generating the Operator Precedence Table}
 
 \begin{listing}[H]
 \begin{minted}[linenos]{text}
@@ -103,19 +179,6 @@ fn factorial[n: int] {
 \label{lst:json_example}
 \end{listing}
 
-Section \ref{dependancies}
-\newline \newline
-Section \ref{structure}
-\newline \newline
-Section \ref{outputs_and_visualizations}
-\newline \newline
-Section \ref{debugging}
-
-\section{Dependencies} \label{dependancies}
-\section{Structure} \label{structure}
-\subsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
-\section{Outputs and Visualizations} \label{outputs_and_visualizations}
-
 \begin{figure}[t]
 \includegraphics[width=\linewidth]{images/nfa.png}
 \caption{NFA of the lexical grammar}
@@ -134,4 +197,3 @@ Section \ref{debugging}
 \label{fig:parse_tree}
 \end{figure}
 
-\section{Debugging} \label{debugging}
