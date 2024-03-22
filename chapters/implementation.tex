@@ -45,7 +45,7 @@ compile time, but I nevertheless chose to do at runtime. The following section b
 this pre-processing work that initializes some datastructures that are used later in the compiler.
 The subsequent three sections describe the implementation of each of the compilation stages.
 
-\subsection{Preprocessing}
+\subsection{Lexer Preprocessing}
 
 In order for the compiler to support different languages, while sharing as much code as possible,
 it is neccessary to generate datastructures that can be used by a generic lexer and parser
@@ -56,27 +56,27 @@ the focus of my implementation is to demonstrate the effectiveness of data-paral
 Single threaded optimisations that leverage the language or \gls{simd} instructions are sufficiently
 orthogonal to this goal to put them outside the scope of the FYP. 
 
-In order to for the lexer to work, a state transition table must be obtained. This is done
-by use a a handwritten lexer and parser to read a file containing the mapping between the
-lexemes a corresponding regular expressions. An example of the syntax can be seen in Listing
+In order to for the lexer to work, a state transition table must be obtained. This is
+done by firstly reading a reading a file that contains the mapping between the lexemes and
+their corresponding regular expressions. An example of the syntax can be seen in Listing
 \ref{lst:json_lexical_grammar}. The \gls{ast} of each regular expression is then traversed and
 converted into one, large joint \gls{nfa} graph using thompson's construction algorithm. This graph
 is then turned into a \gls{dfa} through powerset construction. The \gls{dfa} is then used to create
 a state transition table that can be used by the lexical analyser. The parser similarly requires an
-operator precedence table that cannot be written by hand.
-
-
-The following sections further elaborate on each of these preprocessing steps.
-
-\subsubsection{Reading The Lexer Definition}
-
-
+operator precedence table that cannot be written by hand. The following sections further elaborate
+on each of these preprocessing steps.
 
 \subsubsection{NFA Generation}
+A regular expression is a kind of regular language that can be represented by a \gls{fsm}. In
+order to turn this state machine into a \gls{fsm}, I chose to use thompson's construction algorithm
+to. The algorithm works by splitting the regular expression into its constituent subexpressions and creating an \gls{nfa} for each subexpression. The inital and final states of each subexpression can be joined together with other subexpressions to ultimately form the final \gls{nfa}. 
 
+Parse the regular expression in order to obtain an \gls{ast}. Each node in this tree reprsents some part of the regular expression with each of its direct children representing a sub expression. My implementation first initializes an \gls{nfa} with an initial and final state. The \gls{ast} is traversed in pre order and each node is converted into an \gls{nfa} according to the following rules:
 \subsubsection{DFA Generation}
 
-\subsubsection{Reading the Parser Definition}
+
+
+\subsection{Parser Preprocessing}
 
 \subsubsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
 
