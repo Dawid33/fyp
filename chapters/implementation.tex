@@ -9,7 +9,7 @@ robust and performant code. It additionally has very good parallel programming
 facilities and an extensive software ecosystem that makes it ideal for this kind
 of project. 
 
-\begin{listing}[H]
+\begin{listing}[t]
 \begin{minted}[linenos]{text}
 fn factorial[n: int] {
     if n == 0 {
@@ -25,7 +25,7 @@ fn factorial[n: int] {
 
 Due to a generic lexical and syntatic analysis implementation, as described in the previous chapter,
 the compiler supports parsing JSON aswell as a bespoke test language with syntax similar to Rust,
-shown in Listing \ref{lst:factorial_example}.
+shown in Listing \ref{lst:factorial_example} and \ref{lst:json_example}.
 
 Section \ref{structure} provides an explanation of the programs structure and implementation
 details.
@@ -58,27 +58,50 @@ orthogonal to this goal to put them outside the scope of the FYP.
 
 In order to for the lexer to work, a state transition table must be obtained. This is
 done by firstly reading a reading a file that contains the mapping between the lexemes and
-their corresponding regular expressions. An example of the syntax can be seen in Listing
+their corresponding regular expressions. An example of the syntax can be seen in listing
 \ref{lst:json_lexical_grammar}. The \gls{ast} of each regular expression is then traversed and
-converted into one, large joint \gls{nfa} graph using thompson's construction algorithm. This graph
-is then turned into a \gls{dfa} through powerset construction. The \gls{dfa} is then used to create
-a state transition table that can be used by the lexical analyser. The parser similarly requires an
-operator precedence table that cannot be written by hand. The following sections further elaborate
-on each of these preprocessing steps.
+converted into one, large joint \gls{nfa} graph using thompson's construction algorithm. This is
+a classic algorithm that is described by \cite{aho_compilers_2006}, originally attributed to Ken
+Thompson. It works by recursively breaking down the regex into simpler components and building
+an \gls{nfa} for each component. The resulting NFA recognizes the same language as the original
+regex. For my implementation I use an external library to parse the regex into an \gls{ast}. I then
+traverse this \gls{ast}, building the \gls{nfa} as described by the algorithm
 
-\subsubsection{NFA Generation}
-A regular expression is a kind of regular language that can be represented by a \gls{fsm}. In
-order to turn this state machine into a \gls{fsm}, I chose to use thompson's construction algorithm
-to. The algorithm works by splitting the regular expression into its constituent subexpressions and creating an \gls{nfa} for each subexpression. The inital and final states of each subexpression can be joined together with other subexpressions to ultimately form the final \gls{nfa}. 
+This graph is then turned into a \gls{dfa} through powerset construction. For this
+algorithm I followed the steps outlined in wikipedia article on powerset construction
+\citep{noauthor_powerset_2023}. It works by simulating an \gls{nfa} and interpreting the sets of
+states reachable from each state in the \gls{nfa}, as the states of the \gls{dfa}. In other words,
+it neccessary to simulate the \gls{nfa} and keep track of all states that the automaton could
+reach after seeing an input, according to its nondeterministic choices. Each set of choices is then
+converted into a corresponding state in the \gls{dfa}.
 
-Parse the regular expression in order to obtain an \gls{ast}. Each node in this tree reprsents some part of the regular expression with each of its direct children representing a sub expression. My implementation first initializes an \gls{nfa} with an initial and final state. The \gls{ast} is traversed in pre order and each node is converted into an \gls{nfa} according to the following rules:
-\subsubsection{DFA Generation}
+An example \gls{nfa} and \gls{dfa} for the JSON grammar is shown in figure \ref{fig:nfa} and figure
+\ref{fig:dfa}, respectively. I implemented the graph traversals in both algorithms by keeping track
+of a stack of nodes that have already been previously encountered. The \gls{dfa} can be tivially
+turned into a state transition table by traversing it from its initial state and  taking note of
+each pair of states connected by a transition. The parser similarly requires an operator precedence
+table that must be computer generated due to its complexity.
 
-
+\begin{listing}[t]
+\begin{minted}[linenos]{json}
+{
+  "a": 100,
+  "b": {
+    "x": [
+      100,
+      "a"
+    ]
+  }
+}
+\end{minted}
+\caption{Example of parsable JSON.}
+\hrulefill
+\label{lst:json_example}
+\end{listing}
 
 \subsection{Parser Preprocessing}
 
-\subsubsection{Parsing Grammar Transformation} \label{parsing_grammar_transformation}
+The parser I'm implementing requires 
 
 \subsubsection{Generating the Operator Precedence Table}
 
@@ -140,24 +163,6 @@ read large files is  faster than using the standard read syscall.
 \textbf{bittyset} - A set implementation that uses a bit vector as a backing
 store. This enables a compact representation as well as faster set operations in
 the parser where sets of terminals and non-terminals are used.
-
-
-\begin{listing}[H]
-\begin{minted}[linenos]{json}
-{
-  "a": 100,
-  "b": {
-    "x": [
-      100,
-      "a"
-    ]
-  }
-}
-\end{minted}
-\caption{Example of parsable JSON.}
-\hrulefill
-\label{lst:json_example}
-\end{listing}
 
 \begin{figure}[t]
 \includegraphics[width=\linewidth]{images/nfa.png}

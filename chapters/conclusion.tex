@@ -1,60 +1,29 @@
-\chapter{Conclusion} \label{conclusion}
-The document you provided, titled "Syntactic and Semantic Considerations
-for Parallel Compilation" by Dawid Sobczak, explores the domain of parallel
-compilation within computer science, with a focus on enhancing compiler
-efficiency through parallel processing techniques. Sobczak's investigation
-is grounded in the context of the University of Limerick's Department of
-Computer Science and Information Systems and aims to contribute to the broader
-understanding of compiler design, particularly in leveraging modern multi-core
-computing environments to speed up the compilation process.
+\chapter{Conclusion} \label{conclusion} 
+This FYP began with an introduction to the fundamentals of sequential and parallel compilation,
+highlighting the traditional focus on minimizing memory use and optimizing for single-threaded
+performance, and juxtaposes this with the contemporary shift towards parallel processing methods to
+exploit the capabilities of multi-core processors. I elaborated on various parallelization methods,
+including \gls{simd}, multithreading, \gls{gpgpu}  providing examples of their applications in
+compiler design.
 
-The document begins with an introduction to the fundamentals of sequential
-and parallel compilation, highlighting the traditional focus on minimizing
-memory use and optimizing for single-threaded performance, and juxtaposes this
-with the contemporary shift towards parallel processing methods to exploit
-the capabilities of multi-core processors. Sobczak elaborates on various
-parallelization methods, including Single Instruction Multiple Data (SIMD),
-multithreading/multiprocessing, and general-purpose computing on GPUs, providing
-a comprehensive overview of their applications in compiler design.
+A significant portion of this FYP delved into a detailed literature review on methods for
+parallelizing compilers, focusing on lexing, parsing, and semantic analysis. I examined existing
+techniques, their potential for improving compiler performance, and their implications for language
+design. The review covers topics such as deterministic and non-deterministic finite automata,
+speculative simulation for lexing, parallel LR and LL parsing algorithms, and the challenges of
+semantic analysis in a parallelized context.
 
-A significant portion of the text delves into detailed literature reviews on
-methods for parallelizing compilers, focusing on lexing, parsing, and semantic
-analysis. Sobczak meticulously examines existing techniques, their potential
-for improving compiler performance, and their implications for language
-design. The review covers topics such as deterministic and non-deterministic
-finite automata, speculative simulation for lexing, parallel LR and LL parsing
-algorithms, and the challenges of semantic analysis in a parallelized context.
+Following the literature review, I outlined the design and implementation strategies for developing
+a parallel compiler, including considerations for lexing, parsing, and semantic analysis. The
+document discusses the practical aspects of constructing a parallel compiler, emphasizing the
+need for carefully considering the compiler architecture such that it can efficiently handle the
+complexities of parallel processing.
 
-Following the literature review, Sobczak outlines the design and implementation
-strategies for developing a parallel compiler, including considerations for
-lexing, parsing, and semantic analysis. The document discusses the practical
-aspects of constructing a parallel compiler, emphasizing the need for a
-robust architecture that can efficiently handle the complexities of parallel
-processing.
+The evaluation section provides insights into the testing methodologies used to assess the
+performance of the parallel compiler, including unit and integration testing, as well as benchmarks
+to measure its effectiveness.
 
-The evaluation section provides insights into the testing methodologies used to
-assess the performance of the parallel compiler, including unit and integration
-testing, as well as benchmarks to measure its effectiveness against traditional
-compilation methods.
-
-In conclusion, although the specific concluding remarks are not included in the
-summarized content, it is clear that Sobczak's work contributes significantly to
-the field of compiler technology, offering valuable perspectives on harnessing
-parallel processing to enhance compiler efficiency. This exploration not only
-advances our understanding of compiler design but also opens avenues for further
-research in optimizing compilation processes in the era of multi-core computing.
-
-This summary covers content up to page 32 out of 44. If you're interested in
-more detailed conclusions or specific sections beyond this range, please let me
-know, and I can provide further assistance.```
-
-
-
-
-
-
-\chapter{Addendum} \label{addendum}
-\begin{listing}
+\begin{listing}[H]
 \begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
 CHAR = "[a-zA-Z]"
 BOOL = "true|false"
@@ -72,7 +41,7 @@ QUOTES = "\""
 \label{lst:json_lexical_grammar}
 \end{listing}
 
-\begin{listing}
+\begin{listing}[H]
 \begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
 %nonterminal OBJECT
 %nonterminal MEMBERS
@@ -135,3 +104,258 @@ ELEMENTS : VALUE
 \caption{An operator precedence parsing grammar for JSON.}
 \label{lst:json_grammar}
 \end{listing}
+
+
+\begin{longlisting}
+\begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
+%nonterminal chunk
+%nonterminal statList
+%nonterminal stat
+%nonterminal elseIfBlock
+%nonterminal exprThenElseIfB
+%nonterminal exprThen
+%nonterminal name
+%nonterminal retStat
+%nonterminal label
+%nonterminal funcName
+%nonterminal nameDotList
+%nonterminal varList
+%nonterminal var
+%nonterminal nameList
+%nonterminal exprList
+%nonterminal expr
+%nonterminal logicalOrExp
+%nonterminal logicalAndExp
+%nonterminal relationalExp
+%nonterminal concatExp
+%nonterminal additiveExp
+%nonterminal multiplicativeExp
+%nonterminal unaryExp
+%nonterminal caretExp
+%nonterminal baseExp
+%nonterminal prefixExp
+%nonterminal functionCall
+%nonterminal functionDef
+%nonterminal parList
+%nonterminal tableConstructor
+%nonterminal fieldList
+%nonterminal fieldListBody
+%nonterminal field
+%nonterminal typeExpr
+%nonterminal ptrTypeStart
+
+%axiom chunk
+
+%terminal ENDFILE
+%terminal RETURN
+%terminal SEMI
+%terminal COLON
+%terminal COLON2
+%terminal DOT
+%terminal DOT3
+%terminal COMMA
+%terminal LBRACK
+%terminal RBRACK
+%terminal LBRACE
+%terminal RBRACE
+%terminal LPAREN
+%terminal RPAREN
+%terminal EQ
+%terminal BREAK
+%terminal GOTO
+%terminal DO
+%terminal END
+%terminal WHILE
+%terminal REPEAT
+%terminal UNTIL
+%terminal IF
+%terminal THEN
+%terminal ELSEIF
+%terminal ELSE
+%terminal FOR
+%terminal IN
+%terminal FUNCTION
+%terminal LET
+%terminal NIL
+%terminal FALSE
+%terminal TRUE
+%terminal NUMBER
+%terminal STRING
+%terminal NAME
+%terminal PLUS
+%terminal MINUS
+%terminal ASTERISK
+%terminal DIVIDE
+%terminal CARET
+%terminal PERCENT
+%terminal DOT2
+%terminal LT
+%terminal GT
+%terminal LTEQ
+%terminal GTEQ
+%terminal EQDOUBLE
+%terminal NEQ
+%terminal AND
+%terminal OR
+%terminal NOT
+%terminal UMINUS
+%terminal SHARP
+%terminal SEMIFIELD
+%terminal EQ
+%terminal QUESTIONMARK
+%terminal STRUCT
+%terminal COMMENT
+
+%%
+
+chunk : statList
+	;
+
+statList : stat
+	| SEMI
+	| stat SEMI
+	| statList SEMI stat
+	| statList SEMI
+	;
+
+stat : baseExp EQ expr
+	| functionCall
+	| retStat
+	| LBRACE statList RBRACE
+	| LBRACE RBRACE
+	| WHILE expr LBRACE statList RBRACE
+	| WHILE expr LBRACE RBRACE
+	| IF exprThen RBRACE
+	| IF exprThen RBRACE elseIfBlock
+	| STRUCT baseExp LBRACE RBRACE
+	| STRUCT baseExp LBRACE fieldList RBRACE
+	| FUNCTION baseExp LBRACK RBRACK LBRACE statList RBRACE
+	| FUNCTION baseExp LBRACK fieldList RBRACK LBRACE statList RBRACE
+	| FUNCTION baseExp LBRACK fieldList RBRACK LBRACE RBRACE
+	| FUNCTION baseExp LBRACK baseExp RBRACK LBRACE statList RBRACE
+	| FUNCTION baseExp LBRACK baseExp RBRACK LBRACE RBRACE
+	| FUNCTION baseExp LBRACK RBRACK LBRACE RBRACE
+	| FOR nameList IN exprList LBRACE statList RBRACE
+	| FOR nameList IN exprList LBRACE RBRACE
+	| LET baseExp EQ expr
+	| LET baseExp
+	;
+
+functionCall : baseExp LPAREN exprList RPAREN
+	| baseExp LPAREN expr RPAREN
+	| baseExp LPAREN RPAREN
+	;
+
+retStat : RETURN SEMI
+	| RETURN exprList SEMI
+	| RETURN expr SEMI
+	| RETURN
+	| RETURN exprList
+	| RETURN expr
+	;
+
+elseIfBlock : ELSEIF expr LBRACE statList RBRACE
+	| ELSEIF expr LBRACE RBRACE
+	| ELSEIF expr LBRACE RBRACE elseIfBlock
+	| ELSEIF expr LBRACE statList RBRACE elseIfBlock
+	| ELSE LBRACE RBRACE
+	| ELSE LBRACE statList RBRACE
+	;
+
+exprThen : expr LBRACE statList
+	| expr LBRACE
+	;
+
+exprList : expr COMMA expr
+	| exprList COMMA expr
+	;
+
+expr : logicalOrExp
+	;
+
+logicalOrExp : logicalAndExp
+	| logicalOrExp OR logicalAndExp
+	;
+
+logicalAndExp : relationalExp
+	| logicalAndExp AND relationalExp
+	;
+
+relationalExp : concatExp
+	| relationalExp LT concatExp
+	| relationalExp GT concatExp
+	| relationalExp LTEQ concatExp
+	| relationalExp GTEQ concatExp
+	| relationalExp NEQ concatExp
+	| relationalExp EQDOUBLE concatExp
+	;
+
+concatExp : additiveExp
+	| additiveExp DOT2 concatExp
+	;
+
+additiveExp : multiplicativeExp
+	| additiveExp PLUS multiplicativeExp
+	| additiveExp MINUS multiplicativeExp
+	;
+
+multiplicativeExp : unaryExp
+	| multiplicativeExp ASTERISK unaryExp
+	| multiplicativeExp DIVIDE unaryExp
+	| multiplicativeExp PERCENT unaryExp
+	;
+
+unaryExp : caretExp
+	| NOT unaryExp
+	| SHARP unaryExp
+	| UMINUS unaryExp
+	;
+
+caretExp : baseExp
+	| baseExp CARET caretExp
+	;
+
+baseExp : NIL
+	| FALSE
+	| TRUE
+	| NUMBER
+	| STRING
+	| NAME
+	| functionDef
+	| prefixExp
+	;
+
+prefixExp : var
+	| functionCall
+	| LPAREN expr RPAREN
+	;
+
+fieldList : fieldListBody
+	| fieldListBody COMMA
+	;
+
+fieldListBody : field
+	| fieldListBody COMMA field
+	;
+
+field : baseExp COLON baseExp
+	;
+
+var : prefixExp DOT baseExp
+	;
+
+varList : var COMMA var
+	| varList COMMA var
+	;
+
+funcName : nameDotList
+	| nameDotList COLON baseExp
+	;
+
+nameDotList : baseExp DOT baseExp
+	| nameDotList DOT baseExp
+	;
+\end{minted}
+\caption{An operator precedence parsing grammar for the test language.}
+\label{lst:test_grammar}
+\end{longlisting}

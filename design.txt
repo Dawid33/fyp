@@ -1,4 +1,4 @@
-\chapter{Design} \label{design}
+Design design
 
 The design of my compiler is based on the ideas and techniques I encountered
 during my literature review. Instead of creating a compiler for a specific
@@ -8,41 +8,38 @@ analysis phase cannot easily be made generic and will require a distinct
 implementation per language. I believe this approach will help me evaluate the
 impact of parallel processing on compilation by testing not only my own bespoke
 language but also common languages such as JSON or Lua.
-\newline\newline
-Section \ref{design_lexer} describes the design of the table-driven lexer.
+Section design_lexer describes the design of the table-driven lexer.
 This includes my method of defining lexical grammars, the algorithms used in
 pre-processing the lexical grammar and the algorithms used during the parallel
 lexical analysis.
-\newline\newline
-Section \ref{design_parser} describes the design of the table-driven parser.
+Section design_parser describes the design of the table-driven parser.
 This includes my method of defining the parsing grammar, its limitations,
 the transformation of the grammar into a bounded context grammar and parallel
 parsing algorithm.
-\newline\newline
-Section \ref{design_analyser} describes the general approach for designing the
+Section design_analyser describes the general approach for designing the
 semantic analyser.
 
-\section{Lexer} \label{design_lexer}
+Lexer design_lexer
 
-Lexers are defined using \glspl{reg_exp} that describe the character sequences which need to be
+Lexers are defined using reg_exp that describe the character sequences which need to be
 found and emitted from the lexer as lexemes. These regular expressions can be used to construct
-a \gls{dfa} that accepts the source code as input and is capable of recognizing whether the
+a dfa that accepts the source code as input and is capable of recognizing whether the
 input matches any of the original regular expressions. An example of such a lexical grammar
-for JSON is attached in the addendum as listing \ref{lst:json_lexical_grammar}. In order to
-construct the \gls{dfa}, it is necessary to convert the regular expressions into an \gls{nfa}
-using Thompson's construction algorithm\citep{aho_compilers_2006}, which results in a graph where
-nodes represent the states and the edges represent state transitions within the \gls{nfa}. This
-\gls{nfa} can then be converted into a \gls{dfa} through the powerset construction algorithm
-\citep{noauthor_powerset_2023}.
+for JSON is attached in the addendum as listing lst:json_lexical_grammar. In order to
+construct the dfa, it is necessary to convert the regular expressions into an nfa
+using Thompson's construction algorithmaho_compilers_2006, which results in a graph where
+nodes represent the states and the edges represent state transitions within the nfa. This
+nfa can then be converted into a dfa through the powerset construction algorithm
+noauthor_powerset_2023.
 
 During this conversion, it is necessary to look for duplicate edges where the
 input symbols are the same, but the states being transitioned to are different.
 This process enumerates every potential start state of the lexer and solves the
-issue posed in section \ref{lit_review_lexing}. These states are recorded and
+issue posed in section lit_review_lexing. These states are recorded and
 used during the parallel lexing algorithm.
 
 Sequential lexical analysis can be now be performed by iterating over the
-input text, starting at the \glspl{dfa} initial state and following the edges
+input text, starting at the dfa initial state and following the edges
 that correspond to each input symbol. If an edge is found, the state changes
 accordingly and the symbol is discarded. This continues until a node is
 reached where no edge can be found for the current input symbol. If such a node
@@ -51,13 +48,13 @@ If it doesn't, the lexer emits an error. In either case, the lexer's state is
 reset to its initial state and the input symbol is processed again instead of
 being discarded.
 
-% Insert a figure here like the one in data-parallel finite state machines.
 
-Although it is possible to use the \gls{dfa} directly to perform lexical
+
+Although it is possible to use the dfa directly to perform lexical
 analysis, it is more efficient to keep track of the current state in a variable
 and compute the state transition by using a lookup table. This state transition
 table has the input symbols on one axis and the lexers states on the other axis.
-The table can be constructed by traversing the \gls{dfa} from its initial state
+The table can be constructed by traversing the dfa from its initial state
 and populating it with the state / input symbol pairs represented by edges,
 where the state is the superseding state.
 
@@ -78,28 +75,28 @@ code, is then passed on to the parser.
 The following is a summary of the overall steps that need to be performed before
 and during lexical analysis:
 
-\begin{enumerate}
-\item Define the lexical grammar with a mapping between regex's and terminals.
-\item Use that to create NFA graph using Thompson's construction.
-\item Convert the NFA into a DFA using powerset construction.
-\item During generation, look for duplicate state transitions where the
+enumerate
+Define the lexical grammar with a mapping between regex's and terminals.
+Use that to create NFA graph using Thompson's construction.
+Convert the NFA into a DFA using powerset construction.
+During generation, look for duplicate state transitions where the
 	  characters are the same, but states differ. This indicates that those
 	  states are potential start states of the lexer.
-\item Generate a state transition table by traversing the graph.
-\item Split up the source code into $n$ chunks and put them onto a work queue.
-\item These chunks are taken off the work queue by a thread pool. Each chunk
-	  is lexed for each possible start state, resulting in $x$ number of outputs for $x$
-	  number of start states, per chunk $n$.
-\item Once all chunks have been processed, the correct output from each chunk is
+Generate a state transition table by traversing the graph.
+Split up the source code into  chunks and put them onto a work queue.
+These chunks are taken off the work queue by a thread pool. Each chunk
+	  is lexed for each possible start state, resulting in  number of outputs for 
+	  number of start states, per chunk .
+Once all chunks have been processed, the correct output from each chunk is
 	  chosen such that its start state is the same as the previous chunk's finish
 	  state. Remaining outputs are discarded.
-\end{enumerate}
+enumerate
 
-\section{Parser} \label{design_parser}
+Parser design_parser
 
-As mentioned in section \ref{litreview_conclusion}, I will implement
+As mentioned in section litreview_conclusion, I will implement
 an algorithm for parsing operator precedence grammars as shown by
-\cite{barenghi_parallel_2015}. An operator precedence grammar is a kind of
+barenghi_parallel_2015. An operator precedence grammar is a kind of
 context-free grammar where the right hand-side of each production rule contains
 at least one terminal or non-terminal and no right-hand side contains two
 consecutive non-terminals. 
@@ -108,28 +105,28 @@ In order for it to be possible to parse the grammar in parallel, there must
 be a bound on the number of tokens the parser must see in order to reduce
 the righthand side of a rule to its left hand side. A grammar that has such a
 bound is called a bounded-context grammar, as is described in the literature
-\citep{grune_parsing_2008}. \cite{barenghi_parallel_2015} define a set of
-restrictions which, when adhered to, ensure that an \gls{opg} is also a
-bounded-context grammar with a bound one. They call this \gls{fnf} and it
+grune_parsing_2008.barenghi_parallel_2015 define a set of
+restrictions which, when adhered to, ensure that an opg is also a
+bounded-context grammar with a bound one. They call this fnf and it
 ensures that the parser is able to parse portions of the code without the
 context of what came before or after it.
 
-An \gls{opg} is in \gls{fnf} if and only if an axiom S does not
+An opg is in fnf if and only if an axiom S does not
 occur in any right-hand side; no two rules have the same right-hand side;
-no rule, possibly except one with the axiom as the left-hand side, has $\epsilon$ as
+no rule, possibly except one with the axiom as the left-hand side, has  as
 the right-hand side; renaming rules, i.e., those with a single non-terminal
 character as right-hand side, are those and only those with S as the left-hand
 side.
 
-Once a grammar is in \gls{fnf}, it can then be parsed by the algorithm
-described by \cite{barenghi_parallel_2015}. A traditional linear time parser
-for \gls{opg} languages operates on terminals and results in a parse tree of
+Once a grammar is in fnf, it can then be parsed by the algorithm
+described bybarenghi_parallel_2015. A traditional linear time parser
+for opg languages operates on terminals and results in a parse tree of
 only terminals. In order to parse this kind of grammar in parallel, a more
 general parsing algorithm is presented which allows analysing strings that
 contain non-terminals. Implementing this algorithm requires the construction of
 an operator precedence table that contains the precedence relationships between
 terminals in the grammar. The algorithm to construct such a table is described
-by \cite{grune_parsing_2008}.
+bygrune_parsing_2008.
 
 The input to the parser is prepared similarly to the previous lexing step.
 The list of lexemes from the lexer is split into roughly same sized chunks
@@ -145,38 +142,38 @@ used to produce the final parse tree.
 The following is a summary of the overall steps that need to be performed before
 and during syntax analysis:
 
-\begin{enumerate}
-	\item Read grammar from file that defines terminals, non-terminals and
-  		  production rules.
-	\item Transform grammar into \gls{fnf} as defined in
-		  \cite{barenghi_parallel_2015}
-	\item Build operator precedence table according to \cite{grune_parsing_2008}
-	\item Take the lexer output from the previous step and parse each chunk using
-		  the same thread pool approach as the lexer. The parsing algorithm returns a
-		  partial parse tree and a stack of lexemes.
-	\item Take the outputs from each chunk and join the partial parse trees using
-		  the same parsing algorithm. This results in a parse tree of the whole input.
-\end{enumerate}
+enumerate
+	Read grammar from file that defines terminals, non-terminals and
+  	  production rules.
+	Transform grammar into fnf as defined in
+	 barenghi_parallel_2015
+	Build operator precedence table according togrune_parsing_2008
+	Take the lexer output from the previous step and parse each chunk using
+	  the same thread pool approach as the lexer. The parsing algorithm returns a
+	  partial parse tree and a stack of lexemes.
+	Take the outputs from each chunk and join the partial parse trees using
+	  the same parsing algorithm. This results in a parse tree of the whole input.
+enumerate
 
-\section{Semantic Analysis} \label{design_analyser}
+Semantic Analysis design_analyser
 
 In order to perform semantic analysis, the parse tree from the previous
-step must be transformed in an \gls{ast}. This can be done by traversing the
-\gls{ast} in post-order depth first traversal, reducing leaf nodes into ast nodes,
-thereby producing the \gls{ast} bottom-up. This can be done in linear time as
+step must be transformed in an ast. This can be done by traversing the
+ast in post-order depth first traversal, reducing leaf nodes into ast nodes,
+thereby producing the ast bottom-up. This can be done in linear time as
 the parse tree resulting from the parsing step can be stored as an array whereby
 traversing the array from start to finish equates to a post-order traversal of
 the tree. 
 
-Semantic analysis is performed by traversing the \gls{ast} with a
+Semantic analysis is performed by traversing the ast with a
 pre-order depth first traversal and keeping a record of identifiers
 and their metadata in a symbol table. Parallel semantic analysis can be
-performed by splitting the work based on nested scopes in the \gls{ast}
-\citep{seshadri_investigation_1991}. If during a pre-order depth first traversal
-of the \gls{ast} a new scope is encountered, the analyser starts a new thread
+performed by splitting the work based on nested scopes in the ast
+seshadri_investigation_1991. If during a pre-order depth first traversal
+of the ast a new scope is encountered, the analyser starts a new thread
 for parsing that inner scope while passing to it the symbol table it has
-constructed thus far. Working from the top to bottom of the \gls{ast} this way
-ensures that the whole of the \gls{ast} is analysed correctly. The drawback with
+constructed thus far. Working from the top to bottom of the ast this way
+ensures that the whole of the ast is analysed correctly. The drawback with
 this approach is that the efficacy of this parallelism is limited to the number
 and size of the nested scopes, which additionally makes splitting the work
 equally between threads a challenge.
@@ -184,11 +181,11 @@ equally between threads a challenge.
 Summary of the overall steps that need to be performed during semantic
 analysis:
 
-\begin{enumerate}
-	\item Iterate over the parse tree in post-order DFS in order to generate the Abstract syntax tree.
-	\item Iterate over AST using pre-order DFS, creating a new thread and symbol table for certain nodes.
-	\item Check if variables are defined before they are used by checking if they exist in ancestor symbol tables.
-\end{enumerate}
+enumerate
+	Iterate over the parse tree in post-order DFS in order to generate the Abstract syntax tree.
+	Iterate over AST using pre-order DFS, creating a new thread and symbol table for certain nodes.
+	Check if variables are defined before they are used by checking if they exist in ancestor symbol tables.
+enumerate
 
-\section{Conclusion}
+Conclusion
 
