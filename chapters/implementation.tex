@@ -99,19 +99,35 @@ table that must be computer generated due to its complexity.
 \label{lst:json_example}
 \end{listing}
 
-\subsection{Parser Preprocessing}
+\subsection{Parser Preprocessing} 
 
-The parser I'm implementing requires 
+The parser defined by \cite{barenghi_parallel_2015} is a standard operator
+precedence algorithm that is modified to allow the parsing of non-terminals.
+This parser requires that the structure of the language grammar follow certain
+rules, as been defined in chapter \ref{design_parser}. A preliminary validation
+of the grammar is performed to ensure that it conforms to these rules. It also
+fixes any production rules with duplicate right-hand sides by creating new
+production rules with new non-terminals in a way that keeps the resulting parse
+tree structure predictable. After this validation step, the grammar is ready to
+be parsed. Since this is an operator precedence parser, it additionally requires
+an operator precedence table.
 
-\subsubsection{Generating the Operator Precedence Table}
+An operator precedence table can be derived by an algorithm that iterates over
+the production rules of a grammar and determines the associativity of each
+terminal symbol. 
 
 \subsection{Lexical Analysis}
 
+The lexer works by first splitting the input into equal sized chunks. 
+
 \subsection{Syntactic Analysis}
+
 
 \subsection{Semantic Analysis}
 
-\section{Outputs and Visualizations} \label{outputs_and_visualizations}
+\section{Outputs} \label{outputs_and_visualizations}
+
+The
 
 \section{Dependencies} \label{dependancies}
 
