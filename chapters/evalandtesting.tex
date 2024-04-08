@@ -1,6 +1,15 @@
 \chapter{Evaluation} \label{evalandtesting}
 
+I evalutate the performance of the lexer and parser for by randomly generating JSON.  The compiler
+was tested on a tweleve core Ryzen 5 3600 CPU running Linux Mint with the 5.15.0 kernel. Figure
+\ref{fig:json_graph} shows the speedup achieved by increasing the number of threads used for either
+lexing or parsing.
 
-\cite{komathukattil_evaluating_nodate}
-\section{Benchmarks}
+\begin{figure}[h]
+	\centering
+    \includegraphics[width=0.8\textwidth]{images/graph.png}
+	\caption{Times Speedup compared to the number of threads used to process 1MB of JSON.}
+	\label{fig:json_graph}
+\end{figure}
+
 

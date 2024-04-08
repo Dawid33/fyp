@@ -17,12 +17,20 @@ for lexing, parallel LR and LL parsing algorithms, and the challenges of semanti
 parallelized context.
 
 Following the literature review, I outlined the design and implementation strategies for developing
-a parallel compiler, including considerations for lexing, parsing, and semantic analysis. The
-document discusses the practical aspects of constructing a parallel compiler, emphasizing the
-need for carefully considering the compiler architecture such that it can efficiently handle the
-complexities of parallel processing.
+a parallel compiler, including considerations for lexing and parsing. The document discusses
+the practical aspects of constructing a parallel compiler, emphasizing the need for carefully
+considering the compiler architecture such that it can efficiently handle the complexities of
+parallel processing.
 
-\section{Discussion}
+In evaluation chapter, I discuss the performance of my implementation as well as potential avenues for further improvements or optimisations. I conclude this report with a reflection on the research and development I've done for this \gls{fyp}.
+
+\section{Concluding Remarks}
+
+Parallel compilation can be an effective way of speeding up the first few stages of compilation.
+In many systems where parsing may be a bottleneck, such as processing large amounts of JSON, there exists good evidence that parallel parsing is an effective optimisation. Further work would need to find out if the methods discussed in this \gls{fyp} are compatible with the extraoridnary single threaded optimizations employed by \cite{langdale_parsing_2019}. If they are compatible then such parallel parsing techniques could push the state of the art further in JSON parsing.
+
+Future work could also be done to investigate fully the effectiveness of parser error recovery in
+parallel parsers. Although there is some prior work about thi s\citep{hammond_survey_1984}, the research I found was written quite some time ago. Programming language research and langauge complexity has grown since then which makes it worthwhile to re-asses.
 
 \begin{listing}[H]
 \begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}
