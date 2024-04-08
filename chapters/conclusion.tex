@@ -1,4 +1,7 @@
 \chapter{Conclusion} \label{conclusion} 
+
+\section{Summary}
+
 This FYP began with an introduction to the fundamentals of sequential and parallel compilation,
 highlighting the traditional focus on minimizing memory use and optimizing for single-threaded
 performance, and juxtaposes this with the contemporary shift towards parallel processing methods to
@@ -6,12 +9,12 @@ exploit the capabilities of multi-core processors. I elaborated on various paral
 including \gls{simd}, multithreading, \gls{gpgpu}  providing examples of their applications in
 compiler design.
 
-A significant portion of this FYP delved into a detailed literature review on methods for
-parallelizing compilers, focusing on lexing, parsing, and semantic analysis. I examined existing
-techniques, their potential for improving compiler performance, and their implications for language
-design. The review covers topics such as deterministic and non-deterministic finite automata,
-speculative simulation for lexing, parallel LR and LL parsing algorithms, and the challenges of
-semantic analysis in a parallelized context.
+A significant portion of this FYP delved into a literature review on methods for parallelizing
+compilers, focusing on lexing, parsing, and semantic analysis. I examined existing techniques, their
+potential for improving compiler performance, and their implications for language design. The review
+covers topics such as deterministic and non-deterministic finite automata, speculative simulation
+for lexing, parallel LR and LL parsing algorithms, and the challenges of semantic analysis in a
+parallelized context.
 
 Following the literature review, I outlined the design and implementation strategies for developing
 a parallel compiler, including considerations for lexing, parsing, and semantic analysis. The
@@ -19,9 +22,7 @@ document discusses the practical aspects of constructing a parallel compiler, em
 need for carefully considering the compiler architecture such that it can efficiently handle the
 complexities of parallel processing.
 
-The evaluation section provides insights into the testing methodologies used to assess the
-performance of the parallel compiler, including unit and integration testing, as well as benchmarks
-to measure its effectiveness.
+\section{Discussion}
 
 \begin{listing}[H]
 \begin{minted}[linenos, breaklines=true, fontsize=\scriptsize]{text}

@@ -192,3 +192,4 @@ analysis:
 
 \section{Conclusion}
 
+The design of this compiler involves a table-driven lexer and parser that can handle different languages by modifying the lexical and parsing grammars. The lexer first converts regular expressions into a \gls{dfa} and then processes its input in parallel by splitting it into chunks and processing each chunk individually. The parser employs an operator precedence grammar and a bounded-context restriction to parse in parallel. This allows it, too, to be processed in parallel. Semantic analysis is performed by constructing an abstract syntax tree from the parse tree and checking variable usage using a symbol table. This is done in parallel by spliting the input in places where new scopes are created and processing each part largely in parallel.
